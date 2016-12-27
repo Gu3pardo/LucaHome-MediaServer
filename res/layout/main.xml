@@ -1,0 +1,586 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#000000" >
+
+    <TextView
+        android:id="@+id/weekdayTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/weekdayText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/weekdayTextView"
+        android:layout_below="@+id/weekdayTextView"
+        android:layout_marginTop="5dp"
+        android:text="@string/dateText"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/dateTextView"
+        android:layout_below="@+id/dateTextView"
+        android:layout_marginTop="5dp"
+        android:text="@string/timeText"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherConditionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/weatherConditionImageView"
+        android:text="@string/weatherConditionText"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/weatherConditionImageView"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/weatherConditionTextView"
+        android:layout_marginTop="5dp"
+        android:contentDescription="@string/contentDescription"
+        android:src="@drawable/weather_icon" />
+
+    <TextView
+        android:id="@+id/weatherTemperatureTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/weatherConditionTextView"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/weatherConditionImageView"
+        android:text="@string/temperatureText"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherHumidityTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/weatherTemperatureTextView"
+        android:layout_below="@+id/weatherTemperatureTextView"
+        android:layout_marginTop="5dp"
+        android:text="@string/humidityText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherPressureTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/weatherHumidityTextView"
+        android:layout_below="@+id/weatherHumidityTextView"
+        android:layout_marginTop="5dp"
+        android:text="@string/pressureText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherUpdateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/weatherPressureTextView"
+        android:layout_below="@+id/weatherPressureTextView"
+        android:layout_marginTop="5dp"
+        android:text="@string/weatherTimeUpdateText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/weatherForecast1Condition"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/weatherConditionImageView"
+        android:layout_below="@+id/weatherUpdateTextView"
+        android:layout_marginTop="25dp"
+        android:contentDescription="@string/contentDescription"
+        android:src="@drawable/weather_icon" />
+
+    <TextView
+        android:id="@+id/weatherForecast1Weekday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast1Condition"
+        android:layout_alignTop="@+id/weatherForecast1Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast1Condition"
+        android:gravity="center_vertical"
+        android:text="@string/weekdayText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherForecast1Date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast1Condition"
+        android:layout_alignTop="@+id/weatherForecast1Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast1Weekday"
+        android:gravity="center_vertical"
+        android:text="@string/dateText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherForecast1Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast1Condition"
+        android:layout_alignTop="@+id/weatherForecast1Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast1Date"
+        android:gravity="center_vertical"
+        android:text="@string/timeText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherForecast1TemperatureRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast1Condition"
+        android:layout_alignTop="@+id/weatherForecast1Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast1Time"
+        android:gravity="center_vertical"
+        android:text="@string/temperatureRangeText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/weatherForecast2Condition"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/weatherConditionImageView"
+        android:layout_below="@+id/weatherForecast1Condition"
+        android:layout_marginTop="5dp"
+        android:contentDescription="@string/contentDescription"
+        android:src="@drawable/weather_icon" />
+
+    <TextView
+        android:id="@+id/weatherForecast2Weekday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast2Condition"
+        android:layout_alignTop="@+id/weatherForecast2Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast2Condition"
+        android:gravity="center_vertical"
+        android:text="@string/weekdayText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherForecast2Date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast2Condition"
+        android:layout_alignTop="@+id/weatherForecast2Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast2Weekday"
+        android:gravity="center_vertical"
+        android:text="@string/dateText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherForecast2Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast2Condition"
+        android:layout_alignTop="@+id/weatherForecast2Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast2Date"
+        android:gravity="center_vertical"
+        android:text="@string/timeText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherForecast2TemperatureRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast2Condition"
+        android:layout_alignTop="@+id/weatherForecast2Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast2Time"
+        android:gravity="center_vertical"
+        android:text="@string/temperatureRangeText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/weatherForecast3Condition"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/weatherConditionImageView"
+        android:layout_below="@+id/weatherForecast2Condition"
+        android:layout_marginTop="5dp"
+        android:contentDescription="@string/contentDescription"
+        android:src="@drawable/weather_icon" />
+
+    <TextView
+        android:id="@+id/weatherForecast3Weekday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast3Condition"
+        android:layout_alignTop="@+id/weatherForecast3Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast3Condition"
+        android:gravity="center_vertical"
+        android:text="@string/weekdayText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherForecast3Date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast3Condition"
+        android:layout_alignTop="@+id/weatherForecast3Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast3Weekday"
+        android:gravity="center_vertical"
+        android:text="@string/dateText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherForecast3Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast3Condition"
+        android:layout_alignTop="@+id/weatherForecast3Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast3Date"
+        android:gravity="center_vertical"
+        android:text="@string/timeText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weatherForecast3TemperatureRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weatherForecast3Condition"
+        android:layout_alignTop="@+id/weatherForecast3Condition"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/weatherForecast3Time"
+        android:gravity="center_vertical"
+        android:text="@string/temperatureRangeText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/temperatureRaspberry1"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/weatherConditionImageView"
+        android:layout_below="@+id/weatherForecast3TemperatureRange"
+        android:layout_marginTop="25dp"
+        android:contentDescription="@string/contentDescription"
+        android:src="@drawable/temperature_icon" />
+
+    <View
+        android:id="@+id/temperatureRaspberry1Alarm"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignTop="@+id/temperatureRaspberry1"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/temperatureRaspberry1"
+        android:background="@drawable/circle_green" />
+
+    <TextView
+        android:id="@+id/temperatureRaspberry1Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/temperatureRaspberry1"
+        android:layout_alignTop="@+id/temperatureRaspberry1"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/temperatureRaspberry1Alarm"
+        android:gravity="center_vertical"
+        android:text="@string/raspberryText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/temperatureRaspberry1Value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/temperatureRaspberry1"
+        android:layout_alignTop="@+id/temperatureRaspberry1"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/temperatureRaspberry1Name"
+        android:gravity="center_vertical"
+        android:text="@string/temperatureText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/temperatureRaspberry2"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/weatherConditionImageView"
+        android:layout_below="@+id/temperatureRaspberry1Value"
+        android:layout_marginTop="5dp"
+        android:contentDescription="@string/contentDescription"
+        android:src="@drawable/temperature_icon" />
+
+    <View
+        android:id="@+id/temperatureRaspberry2Alarm"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignTop="@+id/temperatureRaspberry2"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/temperatureRaspberry2"
+        android:background="@drawable/circle_green" />
+
+    <TextView
+        android:id="@+id/temperatureRaspberry2Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/temperatureRaspberry2"
+        android:layout_alignTop="@+id/temperatureRaspberry2"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/temperatureRaspberry2Alarm"
+        android:gravity="center_vertical"
+        android:text="@string/raspberryText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/temperatureRaspberry2Value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/temperatureRaspberry2"
+        android:layout_alignTop="@+id/temperatureRaspberry2"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/temperatureRaspberry2Name"
+        android:gravity="center_vertical"
+        android:text="@string/temperatureText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <com.google.android.youtube.player.YouTubePlayerView
+        android:id="@+id/centerYoutubePlayer"
+        android:layout_width="480dp"
+        android:layout_height="270dp"
+        android:layout_below="@+id/temperatureRaspberry2Value"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:background="#fff" />
+
+    <TextView
+        android:id="@+id/centerTextView"
+        android:layout_width="480dp"
+        android:layout_height="270dp"
+        android:layout_below="@+id/temperatureRaspberry2Value"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="@string/welcomeText"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold"
+        android:visibility="invisible" />
+
+    <WebView
+        android:id="@+id/centerWebView"
+        android:layout_width="480dp"
+        android:layout_height="270dp"
+        android:layout_below="@+id/temperatureRaspberry2Value"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:visibility="invisible" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/volumeTextView"
+        android:layout_below="@+id/centerTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp" >
+
+        <TextView
+            android:id="@+id/rssTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:padding="3dp"
+            android:text="@string/rssText"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/rssSeparatorTextView"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignEnd="@+id/rssTitleTextView"
+            android:layout_alignStart="@+id/rssTitleTextView"
+            android:layout_below="@+id/rssTitleTextView"
+            android:background="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/rssTextView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rssSeparatorTextView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp"
+            android:text="@string/rssText"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/rssDescriptionTextView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rssTextView1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="1dp"
+            android:gravity="center"
+            android:text="@string/rssText"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/rssTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rssDescriptionTextView1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp"
+            android:text="@string/rssText"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/rssDescriptionTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rssTextView2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="1dp"
+            android:gravity="center"
+            android:text="@string/rssText"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/rssTextView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rssDescriptionTextView2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp"
+            android:text="@string/rssText"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/rssDescriptionTextView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rssTextView3"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="1dp"
+            android:gravity="center"
+            android:text="@string/rssText"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/birthdayLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="10dp"
+        android:visibility="visible" >
+
+        <TextView
+            android:id="@+id/birthdayTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/birthdayAlarmView"
+            android:text="@string/birthdayText"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View
+            android:id="@+id/birthdayAlarmView"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/circle_red" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/volumeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/batteryTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="2dp"
+        android:text="Vol.: 85"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <View
+        android:id="@+id/batteryAlarm"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_alignBottom="@+id/batteryTextView"
+        android:layout_alignTop="@+id/batteryTextView"
+        android:layout_toStartOf="@+id/batteryTextView"
+        android:background="@drawable/circle_green" />
+
+    <TextView
+        android:id="@+id/batteryTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ipAdressTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="2dp"
+        android:text="93%"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/ipAdressTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/ipAdressText"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>

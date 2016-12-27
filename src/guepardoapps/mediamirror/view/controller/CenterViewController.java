@@ -1,4 +1,4 @@
-package guepardoapps.mediamirror.viewcontroller;
+package guepardoapps.mediamirror.view.controller;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;

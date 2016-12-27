@@ -1,4 +1,4 @@
-package guepardoapps.mediamirror.viewcontroller;
+package guepardoapps.mediamirror.view.controller;
 
 import java.util.List;
 

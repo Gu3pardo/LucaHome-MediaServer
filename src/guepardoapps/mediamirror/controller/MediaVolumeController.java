@@ -128,6 +128,10 @@ public class MediaVolumeController {
 		return _maxVolume;
 	}
 
+	public String GetCurrentVolume() {
+		return String.valueOf(_currentVolume);
+	}
+
 	private void sendVolumeBroadcast() {
 		_currentVolume = _audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 		_mute = _audioManager.isStreamMute(AudioManager.STREAM_MUSIC);

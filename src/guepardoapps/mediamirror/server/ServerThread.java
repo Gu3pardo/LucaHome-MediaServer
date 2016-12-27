@@ -59,7 +59,6 @@ public class ServerThread {
 	}
 
 	private class SocketServerThread extends Thread {
-
 		@Override
 		public void run() {
 			try {
@@ -76,7 +75,6 @@ public class ServerThread {
 				_logger.Error(e.toString());
 			}
 		}
-
 	}
 
 	private class SocketServerReplyThread extends Thread {
@@ -113,8 +111,7 @@ public class ServerThread {
 					_logger.Debug("trying to read");
 					String read = _inputReader.readLine();
 					_logger.Info("read: " + read);
-					_dataHandler.PerformAction(read);
-					response = "OK";
+					response = _dataHandler.PerformAction(read);
 				} catch (IOException e) {
 					_logger.Error(e.toString());
 					response = "Fail! " + e.toString();

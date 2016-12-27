@@ -8,6 +8,7 @@ import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.enums.RSSFeed;
 import guepardoapps.mediamirror.common.enums.YoutubeId;
+import guepardoapps.mediamirror.controller.BatterySocketController;
 import guepardoapps.mediamirror.model.CenterModel;
 import guepardoapps.mediamirror.model.RSSModel;
 import guepardoapps.mediamirror.server.ServerThread;
@@ -27,6 +28,8 @@ public class MainService extends Service {
 	private boolean _isInitialized;
 
 	private ServerThread _serverThread = null;
+
+	private BatterySocketController _batterySocketController;
 
 	private BirtdayUpdater _birthdayUpdater;
 	private CurrentWeatherUpdater _currentWeatherUpdater;
@@ -57,6 +60,11 @@ public class MainService extends Service {
 			if (_serverThread == null) {
 				_serverThread = new ServerThread(Constants.SERVERPORT, _context);
 				_serverThread.Start();
+			}
+
+			if (_batterySocketController == null) {
+				_batterySocketController = new BatterySocketController(_context);
+				_batterySocketController.Start();
 			}
 
 			if (_birthdayUpdater == null) {
@@ -139,6 +147,8 @@ public class MainService extends Service {
 		}
 
 		_serverThread.Dispose();
+		
+		_batterySocketController.Dispose();
 
 		_birthdayUpdater.Dispose();
 		_currentWeatherUpdater.Dispose();

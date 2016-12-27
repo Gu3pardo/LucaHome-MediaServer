@@ -4,7 +4,7 @@ public class Constants {
 	// TESTING
 	public static final boolean TESTING_ENABLED = false;
 	// DEBUGGING
-	public static final boolean DEBUGGING_ENABLED = true;
+	public static final boolean DEBUGGING_ENABLED = false;
 	// DATE VIEW
 	public static final int DATE_UPDATE_TIMEOUT = 15 * 1000;
 	public static final String BUNDLE_DATE_MODEL = "BUNDLE_DATE_MODEL";
@@ -24,7 +24,7 @@ public class Constants {
 	public static final String BROADCAST_DOWNLOAD_BIRTHDAY_FINISHED = "guepardoapps.mediamirror.broadcast.DOWNLOAD_BIRTHDAY_FINISHED";
 	public static final String BROADCAST_PERFORM_BIRTHDAY_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_BIRTHDAY_UPDATE";
 	// CURRENT WEATHER VIEW
-	public static final String CITY = "Erlangen,DE";
+	public static final String CITY = "Munich";
 	public static final int CURRENT_WEATHER_UPDATE_TIMEOUT = 15 * 60 * 1000;
 	public static final String BUNDLE_CURRENT_WEATHER_MODEL = "BUNDLE_CURRENT_WEATHER_MODEL";
 	public static final String BROADCAST_SHOW_CURRENT_WEATHER_MODEL = "guepardoapps.mediamirror.show.current_weather_model";
@@ -72,6 +72,11 @@ public class Constants {
 	public static final String BUNDLE_SCHEDULE_MODEL = "BUNDLE_SCHEDULE_MODEL";
 	public static final String BROADCAST_SHOW_SCHEDULE_MODEL = "guepardoapps.mediamirror.show.schedule_model";
 	public static final String BROADCAST_DOWNLOAD_SCHEDULE_FINISHED = "guepardoapps.mediamirror.broadcast.DOWNLOAD_SCHEDULE_FINISHED";
+	// SOCKET DATA
+	public static final String ACTION_SET_SOCKET = "setsocket&socket=";
+	public static final String SOCKET_NAME = "MediaMirror1";
+	public static final String SOCKET_STATE_ON = "&state=1";
+	public static final String SOCKET_STATE_OFF = "&state=0";
 	// GAME DATA
 	public static final String BUNDLE_GAME_COMMAND = "BUNDLE_GAME_COMMAND";
 	public static final String BROADCAST_GAME_COMMAND = "guepardoapps.mediamirror.game.command";
@@ -85,7 +90,7 @@ public class Constants {
 	public static final String BROADCAST_START_TETRIS = "guepardoapps.mediamirror.tetris.start";
 	public static final String BROADCAST_STOP_TETRIS = "guepardoapps.mediamirror.tetris.stop";
 	// YOUTUBE API
-	public static final String YOUTUBE_API_KEY = null; //ENTER YOUR YOUTUBE_API_KEY HERE
+	public static final String YOUTUBE_API_KEY = "AIzaSyBsEHy5iVJs67Kktb0dEkwHxGaYNj6wx5E";
 	// SERVER
 	public static final int SERVERPORT = 8080;
 	// TIME
@@ -94,10 +99,12 @@ public class Constants {
 	// DATA FOR RASPBERRY
 	public static final String USER_NAME = "SmartMirror";
 	public static final String PASS_PHRASE = "023884";
-	public static final String[] SERVER_URLs = new String[] { /*Enter your ip addresses here*/ };
+	public static final String[] SERVER_URLs = new String[] { "http://192.168.178.22" };
 	public static final String ACTION_PATH = "/lib/lucahome.php?user=";
 	public static final String BUNDLE_REST_ACTION = "BUNDLE_REST_ACTION";
 	public static final String BUNDLE_REST_DATA = "BUNDLE_REST_DATA";
 	public static final String BUNDLE_REST_BROADCAST = "BUNDLE_REST_BROADCAST";
+	// SERVER ID
+	public static final int SERVER_ID = 1;
 
 }

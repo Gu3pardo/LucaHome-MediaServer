@@ -1,4 +1,4 @@
-package guepardoapps.mediamirror.viewcontroller;
+package guepardoapps.mediamirror.view.controller;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -27,11 +27,8 @@ public class RaspberryViewController {
 	private ReceiverController _receiverController;
 
 	private View _raspberryAlarm1TextView;
-	private View _raspberryAlarm2TextView;
 	private TextView _raspberryName1TextView;
-	private TextView _raspberryName2TextView;
 	private TextView _raspberryTemperature1TextView;
-	private TextView _raspberryTemperature2TextView;
 
 	private RaspberryTemperatureHelper _raspberryTemperatureHelper;
 	private RaspberryViewControllerTest _raspberryViewTest;
@@ -47,11 +44,8 @@ public class RaspberryViewController {
 		_logger.Debug("onCreate");
 
 		_raspberryAlarm1TextView = (View) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Alarm);
-		_raspberryAlarm2TextView = (View) ((Activity) _context).findViewById(R.id.temperatureRaspberry2Alarm);
 		_raspberryName1TextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Name);
-		_raspberryName2TextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberry2Name);
 		_raspberryTemperature1TextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Value);
-		_raspberryTemperature2TextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberry2Value);
 	}
 
 	public void onPause() {
@@ -92,21 +86,15 @@ public class RaspberryViewController {
 
 				_raspberryAlarm1TextView
 						.setBackgroundResource(_raspberryTemperatureHelper.GetIcon(model.GetRaspberry1Temperature()));
-				_raspberryAlarm2TextView
-						.setBackgroundResource(_raspberryTemperatureHelper.GetIcon(model.GetRaspberry2Temperature()));
 				_raspberryName1TextView.setText(model.GetRaspberry1Name());
-				_raspberryName2TextView.setText(model.GetRaspberry2Name());
 				_raspberryTemperature1TextView.setText(model.GetRaspberry1Temperature());
-				_raspberryTemperature2TextView.setText(model.GetRaspberry2Temperature());
 			} else {
 				_logger.Warn("model is null!");
 			}
 
 			if (Constants.TESTING_ENABLED) {
 				_raspberryViewTest.ValidateView(_raspberryName1TextView.getText().toString(),
-						_raspberryName2TextView.getText().toString(),
-						_raspberryTemperature1TextView.getText().toString(),
-						_raspberryTemperature2TextView.getText().toString());
+						_raspberryTemperature1TextView.getText().toString());
 			}
 		}
 	};

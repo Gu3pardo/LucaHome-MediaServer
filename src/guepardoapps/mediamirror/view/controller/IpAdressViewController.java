@@ -1,22 +1,23 @@
-package guepardoapps.mediamirror.viewcontroller;
+package guepardoapps.mediamirror.view.controller;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.view.View;
 import android.widget.TextView;
 
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.model.*;
-import guepardoapps.mediamirror.test.DateViewControllerTest;
+import guepardoapps.mediamirror.test.IpAdressViewControllerTest;
 import guepardoapps.mediamirror.R;
 
 import guepardoapps.toolset.controller.ReceiverController;
 
-public class DateViewController {
+public class IpAdressViewController {
 
-	private static final String TAG = DateViewController.class.getName();
+	private static final String TAG = IpAdressViewController.class.getName();
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
@@ -24,13 +25,11 @@ public class DateViewController {
 	private Context _context;
 	private ReceiverController _receiverController;
 
-	private TextView _weekdayTextView;
-	private TextView _dateTextView;
-	private TextView _timeTextView;
+	private TextView _ipAdressTextView;
 
-	private DateViewControllerTest _dateViewTest;
+	private IpAdressViewControllerTest _ipAdressViewTest;
 
-	public DateViewController(Context context) {
+	public IpAdressViewController(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
 		_context = context;
 		_receiverController = new ReceiverController(_context);
@@ -38,10 +37,7 @@ public class DateViewController {
 
 	public void onCreate() {
 		_logger.Debug("onCreate");
-
-		_weekdayTextView = (TextView) ((Activity) _context).findViewById(R.id.weekdayTextView);
-		_dateTextView = (TextView) ((Activity) _context).findViewById(R.id.dateTextView);
-		_timeTextView = (TextView) ((Activity) _context).findViewById(R.id.timeTextView);
+		_ipAdressTextView = (TextView) ((Activity) _context).findViewById(R.id.ipAdressTextView);
 	}
 
 	public void onPause() {
@@ -52,13 +48,13 @@ public class DateViewController {
 		_logger.Debug("onResume");
 		if (!_isInitialized) {
 			_receiverController.RegisterReceiver(_updateViewReceiver,
-					new String[] { Constants.BROADCAST_SHOW_DATE_MODEL });
+					new String[] { Constants.BROADCAST_SHOW_IP_ADRESS_MODEL });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
 			if (Constants.TESTING_ENABLED) {
-				if (_dateViewTest == null) {
-					_dateViewTest = new DateViewControllerTest(_context);
+				if (_ipAdressViewTest == null) {
+					_ipAdressViewTest = new IpAdressViewControllerTest(_context);
 				}
 			}
 		} else {
@@ -76,20 +72,22 @@ public class DateViewController {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_updateViewReceiver onReceive");
-			DateModel model = (DateModel) intent.getSerializableExtra(Constants.BUNDLE_DATE_MODEL);
+			IpAdressModel model = (IpAdressModel) intent.getSerializableExtra(Constants.BUNDLE_IP_ADRESS_MODEL);
 			if (model != null) {
 				_logger.Debug(model.toString());
-
-				_weekdayTextView.setText(model.GetWeekday());
-				_dateTextView.setText(model.GetDate());
-				_timeTextView.setText(model.GetTime());
+				if (model.GetIsVisible()) {
+					_ipAdressTextView.setVisibility(View.VISIBLE);
+					_ipAdressTextView.setText(model.GetIpAdress());
+				} else {
+					_ipAdressTextView.setVisibility(View.INVISIBLE);
+				}
 			} else {
 				_logger.Warn("model is null!");
 			}
 
 			if (Constants.TESTING_ENABLED) {
-				_dateViewTest.ValidateView(_weekdayTextView.getText().toString(), _dateTextView.getText().toString(),
-						_timeTextView.getText().toString());
+				_ipAdressViewTest.ValidateView(_ipAdressTextView.getVisibility() == View.VISIBLE,
+						_ipAdressTextView.getText().toString());
 			}
 		}
 	};

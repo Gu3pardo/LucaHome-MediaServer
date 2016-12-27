@@ -1,4 +1,4 @@
-package guepardoapps.mediamirror.viewcontroller;
+package guepardoapps.mediamirror.view.controller;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;

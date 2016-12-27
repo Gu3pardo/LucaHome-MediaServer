@@ -32,10 +32,10 @@ public class DataHandler {
 		_mediaVolumeController = new MediaVolumeController(_context);
 	}
 
-	public void PerformAction(String command) {
+	public String PerformAction(String command) {
 		if (command == null) {
 			_logger.Warn("Command is null!");
-			return;
+			return "Command is null!";
 		}
 
 		_logger.Debug("PerformAction with data: " + command);
@@ -46,10 +46,6 @@ public class DataHandler {
 				_logger.Debug("action: " + action.toString());
 				String data = convertCommandToData(command);
 				_logger.Debug("data: " + data);
-
-				// _broadcastController.SendStringBroadcast(Constants.BROADCAST_TOAST_TEXT,
-				// Constants.BUNDLE_TOAST_TEXT,
-				// action + " " + data);
 
 				switch (action) {
 				case SHOW_YOUTUBE_VIDEO:
@@ -140,16 +136,18 @@ public class DataHandler {
 					break;
 				case INCREASE_VOLUME:
 					_mediaVolumeController.IncreaseVolume();
-					break;
+					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
 				case DECREASE_VOLUME:
 					_mediaVolumeController.DecreaseVolume();
-					break;
+					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
 				case MUTE_VOLUME:
 					_mediaVolumeController.MuteVolume();
-					break;
+					return action.toString() + ":Muted";
 				case UNMUTE_VOLUME:
 					_mediaVolumeController.UnmuteVolume();
-					break;
+					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
+				case GET_CURRENT_VOLUME:
+					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
 				case INCREASE_SCREEN_BRIGHTNESS:
 					_broadcastController.SendIntBroadcast(Constants.BROADCAST_ACTION_SCREEN_BRIGHTNESS,
 							Constants.BUNDLE_SCREEN_BRIGHTNESS, ScreenController.INCREASE);
@@ -200,13 +198,16 @@ public class DataHandler {
 					break;
 				default:
 					_logger.Warn("Action not handled!\n" + action.toString());
-					break;
+					return "Action not handled!\n" + action.toString();
 				}
+				return "Performed action!";
 			} else {
 				_logger.Warn("Action failed to be converted! Is null!\n" + command);
+				return "Action failed to be converted! Is null!\n" + command;
 			}
 		} else {
 			_logger.Warn("Command has wrong format!\n" + command);
+			return "Command has wrong format!\n" + command;
 		}
 	}
 

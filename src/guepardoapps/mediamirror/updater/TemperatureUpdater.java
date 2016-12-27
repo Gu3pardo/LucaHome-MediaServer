@@ -53,15 +53,14 @@ public class TemperatureUpdater {
 
 				RaspberryModel model = null;
 				if (temperatureList != null) {
-					if (temperatureList.size() == 2) {
-						model = new RaspberryModel(temperatureList.get(0).GetArea(), temperatureList.get(1).GetArea(),
-								temperatureList.get(0).GetTemperatureString(),
-								temperatureList.get(1).GetTemperatureString());
+					if (temperatureList.size() == Constants.SERVER_URLs.length) {
+						model = new RaspberryModel(temperatureList.get(0).GetArea(),
+								temperatureList.get(0).GetTemperatureString());
 
 					}
 				}
 				if (model == null) {
-					model = new RaspberryModel("not found", "not found", "", "");
+					model = new RaspberryModel("not found", "");
 				}
 				_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_RASPBERRY_DATA_MODEL,
 						Constants.BUNDLE_RASPBERRY_DATA_MODEL, model);

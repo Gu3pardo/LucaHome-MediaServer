@@ -335,67 +335,22 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/temperatureRaspberry2"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignStart="@+id/weatherConditionImageView"
-        android:layout_below="@+id/temperatureRaspberry1Value"
-        android:layout_marginTop="5dp"
-        android:contentDescription="@string/contentDescription"
-        android:src="@drawable/temperature_icon" />
-
-    <View
-        android:id="@+id/temperatureRaspberry2Alarm"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignTop="@+id/temperatureRaspberry2"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/temperatureRaspberry2"
-        android:background="@drawable/circle_green" />
-
-    <TextView
-        android:id="@+id/temperatureRaspberry2Name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/temperatureRaspberry2"
-        android:layout_alignTop="@+id/temperatureRaspberry2"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/temperatureRaspberry2Alarm"
-        android:gravity="center_vertical"
-        android:text="@string/raspberryText"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/temperatureRaspberry2Value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/temperatureRaspberry2"
-        android:layout_alignTop="@+id/temperatureRaspberry2"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/temperatureRaspberry2Name"
-        android:gravity="center_vertical"
-        android:text="@string/temperatureText"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textStyle="bold" />
-
     <com.google.android.youtube.player.YouTubePlayerView
         android:id="@+id/centerYoutubePlayer"
         android:layout_width="480dp"
         android:layout_height="270dp"
-        android:layout_below="@+id/temperatureRaspberry2Value"
+        android:layout_below="@+id/temperatureRaspberry1Value"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="80dp"
         android:background="#fff" />
 
     <TextView
         android:id="@+id/centerTextView"
         android:layout_width="480dp"
         android:layout_height="270dp"
-        android:layout_below="@+id/temperatureRaspberry2Value"
+        android:layout_below="@+id/temperatureRaspberry1Value"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="80dp"
         android:gravity="center"
         android:text="@string/welcomeText"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -406,9 +361,9 @@
         android:id="@+id/centerWebView"
         android:layout_width="480dp"
         android:layout_height="270dp"
-        android:layout_below="@+id/temperatureRaspberry2Value"
+        android:layout_below="@+id/temperatureRaspberry1Value"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="80dp"
         android:gravity="center"
         android:visibility="invisible" />
 

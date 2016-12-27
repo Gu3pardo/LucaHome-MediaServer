@@ -16,7 +16,7 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.controller.ScreenController;
 import guepardoapps.mediamirror.services.*;
 import guepardoapps.mediamirror.tts.TTSService;
-import guepardoapps.mediamirror.viewcontroller.*;
+import guepardoapps.mediamirror.view.controller.*;
 import guepardoapps.mediamirror.R;
 
 public class Main extends YouTubeBaseActivity {

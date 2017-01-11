@@ -1,11 +1,15 @@
 package guepardoapps.mediamirror.controller;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
 import guepardoapps.toolset.controller.BroadcastController;
+import guepardoapps.toolset.controller.ReceiverController;
 
 public class MediaVolumeController {
 
@@ -14,6 +18,7 @@ public class MediaVolumeController {
 
 	private Context _context;
 	private BroadcastController _broadcastController;
+	private ReceiverController _receiverController;
 
 	private static final int VOLUME_CHANGE_STEP = 1;
 
@@ -27,6 +32,8 @@ public class MediaVolumeController {
 
 		_context = context;
 		_broadcastController = new BroadcastController(_context);
+		_receiverController = new ReceiverController(_context);
+		_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Constants.BROADCAST_SCREEN_ENABLE });
 
 		_audioManager = (AudioManager) _context.getSystemService(Context.AUDIO_SERVICE);
 		_currentVolume = _audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -132,6 +139,10 @@ public class MediaVolumeController {
 		return String.valueOf(_currentVolume);
 	}
 
+	public void Dispose() {
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+	}
+
 	private void sendVolumeBroadcast() {
 		_currentVolume = _audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 		_mute = _audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
@@ -144,4 +155,11 @@ public class MediaVolumeController {
 		_broadcastController.SendStringBroadcast(Constants.BROADCAST_SHOW_VOLUME_MODEL, Constants.BUNDLE_VOLUME_MODEL,
 				volumeText);
 	}
+
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			sendVolumeBroadcast();
+		}
+	};
 }

@@ -18,6 +18,7 @@ public class VolumeViewController {
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
+	private boolean _screenEnabled;
 
 	private Context _context;
 	private ReceiverController _receiverController;
@@ -27,12 +28,32 @@ public class VolumeViewController {
 	private BroadcastReceiver _volumeInfoReveicer = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context ctxt, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_volumeInfoReveicer onReceive");
 			String newVolumeText = intent.getStringExtra(Constants.BUNDLE_VOLUME_MODEL);
 			if (newVolumeText != null) {
 				_logger.Debug("newVolumeText: " + newVolumeText);
 				_volumeValueTextView.setText(newVolumeText);
 			}
+		}
+	};
+
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = true;
+			_volumeValueTextView = (TextView) ((Activity) _context).findViewById(R.id.volumeTextView);
+		}
+	};
+
+	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = false;
 		}
 	};
 
@@ -44,6 +65,9 @@ public class VolumeViewController {
 
 	public void onCreate() {
 		_logger.Debug("onCreate");
+
+		_screenEnabled = true;
+
 		_volumeValueTextView = (TextView) ((Activity) _context).findViewById(R.id.volumeTextView);
 	}
 
@@ -57,6 +81,10 @@ public class VolumeViewController {
 			_logger.Debug("Initializing!");
 			_receiverController.RegisterReceiver(_volumeInfoReveicer,
 					new String[] { Constants.BROADCAST_SHOW_VOLUME_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+			_receiverController.RegisterReceiver(_screenDisableReceiver,
+					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
 			_isInitialized = true;
 		} else {
 			_logger.Warn("Is ALREADY initialized!");
@@ -66,6 +94,8 @@ public class VolumeViewController {
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
 		_receiverController.UnregisterReceiver(_volumeInfoReveicer);
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 		_isInitialized = false;
 	}
 }

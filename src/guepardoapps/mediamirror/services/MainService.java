@@ -2,6 +2,7 @@ package guepardoapps.mediamirror.services;
 
 import android.os.IBinder;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import guepardoapps.mediamirror.common.Constants;
@@ -16,6 +17,7 @@ import guepardoapps.mediamirror.test.ConverterTest;
 import guepardoapps.mediamirror.tts.TTSService;
 import guepardoapps.mediamirror.updater.*;
 import guepardoapps.toolset.controller.BroadcastController;
+import guepardoapps.toolset.controller.ReceiverController;
 
 public class MainService extends Service {
 
@@ -24,6 +26,7 @@ public class MainService extends Service {
 
 	private Context _context;
 	private BroadcastController _broadcastController;
+	private ReceiverController _receiverController;
 
 	private boolean _isInitialized;
 
@@ -43,6 +46,19 @@ public class MainService extends Service {
 
 	private ConverterTest _converterTest;
 
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_birthdayUpdater.DownloadBirthdays();
+			_currentWeatherUpdater.DownloadWeather();
+			_dateViewUpdater.UpdateDate();
+			_forecastWeatherUpdater.DownloadWeather();
+			_ipAdressViewUpdater.GetCurrentLocalIpAddress();
+			_rssViewUpdater.LoadRss();
+			_temperatureUpdater.DownloadTemperature();
+		}
+	};
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -55,6 +71,13 @@ public class MainService extends Service {
 			_context = this;
 			if (_broadcastController == null) {
 				_broadcastController = new BroadcastController(_context);
+			}
+
+			if (_receiverController == null) {
+				_receiverController = new ReceiverController(_context);
+
+				_receiverController.RegisterReceiver(_screenEnableReceiver,
+						new String[] { Constants.BROADCAST_SCREEN_ENABLE });
 			}
 
 			if (_serverThread == null) {
@@ -146,8 +169,10 @@ public class MainService extends Service {
 			_logger.Debug("onDestroy");
 		}
 
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+
 		_serverThread.Dispose();
-		
+
 		_batterySocketController.Dispose();
 
 		_birthdayUpdater.Dispose();

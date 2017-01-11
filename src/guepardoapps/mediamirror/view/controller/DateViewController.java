@@ -20,6 +20,7 @@ public class DateViewController {
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
+	private boolean _screenEnabled;
 
 	private Context _context;
 	private ReceiverController _receiverController;
@@ -39,6 +40,8 @@ public class DateViewController {
 	public void onCreate() {
 		_logger.Debug("onCreate");
 
+		_screenEnabled = true;
+
 		_weekdayTextView = (TextView) ((Activity) _context).findViewById(R.id.weekdayTextView);
 		_dateTextView = (TextView) ((Activity) _context).findViewById(R.id.dateTextView);
 		_timeTextView = (TextView) ((Activity) _context).findViewById(R.id.timeTextView);
@@ -53,6 +56,10 @@ public class DateViewController {
 		if (!_isInitialized) {
 			_receiverController.RegisterReceiver(_updateViewReceiver,
 					new String[] { Constants.BROADCAST_SHOW_DATE_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+			_receiverController.RegisterReceiver(_screenDisableReceiver,
+					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
@@ -69,12 +76,19 @@ public class DateViewController {
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 		_isInitialized = false;
 	}
 
 	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_updateViewReceiver onReceive");
 			DateModel model = (DateModel) intent.getSerializableExtra(Constants.BUNDLE_DATE_MODEL);
 			if (model != null) {
@@ -91,6 +105,24 @@ public class DateViewController {
 				_dateViewTest.ValidateView(_weekdayTextView.getText().toString(), _dateTextView.getText().toString(),
 						_timeTextView.getText().toString());
 			}
+		}
+	};
+
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = true;
+
+			_weekdayTextView = (TextView) ((Activity) _context).findViewById(R.id.weekdayTextView);
+			_dateTextView = (TextView) ((Activity) _context).findViewById(R.id.dateTextView);
+			_timeTextView = (TextView) ((Activity) _context).findViewById(R.id.timeTextView);
+		}
+	};
+
+	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = false;
 		}
 	};
 }

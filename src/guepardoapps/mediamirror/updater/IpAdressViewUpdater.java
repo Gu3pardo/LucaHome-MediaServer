@@ -31,9 +31,7 @@ public class IpAdressViewUpdater {
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
 			_logger.Debug("_updateRunnable run");
-			if (!Tools.IsMuteTime()) {
-				getCurrentLocalIpAddress();
-			}
+			GetCurrentLocalIpAddress();
 			_updater.postDelayed(_updateRunnable, _updateTime);
 		}
 	};
@@ -42,7 +40,7 @@ public class IpAdressViewUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_performUpdateReceiver onReceive");
-			getCurrentLocalIpAddress();
+			GetCurrentLocalIpAddress();
 		}
 	};
 
@@ -70,8 +68,13 @@ public class IpAdressViewUpdater {
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
 	}
 
-	private void getCurrentLocalIpAddress() {
+	public void GetCurrentLocalIpAddress() {
 		_logger.Debug("getCurrentLocalIpAddress");
+
+		if (Tools.IsMuteTime()) {
+			_logger.Warn("Mute time!");
+			return;
+		}
 
 		String ip = _userInformationController.GetIp();
 		_logger.Debug("IP adress is: " + ip);

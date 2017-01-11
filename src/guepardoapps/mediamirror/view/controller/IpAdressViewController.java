@@ -21,6 +21,7 @@ public class IpAdressViewController {
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
+	private boolean _screenEnabled;
 
 	private Context _context;
 	private ReceiverController _receiverController;
@@ -37,6 +38,9 @@ public class IpAdressViewController {
 
 	public void onCreate() {
 		_logger.Debug("onCreate");
+
+		_screenEnabled = true;
+		
 		_ipAdressTextView = (TextView) ((Activity) _context).findViewById(R.id.ipAdressTextView);
 	}
 
@@ -49,6 +53,10 @@ public class IpAdressViewController {
 		if (!_isInitialized) {
 			_receiverController.RegisterReceiver(_updateViewReceiver,
 					new String[] { Constants.BROADCAST_SHOW_IP_ADRESS_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+			_receiverController.RegisterReceiver(_screenDisableReceiver,
+					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
@@ -65,12 +73,19 @@ public class IpAdressViewController {
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 		_isInitialized = false;
 	}
 
 	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_updateViewReceiver onReceive");
 			IpAdressModel model = (IpAdressModel) intent.getSerializableExtra(Constants.BUNDLE_IP_ADRESS_MODEL);
 			if (model != null) {
@@ -89,6 +104,22 @@ public class IpAdressViewController {
 				_ipAdressViewTest.ValidateView(_ipAdressTextView.getVisibility() == View.VISIBLE,
 						_ipAdressTextView.getText().toString());
 			}
+		}
+	};
+
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = true;
+			
+			_ipAdressTextView = (TextView) ((Activity) _context).findViewById(R.id.ipAdressTextView);
+		}
+	};
+
+	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = false;
 		}
 	};
 }

@@ -22,6 +22,7 @@ public class RaspberryViewController {
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
+	private boolean _screenEnabled;
 
 	private Context _context;
 	private ReceiverController _receiverController;
@@ -43,6 +44,8 @@ public class RaspberryViewController {
 	public void onCreate() {
 		_logger.Debug("onCreate");
 
+		_screenEnabled = true;
+
 		_raspberryAlarm1TextView = (View) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Alarm);
 		_raspberryName1TextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Name);
 		_raspberryTemperature1TextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Value);
@@ -57,6 +60,10 @@ public class RaspberryViewController {
 		if (!_isInitialized) {
 			_receiverController.RegisterReceiver(_updateViewReceiver,
 					new String[] { Constants.BROADCAST_SHOW_RASPBERRY_DATA_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+			_receiverController.RegisterReceiver(_screenDisableReceiver,
+					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
@@ -73,12 +80,19 @@ public class RaspberryViewController {
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 		_isInitialized = false;
 	}
 
 	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_updateViewReceiver onReceive");
 			RaspberryModel model = (RaspberryModel) intent.getSerializableExtra(Constants.BUNDLE_RASPBERRY_DATA_MODEL);
 			if (model != null) {
@@ -96,6 +110,24 @@ public class RaspberryViewController {
 				_raspberryViewTest.ValidateView(_raspberryName1TextView.getText().toString(),
 						_raspberryTemperature1TextView.getText().toString());
 			}
+		}
+	};
+
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = true;
+
+			_raspberryAlarm1TextView = (View) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Alarm);
+			_raspberryName1TextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Name);
+			_raspberryTemperature1TextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Value);
+		}
+	};
+
+	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = false;
 		}
 	};
 }

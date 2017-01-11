@@ -21,6 +21,8 @@ public class ForecastWeatherViewController {
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
+	private boolean _screenEnabled;
+
 	private static int _forecastCount = 3;
 
 	private Context _context;
@@ -42,6 +44,8 @@ public class ForecastWeatherViewController {
 
 	public void onCreate() {
 		_logger.Debug("onCreate");
+
+		_screenEnabled = true;
 
 		_weatherForecastConditionImageViews = new ImageView[_forecastCount];
 		_weatherForecastWeekdayTextViews = new TextView[_forecastCount];
@@ -86,6 +90,10 @@ public class ForecastWeatherViewController {
 		if (!_isInitialized) {
 			_receiverController.RegisterReceiver(_updateViewReceiver,
 					new String[] { Constants.BROADCAST_SHOW_FORECAST_WEATHER_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+			_receiverController.RegisterReceiver(_screenDisableReceiver,
+					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
@@ -102,12 +110,19 @@ public class ForecastWeatherViewController {
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 		_isInitialized = false;
 	}
 
 	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_updateViewReceiver onReceive");
 			ForecastWeatherModel model = (ForecastWeatherModel) intent
 					.getSerializableExtra(Constants.BUNDLE_FORECAST_WEATHER_MODEL);
@@ -129,7 +144,7 @@ public class ForecastWeatherViewController {
 			} else {
 				_logger.Warn("model is null!");
 			}
-			
+
 			if (Constants.TESTING_ENABLED) {
 				_forecastWeatherViewTest.ValidateView(-1, _weatherForecastWeekdayTextViews[0].getText().toString(),
 						_weatherForecastDateTextViews[0].getText().toString(),
@@ -144,6 +159,53 @@ public class ForecastWeatherViewController {
 						_weatherForecastTimeTextViews[2].getText().toString(),
 						_weatherForecastTemperatureRangeTextViews[2].getText().toString());
 			}
+		}
+	};
+
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = true;
+
+			_weatherForecastConditionImageViews = new ImageView[_forecastCount];
+			_weatherForecastWeekdayTextViews = new TextView[_forecastCount];
+			_weatherForecastDateTextViews = new TextView[_forecastCount];
+			_weatherForecastTimeTextViews = new TextView[_forecastCount];
+			_weatherForecastTemperatureRangeTextViews = new TextView[_forecastCount];
+
+			_weatherForecastConditionImageViews[0] = (ImageView) ((Activity) _context)
+					.findViewById(R.id.weatherForecast1Condition);
+			_weatherForecastWeekdayTextViews[0] = (TextView) ((Activity) _context)
+					.findViewById(R.id.weatherForecast1Weekday);
+			_weatherForecastDateTextViews[0] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast1Date);
+			_weatherForecastTimeTextViews[0] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast1Time);
+			_weatherForecastTemperatureRangeTextViews[0] = (TextView) ((Activity) _context)
+					.findViewById(R.id.weatherForecast1TemperatureRange);
+
+			_weatherForecastConditionImageViews[1] = (ImageView) ((Activity) _context)
+					.findViewById(R.id.weatherForecast2Condition);
+			_weatherForecastWeekdayTextViews[1] = (TextView) ((Activity) _context)
+					.findViewById(R.id.weatherForecast2Weekday);
+			_weatherForecastDateTextViews[1] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast2Date);
+			_weatherForecastTimeTextViews[1] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast2Time);
+			_weatherForecastTemperatureRangeTextViews[1] = (TextView) ((Activity) _context)
+					.findViewById(R.id.weatherForecast2TemperatureRange);
+
+			_weatherForecastConditionImageViews[2] = (ImageView) ((Activity) _context)
+					.findViewById(R.id.weatherForecast3Condition);
+			_weatherForecastWeekdayTextViews[2] = (TextView) ((Activity) _context)
+					.findViewById(R.id.weatherForecast3Weekday);
+			_weatherForecastDateTextViews[2] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast3Date);
+			_weatherForecastTimeTextViews[2] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast3Time);
+			_weatherForecastTemperatureRangeTextViews[2] = (TextView) ((Activity) _context)
+					.findViewById(R.id.weatherForecast3TemperatureRange);
+		}
+	};
+
+	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = false;
 		}
 	};
 }

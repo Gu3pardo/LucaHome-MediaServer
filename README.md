@@ -4,10 +4,11 @@ Android application permanently displaying data behind a mirror
 - weather (current and forecast)
 - temperature in the flat
 - birthdays
-- video
+- watching youtube videos
 - RSS data
-- websites
+- surfing websites
+- displaying custom text
 - ...
 
-Can receive commands by a client application
-- e.g. to display new videos, update rss feed, display websites, display custom text
+Receive commands by a client application (LucaHome_AndroidApplication)
+- e.g. to display new videos, update rss feed, display websites, display custom text, ...

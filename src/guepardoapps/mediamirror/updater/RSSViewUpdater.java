@@ -31,11 +31,7 @@ public class RSSViewUpdater {
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
 			_logger.Debug("_updateRunnable run");
-			if (!Tools.IsMuteTime()) {
-				RSSModel model = new RSSModel(_rssFeed, true);
-				_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_RSS_DATA_MODEL,
-						Constants.BUNDLE_RSS_DATA_MODEL, model);
-			}
+			LoadRss();
 			_updater.postDelayed(_updateRunnable, _updateTime);
 		}
 	};
@@ -43,7 +39,7 @@ public class RSSViewUpdater {
 	private BroadcastReceiver _resetRSSFeedReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			_logger.Debug("_updateRSSFeedReceiver onReceive");
+			_logger.Debug("_resetRSSFeedReceiver onReceive");
 			_rssFeed = RSSFeed.DEFAULT;
 			_logger.Debug("Resetted RssFeed is: " + _rssFeed);
 
@@ -100,5 +96,18 @@ public class RSSViewUpdater {
 
 		_receiverController.UnregisterReceiver(_resetRSSFeedReceiver);
 		_receiverController.UnregisterReceiver(_updateRSSFeedReceiver);
+	}
+
+	public void LoadRss() {
+		_logger.Debug("LoadRss");
+
+		if (Tools.IsMuteTime()) {
+			_logger.Warn("Mute time!");
+			return;
+		}
+
+		RSSModel model = new RSSModel(_rssFeed, true);
+		_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_RSS_DATA_MODEL,
+				Constants.BUNDLE_RSS_DATA_MODEL, model);
 	}
 }

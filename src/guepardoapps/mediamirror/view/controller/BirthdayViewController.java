@@ -23,6 +23,7 @@ public class BirthdayViewController {
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
+	private boolean _screenEnabled;
 
 	private Context _context;
 	private ReceiverController _receiverController;
@@ -44,6 +45,8 @@ public class BirthdayViewController {
 
 	public void onCreate() {
 		_logger.Debug("onCreate");
+		
+		_screenEnabled = true;
 
 		_birthdayLayout = (RelativeLayout) ((Activity) _context).findViewById(R.id.birthdayLayout);
 		_birthdayLayout.setVisibility(View.GONE);
@@ -60,6 +63,10 @@ public class BirthdayViewController {
 		if (!_isInitialized) {
 			_receiverController.RegisterReceiver(_updateViewReceiver,
 					new String[] { Constants.BROADCAST_SHOW_BIRTHDAY_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+			_receiverController.RegisterReceiver(_screenDisableReceiver,
+					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
@@ -76,12 +83,19 @@ public class BirthdayViewController {
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 		_isInitialized = false;
 	}
 
 	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_updateViewReceiver onReceive");
 			BirthdayModel model = (BirthdayModel) intent.getSerializableExtra(Constants.BUNDLE_BIRTHDAY_MODEL);
 			if (model != null) {
@@ -109,10 +123,34 @@ public class BirthdayViewController {
 		}
 	};
 
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = true;
+
+			_birthdayLayout = (RelativeLayout) ((Activity) _context).findViewById(R.id.birthdayLayout);
+			_birthdayLayout.setVisibility(View.GONE);
+			_birthdayAlarmView = (View) ((Activity) _context).findViewById(R.id.birthdayAlarmView);
+			_birthdayTextView = (TextView) ((Activity) _context).findViewById(R.id.birthdayTextView);
+		}
+	};
+
+	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = false;
+		}
+	};
+
 	private Runnable _updateAlarmViewRunnable = new Runnable() {
 		private boolean invert;
 
 		public void run() {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("Inverting birthday alarm view!");
 			if (invert) {
 				_birthdayAlarmView.setBackgroundResource(R.drawable.circle_red);

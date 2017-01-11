@@ -30,6 +30,8 @@ public class RSSViewController {
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
+	private boolean _screenEnabled;
+
 	private int _index;
 	private String _title;
 	private List<RssItem> _items;
@@ -60,6 +62,8 @@ public class RSSViewController {
 	public void onCreate() {
 		_logger.Debug("onCreate");
 
+		_screenEnabled = true;
+
 		_rssTitleTextView = (TextView) ((Activity) _context).findViewById(R.id.rssTitleTextView);
 		_rssSeparatorTextView = (TextView) ((Activity) _context).findViewById(R.id.rssSeparatorTextView);
 
@@ -80,6 +84,10 @@ public class RSSViewController {
 		if (!_isInitialized) {
 			_receiverController.RegisterReceiver(_updateViewReceiver,
 					new String[] { Constants.BROADCAST_SHOW_RSS_DATA_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+			_receiverController.RegisterReceiver(_screenDisableReceiver,
+					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
@@ -96,12 +104,19 @@ public class RSSViewController {
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 		_isInitialized = false;
 	}
 
 	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_updateViewReceiver onReceive");
 			RSSModel model = (RSSModel) intent.getSerializableExtra(Constants.BUNDLE_RSS_DATA_MODEL);
 
@@ -142,6 +157,11 @@ public class RSSViewController {
 		@SuppressWarnings("unchecked")
 		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_index = 0;
 			_title = resultData.getString(RssService.TITLE);
 			_items = (List<RssItem>) resultData.getSerializable(RssService.ITEMS);
@@ -179,8 +199,37 @@ public class RSSViewController {
 		};
 	};
 
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = true;
+
+			_rssTitleTextView = (TextView) ((Activity) _context).findViewById(R.id.rssTitleTextView);
+			_rssSeparatorTextView = (TextView) ((Activity) _context).findViewById(R.id.rssSeparatorTextView);
+
+			_rssTextView1 = (TextView) ((Activity) _context).findViewById(R.id.rssTextView1);
+			_rssTextView1Description = (TextView) ((Activity) _context).findViewById(R.id.rssDescriptionTextView1);
+			_rssTextView2 = (TextView) ((Activity) _context).findViewById(R.id.rssTextView2);
+			_rssTextView2Description = (TextView) ((Activity) _context).findViewById(R.id.rssDescriptionTextView2);
+			_rssTextView3 = (TextView) ((Activity) _context).findViewById(R.id.rssTextView3);
+			_rssTextView3Description = (TextView) ((Activity) _context).findViewById(R.id.rssDescriptionTextView3);
+		}
+	};
+
+	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = false;
+		}
+	};
+
 	private Runnable _updateRSSTextViewRunnable = new Runnable() {
 		public void run() {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("Update RSS text view!");
 			_logger.Debug("RSS List size is: " + String.valueOf(_items.size()));
 			_logger.Debug("Index is: " + String.valueOf(_index));

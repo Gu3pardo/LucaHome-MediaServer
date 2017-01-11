@@ -35,9 +35,7 @@ public class TemperatureUpdater {
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
 			_logger.Debug("_updateRunnable run");
-			if (!Tools.IsMuteTime()) {
-				startDownloadTemperature();
-			}
+			DownloadTemperature();
 			_updater.postDelayed(_updateRunnable, _updateTime);
 		}
 	};
@@ -72,7 +70,7 @@ public class TemperatureUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_performUpdateReceiver onReceive");
-			startDownloadTemperature();
+			DownloadTemperature();
 		}
 	};
 
@@ -102,8 +100,13 @@ public class TemperatureUpdater {
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
 	}
 
-	private void startDownloadTemperature() {
+	public void DownloadTemperature() {
 		_logger.Debug("startDownloadTemperature");
+
+		if (Tools.IsMuteTime()) {
+			_logger.Warn("Mute time!");
+			return;
+		}
 
 		Intent serviceIntent = new Intent(_context, RESTService.class);
 		Bundle serviceData = new Bundle();

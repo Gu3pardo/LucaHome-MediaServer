@@ -36,9 +36,7 @@ public class CurrentWeatherUpdater {
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
 			_logger.Debug("_updateRunnable run");
-			if (!Tools.IsMuteTime()) {
-				_openWeatherController.loadCurrentWeather();
-			}
+			DownloadWeather();
 			_updater.postDelayed(_updateRunnable, _updateTime);
 		}
 	};
@@ -79,7 +77,7 @@ public class CurrentWeatherUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_performUpdateReceiver onReceive");
-			_openWeatherController.loadCurrentWeather();
+			DownloadWeather();
 		}
 	};
 
@@ -108,5 +106,16 @@ public class CurrentWeatherUpdater {
 		_updater.removeCallbacks(_updateRunnable);
 		_receiverController.UnregisterReceiver(_updateReceiver);
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
+	}
+
+	public void DownloadWeather() {
+		_logger.Debug("DownloadWeather");
+
+		if (Tools.IsMuteTime()) {
+			_logger.Warn("Mute time!");
+			return;
+		}
+
+		_openWeatherController.loadCurrentWeather();
 	}
 }

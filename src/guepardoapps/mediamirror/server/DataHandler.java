@@ -13,6 +13,7 @@ import guepardoapps.mediamirror.model.CenterModel;
 import guepardoapps.mediamirror.model.RSSModel;
 
 import guepardoapps.toolset.controller.BroadcastController;
+import guepardoapps.toolset.controller.CommandController;
 
 public class DataHandler {
 
@@ -21,6 +22,7 @@ public class DataHandler {
 
 	private Context _context;
 
+	private CommandController _commandController;
 	private BroadcastController _broadcastController;
 	private MediaVolumeController _mediaVolumeController;
 
@@ -28,6 +30,8 @@ public class DataHandler {
 		_logger = new SmartMirrorLogger(TAG);
 
 		_context = context;
+
+		_commandController = new CommandController(_context);
 		_broadcastController = new BroadcastController(_context);
 		_mediaVolumeController = new MediaVolumeController(_context);
 	}
@@ -196,6 +200,18 @@ public class DataHandler {
 				case GAME_TETRIS_STOP:
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_STOP_TETRIS);
 					break;
+				case SCREEN_ENABLE:
+					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_ENABLE_SCREEN);
+					break;
+				case SCREEN_DISABLE:
+					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_DISABLE_SCREEN);
+					break;
+				case SYSTEM_REBOOT:
+					_commandController.RebootDevice();
+					break;
+				case SYSTEM_SHUTDOWN:
+					_commandController.ShutDownDevice();
+					break;
 				default:
 					_logger.Warn("Action not handled!\n" + action.toString());
 					return "Action not handled!\n" + action.toString();
@@ -209,6 +225,10 @@ public class DataHandler {
 			_logger.Warn("Command has wrong format!\n" + command);
 			return "Command has wrong format!\n" + command;
 		}
+	}
+
+	public void Dispose() {
+		_mediaVolumeController.Dispose();
 	}
 
 	private ServerAction convertCommandToAction(String command) {

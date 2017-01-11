@@ -21,6 +21,7 @@ public class CurrentWeatherViewController {
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
+	private boolean _screenEnabled;
 
 	private Context _context;
 	private ReceiverController _receiverController;
@@ -43,6 +44,8 @@ public class CurrentWeatherViewController {
 	public void onCreate() {
 		_logger.Debug("onCreate");
 
+		_screenEnabled = true;
+
 		_conditionTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherConditionTextView);
 		_temperatureTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherTemperatureTextView);
 		_humidityTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherHumidityTextView);
@@ -60,6 +63,10 @@ public class CurrentWeatherViewController {
 		if (!_isInitialized) {
 			_receiverController.RegisterReceiver(_updateViewReceiver,
 					new String[] { Constants.BROADCAST_SHOW_CURRENT_WEATHER_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+			_receiverController.RegisterReceiver(_screenDisableReceiver,
+					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
@@ -76,12 +83,19 @@ public class CurrentWeatherViewController {
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 		_isInitialized = false;
 	}
 
 	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_updateViewReceiver onReceive");
 			CurrentWeatherModel model = (CurrentWeatherModel) intent
 					.getSerializableExtra(Constants.BUNDLE_CURRENT_WEATHER_MODEL);
@@ -102,6 +116,27 @@ public class CurrentWeatherViewController {
 						_temperatureTextView.getText().toString(), _humidityTextView.getText().toString(),
 						_pressureTextView.getText().toString(), _updatedTimeTextView.getText().toString(), -1);
 			}
+		}
+	};
+
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = true;
+
+			_conditionTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherConditionTextView);
+			_temperatureTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherTemperatureTextView);
+			_humidityTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherHumidityTextView);
+			_pressureTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherPressureTextView);
+			_updatedTimeTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherUpdateTextView);
+			_conditionImageView = (ImageView) ((Activity) _context).findViewById(R.id.weatherConditionImageView);
+		}
+	};
+
+	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = false;
 		}
 	};
 }

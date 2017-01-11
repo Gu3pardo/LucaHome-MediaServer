@@ -36,6 +36,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
+	private boolean _screenEnabled;
 
 	private Context _context;
 	private ReceiverController _receiverController;
@@ -70,6 +71,11 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 	@Override
 	public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean wasRestored) {
+		if (!_screenEnabled) {
+			_logger.Debug("Screen is not enabled!");
+			return;
+		}
+
 		if (!_youtTubePlayerIsInitialized) {
 			_youtubePlayer = player;
 
@@ -89,6 +95,8 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	@SuppressLint("SetJavaScriptEnabled")
 	public void onCreate() {
 		_logger.Debug("onCreate");
+
+		_screenEnabled = true;
 
 		_centerTextView = (TextView) ((Activity) _context).findViewById(R.id.centerTextView);
 
@@ -129,6 +137,10 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 					new String[] { Constants.BROADCAST_SHOW_CENTER_MODEL });
 			_receiverController.RegisterReceiver(_playVideoReceiver, new String[] { Constants.BROADCAST_PLAY_VIDEO });
 			_receiverController.RegisterReceiver(_stopVideoReceiver, new String[] { Constants.BROADCAST_STOP_VIDEO });
+			_receiverController.RegisterReceiver(_screenEnableReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+			_receiverController.RegisterReceiver(_screenDisableReceiver,
+					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
 
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
@@ -149,6 +161,8 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
 		_receiverController.UnregisterReceiver(_playVideoReceiver);
 		_receiverController.UnregisterReceiver(_stopVideoReceiver);
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 
 		_isInitialized = false;
 	}
@@ -156,6 +170,11 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_updateViewReceiver onReceive");
 			CenterModel model = (CenterModel) intent.getSerializableExtra(Constants.BUNDLE_CENTER_MODEL);
 			if (model != null) {
@@ -230,6 +249,11 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	private BroadcastReceiver _playVideoReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_playVideoReceiver onReceive");
 
 			_youTubePlayerView.setVisibility(View.VISIBLE);
@@ -243,12 +267,66 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	private BroadcastReceiver _stopVideoReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_stopVideoReceiver onReceive");
 			stopVideo();
 		}
 	};
 
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@SuppressLint("SetJavaScriptEnabled")
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = true;
+
+			_centerTextView = (TextView) ((Activity) _context).findViewById(R.id.centerTextView);
+
+			_centerWebView = (WebView) ((Activity) _context).findViewById(R.id.centerWebView);
+			_centerWebView.getSettings().setBuiltInZoomControls(true);
+			_centerWebView.getSettings().setSupportZoom(true);
+			_centerWebView.getSettings().setJavaScriptEnabled(true);
+			_centerWebView.getSettings().setLoadWithOverviewMode(true);
+			_centerWebView.setWebViewClient(new WebViewClient());
+			_centerWebView.setWebChromeClient(new WebChromeClient());
+			_centerWebView.setInitialScale(100);
+			CookieManager cookieManager = CookieManager.getInstance();
+			cookieManager.setAcceptCookie(false);
+			_centerWebView.setWebViewClient(new WebViewClient() {
+				public void onPageFinished(WebView view, String url) {
+					_progressDialog.dismiss();
+					_loadingUrl = false;
+				}
+			});
+
+			_youTubePlayerView = (YouTubePlayerView) ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
+			if (Constants.YOUTUBE_API_KEY != null) {
+				_youTubePlayerView.initialize(Constants.YOUTUBE_API_KEY, CenterViewController.this);
+			} else {
+				_logger.Warn("Please enter your youtube api key!");
+				Toast.makeText(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
+			}
+		}
+	};
+
+	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = false;
+			_youtubePlayer.release();
+			_youtTubePlayerIsInitialized = false;
+		}
+	};
+
 	private void startVideo(String youtubeId) {
+		if (!_screenEnabled) {
+			_logger.Debug("Screen is not enabled!");
+			return;
+		}
+
 		if (!_youtTubePlayerIsInitialized) {
 			_logger.Error("YouTubePlayer is not initialized!");
 			return;
@@ -276,6 +354,11 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	}
 
 	private void stopVideo() {
+		if (!_screenEnabled) {
+			_logger.Debug("Screen is not enabled!");
+			return;
+		}
+
 		_logger.Debug("_stopVideoReceiver onReceive");
 
 		if (!_youtTubePlayerIsInitialized) {
@@ -292,6 +375,11 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	}
 
 	private void videoError(String error) {
+		if (!_screenEnabled) {
+			_logger.Debug("Screen is not enabled!");
+			return;
+		}
+
 		_loadingVideo = false;
 		_logger.Error("Video Play Error :" + error);
 

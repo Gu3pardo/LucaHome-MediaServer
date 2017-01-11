@@ -56,6 +56,8 @@ public class ServerThread {
 				_logger.Error(e.toString());
 			}
 		}
+
+		_dataHandler.Dispose();
 	}
 
 	private class SocketServerThread extends Thread {

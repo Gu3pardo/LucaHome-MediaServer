@@ -13,6 +13,7 @@ public class GameViewController {
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
+	private boolean _screenEnabled;
 
 	private Context _context;
 	private GameDialogController _gameDialogController;
@@ -21,6 +22,11 @@ public class GameViewController {
 	private BroadcastReceiver _pongStartReveicer = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_pongStartReveicer onReceive");
 			_gameDialogController.ShowDialogPong();
 		}
@@ -29,6 +35,11 @@ public class GameViewController {
 	private BroadcastReceiver _pongStopReveicer = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_pongStopReveicer onReceive");
 			_gameDialogController.CloseDialogCallback.run();
 		}
@@ -37,6 +48,11 @@ public class GameViewController {
 	private BroadcastReceiver _snakeStartReveicer = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_snakeStartReveicer onReceive");
 			_gameDialogController.ShowDialogSnake();
 		}
@@ -45,6 +61,11 @@ public class GameViewController {
 	private BroadcastReceiver _snakeStopReveicer = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_snakeStopReveicer onReceive");
 			_gameDialogController.CloseDialogCallback.run();
 		}
@@ -53,6 +74,11 @@ public class GameViewController {
 	private BroadcastReceiver _tetrisStartReveicer = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_tetrisStartReveicer onReceive");
 			_gameDialogController.ShowDialogTetris();
 		}
@@ -61,8 +87,27 @@ public class GameViewController {
 	private BroadcastReceiver _tetrisStopReveicer = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
 			_logger.Debug("_tetrisStopReveicer onReceive");
 			_gameDialogController.CloseDialogCallback.run();
+		}
+	};
+
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = true;
+		}
+	};
+
+	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = false;
 		}
 	};
 
@@ -75,6 +120,8 @@ public class GameViewController {
 
 	public void onCreate() {
 		_logger.Debug("onCreate");
+
+		_screenEnabled = true;
 	}
 
 	public void onPause() {
@@ -92,6 +139,10 @@ public class GameViewController {
 			_receiverController.RegisterReceiver(_tetrisStartReveicer,
 					new String[] { Constants.BROADCAST_START_TETRIS });
 			_receiverController.RegisterReceiver(_tetrisStopReveicer, new String[] { Constants.BROADCAST_STOP_TETRIS });
+			_receiverController.RegisterReceiver(_screenEnableReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+			_receiverController.RegisterReceiver(_screenDisableReceiver,
+					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
 			_isInitialized = true;
 		} else {
 			_logger.Warn("Is ALREADY initialized!");
@@ -107,6 +158,8 @@ public class GameViewController {
 		_receiverController.UnregisterReceiver(_snakeStopReveicer);
 		_receiverController.UnregisterReceiver(_tetrisStartReveicer);
 		_receiverController.UnregisterReceiver(_tetrisStopReveicer);
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 		_isInitialized = false;
 	}
 }

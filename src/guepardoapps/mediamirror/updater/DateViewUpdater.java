@@ -29,15 +29,7 @@ public class DateViewUpdater {
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
 			_logger.Debug("_updateRunnable run");
-
-			Calendar calendar = Calendar.getInstance();
-			String weekday = WeekdayConverter.GetWeekday(calendar.get(Calendar.DAY_OF_WEEK));
-			String date = DateConverter.GetDate(calendar);
-			String time = TimeConverter.GetTime(calendar);
-
-			DateModel model = new DateModel(weekday, date, time);
-			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_DATE_MODEL, Constants.BUNDLE_DATE_MODEL, model);
-
+			UpdateDate();
 			_updater.postDelayed(_updateRunnable, _updateTime);
 		}
 	};
@@ -59,5 +51,16 @@ public class DateViewUpdater {
 	public void Dispose() {
 		_logger.Debug("Dispose");
 		_updater.removeCallbacks(_updateRunnable);
+	}
+
+	public void UpdateDate() {
+		Calendar calendar = Calendar.getInstance();
+		String weekday = WeekdayConverter.GetWeekday(calendar.get(Calendar.DAY_OF_WEEK));
+		String date = DateConverter.GetDate(calendar);
+		String time = TimeConverter.GetTime(calendar);
+
+		DateModel model = new DateModel(weekday, date, time);
+		_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_DATE_MODEL, Constants.BUNDLE_DATE_MODEL,
+				model);
 	}
 }

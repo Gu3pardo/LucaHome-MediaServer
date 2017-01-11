@@ -35,9 +35,7 @@ public class BirtdayUpdater {
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
 			_logger.Debug("_updateRunnable run");
-			if (!Tools.IsMuteTime()) {
-				startDownloadBirthdays();
-			}
+			DownloadBirthdays();
 			_updater.postDelayed(_updateRunnable, _updateTime);
 		}
 	};
@@ -75,7 +73,7 @@ public class BirtdayUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_performUpdateReceiver onReceive");
-			startDownloadBirthdays();
+			DownloadBirthdays();
 		}
 	};
 
@@ -105,8 +103,13 @@ public class BirtdayUpdater {
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
 	}
 
-	private void startDownloadBirthdays() {
+	public void DownloadBirthdays() {
 		_logger.Debug("startDownloadBirthdays");
+
+		if (Tools.IsMuteTime()) {
+			_logger.Warn("Mute time!");
+			return;
+		}
 
 		Intent serviceIntent = new Intent(_context, RESTService.class);
 		Bundle serviceData = new Bundle();

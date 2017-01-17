@@ -33,7 +33,7 @@ public class MediaVolumeController {
 		_context = context;
 		_broadcastController = new BroadcastController(_context);
 		_receiverController = new ReceiverController(_context);
-		_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+		_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 
 		_audioManager = (AudioManager) _context.getSystemService(Context.AUDIO_SERVICE);
 		_currentVolume = _audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);

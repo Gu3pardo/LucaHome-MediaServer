@@ -54,9 +54,9 @@ public class IpAdressViewController {
 			_receiverController.RegisterReceiver(_updateViewReceiver,
 					new String[] { Constants.BROADCAST_SHOW_IP_ADRESS_MODEL });
 			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
+					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 

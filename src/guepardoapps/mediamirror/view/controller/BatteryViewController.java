@@ -52,9 +52,9 @@ public class BatteryViewController {
 			_logger.Debug("Initializing!");
 			_context.registerReceiver(_batteryInfoReveicer, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
+					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
 			_isInitialized = true;
 		} else {
 			_logger.Warn("Is ALREADY initialized!");

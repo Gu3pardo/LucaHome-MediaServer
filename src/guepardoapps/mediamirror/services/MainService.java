@@ -77,7 +77,7 @@ public class MainService extends Service {
 				_receiverController = new ReceiverController(_context);
 
 				_receiverController.RegisterReceiver(_screenEnableReceiver,
-						new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+						new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 			}
 
 			if (_serverThread == null) {

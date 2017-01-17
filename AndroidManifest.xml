@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="guepardoapps.mediamirror"
-    android:versionCode="909"
-    android:versionName="0.9.9.170111" >
+    android:versionCode="912"
+    android:versionName="0.9.12.170117" >
 
     <uses-sdk
         android:minSdkVersion="23"

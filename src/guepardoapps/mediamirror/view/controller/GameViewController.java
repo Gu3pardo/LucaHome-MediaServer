@@ -140,9 +140,9 @@ public class GameViewController {
 					new String[] { Constants.BROADCAST_START_TETRIS });
 			_receiverController.RegisterReceiver(_tetrisStopReveicer, new String[] { Constants.BROADCAST_STOP_TETRIS });
 			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLE });
+					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
+					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
 			_isInitialized = true;
 		} else {
 			_logger.Warn("Is ALREADY initialized!");

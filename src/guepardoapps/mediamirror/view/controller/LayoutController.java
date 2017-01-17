@@ -8,6 +8,7 @@ import android.content.Intent;
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.controller.ScreenController;
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
 
@@ -21,12 +22,15 @@ public class LayoutController {
 	private Context _context;
 	private BroadcastController _broadcastController;
 	private ReceiverController _receiverController;
+	private ScreenController _screenController;
 
 	public LayoutController(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
+
 		_context = context;
 		_broadcastController = new BroadcastController(_context);
 		_receiverController = new ReceiverController(_context);
+		_screenController = new ScreenController(_context);
 
 		((Activity) _context).setContentView(R.layout.main);
 	}
@@ -43,10 +47,12 @@ public class LayoutController {
 		_logger.Debug("onResume");
 		if (!_isInitialized) {
 			_logger.Debug("Initializing!");
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_ENABLE_SCREEN });
-			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_DISABLE_SCREEN });
+			_receiverController.RegisterReceiver(_screenNormalReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_NORMAL });
+			_receiverController.RegisterReceiver(_screenSaverReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_SAVER });
+			_receiverController.RegisterReceiver(_screenOnReceiver, new String[] { Constants.BROADCAST_SCREEN_ON });
+			_receiverController.RegisterReceiver(_screenOffReceiver, new String[] { Constants.BROADCAST_SCREEN_OFF });
 			_isInitialized = true;
 		} else {
 			_logger.Warn("Is ALREADY initialized!");
@@ -55,23 +61,44 @@ public class LayoutController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
-		_receiverController.UnregisterReceiver(_screenEnableReceiver);
-		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+		_receiverController.UnregisterReceiver(_screenNormalReceiver);
+		_receiverController.UnregisterReceiver(_screenSaverReceiver);
+		_receiverController.UnregisterReceiver(_screenOnReceiver);
+		_receiverController.UnregisterReceiver(_screenOffReceiver);
 		_isInitialized = false;
 	}
 
-	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+	private BroadcastReceiver _screenNormalReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			_logger.Debug("_screenNormalReceiver onReceive");
 			((Activity) _context).setContentView(R.layout.main);
-			_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_ENABLE);
+			_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_ENABLED);
 		}
 	};
 
-	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+	private BroadcastReceiver _screenSaverReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			_logger.Debug("_screenSaverReceiver onReceive");
 			((Activity) _context).setContentView(R.layout.blackscreen);
+		}
+	};
+
+	private BroadcastReceiver _screenOnReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_logger.Debug("_screenOnReceiver onReceive");
+			_screenController.ScreenOn();
+			_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_ENABLED);
+		}
+	};
+
+	private BroadcastReceiver _screenOffReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_logger.Debug("_screenOffReceiver onReceive");
+			_screenController.ScreenOff();
 		}
 	};
 }

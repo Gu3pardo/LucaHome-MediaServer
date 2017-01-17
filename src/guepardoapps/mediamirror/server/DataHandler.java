@@ -52,6 +52,8 @@ public class DataHandler {
 				_logger.Debug("data: " + data);
 
 				switch (action) {
+				case PING:
+					return "Mediamirror available!";
 				case SHOW_YOUTUBE_VIDEO:
 					if (data.length() < 4) {
 						int youtubeIdInt = -1;
@@ -200,11 +202,17 @@ public class DataHandler {
 				case GAME_TETRIS_STOP:
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_STOP_TETRIS);
 					break;
-				case SCREEN_ENABLE:
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_ENABLE_SCREEN);
+				case SCREEN_ON:
+					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_ON);
 					break;
-				case SCREEN_DISABLE:
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_DISABLE_SCREEN);
+				case SCREEN_OFF:
+					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_OFF);
+					break;
+				case SCREEN_SAVER:
+					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_SAVER);
+					break;
+				case SCREEN_NORMAL:
+					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_NORMAL);
 					break;
 				case SYSTEM_REBOOT:
 					_commandController.RebootDevice();
@@ -216,7 +224,7 @@ public class DataHandler {
 					_logger.Warn("Action not handled!\n" + action.toString());
 					return "Action not handled!\n" + action.toString();
 				}
-				return "Performed action!";
+				return "OK:Command performed:" + action.toString();
 			} else {
 				_logger.Warn("Action failed to be converted! Is null!\n" + command);
 				return "Action failed to be converted! Is null!\n" + command;

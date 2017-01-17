@@ -90,11 +90,13 @@ public class Constants {
 	public static final String BROADCAST_START_TETRIS = "guepardoapps.mediamirror.tetris.start";
 	public static final String BROADCAST_STOP_TETRIS = "guepardoapps.mediamirror.tetris.stop";
 	// SCREEN
-	public static final String BROADCAST_ENABLE_SCREEN = "guepardoapps.mediamirror.enable.screen";
-	public static final String BROADCAST_DISABLE_SCREEN = "guepardoapps.mediamirror.disable.screen";
-	public static final String BROADCAST_SCREEN_ENABLE = "guepardoapps.mediamirror.screen.enable";
+	public static final String BROADCAST_SCREEN_SAVER = "guepardoapps.mediamirror.screen.saver";
+	public static final String BROADCAST_SCREEN_NORMAL = "guepardoapps.mediamirror.screen.normal";
+	public static final String BROADCAST_SCREEN_ON = "guepardoapps.mediamirror.screen.on";
+	public static final String BROADCAST_SCREEN_OFF = "guepardoapps.mediamirror.screen.off";
+	public static final String BROADCAST_SCREEN_ENABLED = "guepardoapps.mediamirror.screen.enabled";
 	// YOUTUBE API
-	public static final String YOUTUBE_API_KEY = "AIzaSyBsEHy5iVJs67Kktb0dEkwHxGaYNj6wx5E";
+	public static final String YOUTUBE_API_KEY = null;
 	// SERVER
 	public static final int SERVERPORT = 8080;
 	// TIME

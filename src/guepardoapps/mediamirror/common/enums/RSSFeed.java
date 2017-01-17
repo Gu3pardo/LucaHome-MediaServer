@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public enum RSSFeed implements Serializable {
 
-	DEFAULT(0, "Spektrum der Wissenschaft", "http://www.spektrum.de/alias/rss/spektrum-de-rss-feed/996406"),
+	DEFAULT(0, "Spiegel Schlagzeilen", "http://www.spiegel.de/schlagzeilen/tops/index.rss"),
 	SPIEGEL_SCHLAGZEILEN(1, "Spiegel Schlagzeilen", "http://www.spiegel.de/schlagzeilen/tops/index.rss"),
 	SPIEGEL_EILMELDUNGEN(2, "Spiegel Eilmeldungen", "http://www.spiegel.de/schlagzeilen/eilmeldungen/index.rss"),
 	SPIEGEL_NETZWELT(3, "Spiegel Netzwelt", "http://www.spiegel.de/netzwelt/index.rss"),

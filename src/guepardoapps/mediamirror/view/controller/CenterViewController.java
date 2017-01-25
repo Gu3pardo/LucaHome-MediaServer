@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.database.DBController;
 import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.test.CenterViewControllerTest;
 import guepardoapps.mediamirror.R;
@@ -39,6 +40,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	private boolean _screenEnabled;
 
 	private Context _context;
+	private DBController _dbController;
 	private ReceiverController _receiverController;
 
 	private TextView _centerTextView;
@@ -61,6 +63,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	public CenterViewController(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
 		_context = context;
+		_dbController = new DBController(_context);
 		_receiverController = new ReceiverController(_context);
 	}
 
@@ -349,6 +352,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 				return;
 			}
 
+			_dbController.SaveYoutubeId(new YoutubeDatabaseModel(_dbController.GetHighesId() + 1, youtubeId, 0));
 			_youtubePlayer.cueVideo(youtubeId);
 		}
 	}
@@ -438,10 +442,14 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 		@Override
 		public void onVideoEnded() {
-			_youTubePlayerView.setVisibility(View.INVISIBLE);
-			_centerWebView.setVisibility(View.INVISIBLE);
-			_centerTextView.setVisibility(View.VISIBLE);
-			_centerTextView.setText("");
+			if (_youtubePlayer.hasNext()) {
+				_youtubePlayer.next();
+			} else {
+				_youTubePlayerView.setVisibility(View.INVISIBLE);
+				_centerWebView.setVisibility(View.INVISIBLE);
+				_centerTextView.setVisibility(View.VISIBLE);
+				_centerTextView.setText("MediaMirror by JSc");
+			}
 		}
 
 		@Override

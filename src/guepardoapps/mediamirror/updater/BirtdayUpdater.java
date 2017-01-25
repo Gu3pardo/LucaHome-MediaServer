@@ -1,10 +1,12 @@
 package guepardoapps.mediamirror.updater;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -12,7 +14,6 @@ import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.Tools;
 import guepardoapps.mediamirror.common.converter.JsonDataToBirthdayConverter;
-import guepardoapps.mediamirror.model.BirthdayModel;
 import guepardoapps.mediamirror.model.helper.BirthdayHelper;
 import guepardoapps.mediamirror.services.RESTService;
 
@@ -46,25 +47,82 @@ public class BirtdayUpdater {
 			_logger.Debug("_updateReceiver onReceive");
 			String[] birthdayStringArray = intent.getStringArrayExtra(Constants.BUNDLE_BIRTHDAY_MODEL);
 			if (birthdayStringArray != null) {
-				ArrayList<BirthdayHelper> birthdayList = JsonDataToBirthdayConverter.GetList(birthdayStringArray);
-				BirthdayModel model = null;
-				if (birthdayList != null) {
-					for (BirthdayHelper entry : birthdayList) {
-						if (entry.HasBirthday()) {
-							model = new BirthdayModel(true, entry.GetNotificationString(), true);
-							_broadcastController.SendStringBroadcast(Constants.BROADCAST_SPEAK_TEXT,
-									Constants.BUNDLE_SPEAK_TEXT, entry.GetNotificationString());
-							break;
+				ArrayList<BirthdayHelper> _nextBirthdaysList = new ArrayList<BirthdayHelper>();
+				ArrayList<BirthdayHelper> nextBirthdaysList = JsonDataToBirthdayConverter.GetList(birthdayStringArray);
+
+				if (nextBirthdaysList != null) {
+					if (nextBirthdaysList.size() == 3) {
+						_nextBirthdaysList = nextBirthdaysList;
+					} else if (nextBirthdaysList.size() < 3) {
+						int count = nextBirthdaysList.size();
+						for (int index = 0; index < count - 1; index++) {
+							_nextBirthdaysList.set(index, nextBirthdaysList.get(index));
+						}
+						for (int index = 2; index > count - 1; index--) {
+							_nextBirthdaysList.set(index, null);
+						}
+					} else if (nextBirthdaysList.size() > 3) {
+						nextBirthdaysList.sort(new Comparator<BirthdayHelper>() {
+							@Override
+							public int compare(BirthdayHelper entry0, BirthdayHelper entry1) {
+								return entry0.GetBirthday().compareTo(entry1.GetBirthday());
+							}
+						});
+
+						Calendar today = Calendar.getInstance();
+						ArrayList<BirthdayHelper> nextDateList = new ArrayList<BirthdayHelper>();
+						ArrayList<BirthdayHelper> prevDateList = new ArrayList<BirthdayHelper>();
+
+						for (BirthdayHelper entry : nextBirthdaysList) {
+							if (entry.GetBirthday().get(Calendar.MONTH) >= today.get(Calendar.MONTH)) {
+								if (entry.GetBirthday().get(Calendar.DAY_OF_MONTH) >= today
+										.get(Calendar.DAY_OF_MONTH)) {
+									nextDateList.add(entry);
+								} else {
+									prevDateList.add(entry);
+								}
+							} else {
+								prevDateList.add(entry);
+							}
+						}
+
+						int nextDateCount = nextDateList.size();
+						if (nextDateCount >= 3) {
+							for (int index = 0; index < 3; index++) {
+								_nextBirthdaysList.set(index, nextDateList.get(index));
+							}
+						} else {
+							for (int index = 0; index < nextDateCount; index++) {
+								_nextBirthdaysList.set(index, nextDateList.get(index));
+							}
+							if (prevDateList.size() > 3 - nextDateCount) {
+								for (int index = nextDateCount; index < 3; index++) {
+									_nextBirthdaysList.set(index, prevDateList.get(index));
+								}
+							} else {
+								for (int index = nextDateCount; index < prevDateList.size() + nextDateCount; index++) {
+									_nextBirthdaysList.set(index, prevDateList.get(index));
+								}
+								for (int index = 2; index > prevDateList.size() + nextDateCount - 1; index--) {
+									_nextBirthdaysList.set(index, null);
+								}
+							}
+						}
+					}
+
+					for (BirthdayHelper entry : _nextBirthdaysList) {
+						if (entry != null) {
+							if (entry.HasBirthday()) {
+								_broadcastController.SendStringBroadcast(Constants.BROADCAST_SPEAK_TEXT,
+										Constants.BUNDLE_SPEAK_TEXT, entry.GetNotificationString());
+								break;
+							}
 						}
 					}
 				}
 
-				if (model == null) {
-					model = new BirthdayModel(false, "", false);
-				}
-
 				_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_BIRTHDAY_MODEL,
-						Constants.BUNDLE_BIRTHDAY_MODEL, model);
+						Constants.BUNDLE_BIRTHDAY_MODEL, _nextBirthdaysList);
 			}
 		}
 	};

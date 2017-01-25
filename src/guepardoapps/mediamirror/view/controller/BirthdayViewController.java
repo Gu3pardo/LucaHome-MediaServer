@@ -1,17 +1,18 @@
 package guepardoapps.mediamirror.view.controller;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.model.*;
+import guepardoapps.mediamirror.model.helper.BirthdayHelper;
 import guepardoapps.mediamirror.test.BirthdayViewControllerTest;
 import guepardoapps.mediamirror.R;
 
@@ -28,9 +29,9 @@ public class BirthdayViewController {
 	private Context _context;
 	private ReceiverController _receiverController;
 
-	private RelativeLayout _birthdayLayout;
-	private View _birthdayAlarmView;
-	private TextView _birthdayTextView;
+	private View[] _birthdayAlarmViewArray = new View[3];
+	private TextView[] _birthdayTextViewArray = new TextView[3];
+	private boolean[] _hasBirthday = new boolean[3];
 
 	private Handler _updateAlarmHandler = new Handler();
 	private int _invertTime = 1000;
@@ -45,13 +46,15 @@ public class BirthdayViewController {
 
 	public void onCreate() {
 		_logger.Debug("onCreate");
-		
+
 		_screenEnabled = true;
 
-		_birthdayLayout = (RelativeLayout) ((Activity) _context).findViewById(R.id.birthdayLayout);
-		_birthdayLayout.setVisibility(View.GONE);
-		_birthdayAlarmView = (View) ((Activity) _context).findViewById(R.id.birthdayAlarmView);
-		_birthdayTextView = (TextView) ((Activity) _context).findViewById(R.id.birthdayTextView);
+		_birthdayAlarmViewArray[0] = (View) ((Activity) _context).findViewById(R.id.birthday1AlarmView);
+		_birthdayTextViewArray[0] = (TextView) ((Activity) _context).findViewById(R.id.birthday1TextView);
+		_birthdayAlarmViewArray[1] = (View) ((Activity) _context).findViewById(R.id.birthday2AlarmView);
+		_birthdayTextViewArray[1] = (TextView) ((Activity) _context).findViewById(R.id.birthday2TextView);
+		_birthdayAlarmViewArray[2] = (View) ((Activity) _context).findViewById(R.id.birthday3AlarmView);
+		_birthdayTextViewArray[2] = (TextView) ((Activity) _context).findViewById(R.id.birthday3TextView);
 	}
 
 	public void onPause() {
@@ -89,6 +92,7 @@ public class BirthdayViewController {
 	}
 
 	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
+		@SuppressWarnings("unchecked")
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (!_screenEnabled) {
@@ -97,29 +101,43 @@ public class BirthdayViewController {
 			}
 
 			_logger.Debug("_updateViewReceiver onReceive");
-			BirthdayModel model = (BirthdayModel) intent.getSerializableExtra(Constants.BUNDLE_BIRTHDAY_MODEL);
-			if (model != null) {
-				_logger.Debug(model.toString());
-				if (model.GetIsVisible()) {
-					_birthdayLayout.setVisibility(View.VISIBLE);
-					_birthdayTextView.setText(model.GetText());
-					_updateAlarmHandler.postDelayed(_updateAlarmViewRunnable, _invertTime);
-				} else {
-					_birthdayLayout.setVisibility(View.INVISIBLE);
-					_updateAlarmHandler.removeCallbacks(_updateAlarmViewRunnable);
+			ArrayList<BirthdayHelper> birthdayList = (ArrayList<BirthdayHelper>) intent
+					.getSerializableExtra(Constants.BUNDLE_BIRTHDAY_MODEL);
+			if (birthdayList != null) {
+				_logger.Debug(birthdayList.toString());
+				for (int index = 0; index < birthdayList.size(); index++) {
+					BirthdayHelper entry = birthdayList.get(index);
+					if (entry != null) {
+						if (entry.HasBirthday()) {
+							_hasBirthday[index] = true;
+							_birthdayTextViewArray[index].setText(entry.GetNotificationString());
+							_birthdayAlarmViewArray[index].setVisibility(View.VISIBLE);
+						} else {
+							_hasBirthday[index] = false;
+							_birthdayTextViewArray[index]
+									.setText(entry.GetName() + ": " + entry.GetBirthday().toString());
+							_birthdayAlarmViewArray[index].setVisibility(View.INVISIBLE);
+						}
+					} else {
+						_hasBirthday[index] = false;
+						_birthdayTextViewArray[index].setText("");
+						_birthdayAlarmViewArray[index].setVisibility(View.INVISIBLE);
+					}
 				}
+
+				_updateAlarmHandler.removeCallbacks(_updateAlarmViewRunnable);
+				_updateAlarmHandler.postDelayed(_updateAlarmViewRunnable, _invertTime);
 			} else {
-				_logger.Warn("model is null!");
+				_logger.Warn("birthdayList is null!");
 			}
 
-			if (Constants.TESTING_ENABLED) {
-				boolean hasBirthday = false;
-				if (model != null) {
-					hasBirthday = model.GetHasBirthday();
-				}
-				_birthdayViewTest.ValidateView(_birthdayLayout.getVisibility() == View.VISIBLE,
-						_birthdayTextView.getText().toString(), hasBirthday);
-			}
+			/*
+			 * if (Constants.TESTING_ENABLED) { boolean hasBirthday = false; if
+			 * (model != null) { hasBirthday = model.GetHasBirthday(); }
+			 * _birthdayViewTest.ValidateView(_birthdayLayout.getVisibility() ==
+			 * View.VISIBLE, _birthdayTextView.getText().toString(),
+			 * hasBirthday); }
+			 */
 		}
 	};
 
@@ -128,10 +146,14 @@ public class BirthdayViewController {
 		public void onReceive(Context context, Intent intent) {
 			_screenEnabled = true;
 
-			_birthdayLayout = (RelativeLayout) ((Activity) _context).findViewById(R.id.birthdayLayout);
-			_birthdayLayout.setVisibility(View.GONE);
-			_birthdayAlarmView = (View) ((Activity) _context).findViewById(R.id.birthdayAlarmView);
-			_birthdayTextView = (TextView) ((Activity) _context).findViewById(R.id.birthdayTextView);
+			_birthdayAlarmViewArray[0] = (View) ((Activity) _context).findViewById(R.id.birthday1AlarmView);
+			_birthdayTextViewArray[0] = (TextView) ((Activity) _context).findViewById(R.id.birthday1TextView);
+			_birthdayAlarmViewArray[1] = (View) ((Activity) _context).findViewById(R.id.birthday2AlarmView);
+			_birthdayTextViewArray[1] = (TextView) ((Activity) _context).findViewById(R.id.birthday2TextView);
+			_birthdayAlarmViewArray[2] = (View) ((Activity) _context).findViewById(R.id.birthday3AlarmView);
+			_birthdayTextViewArray[2] = (TextView) ((Activity) _context).findViewById(R.id.birthday3TextView);
+
+			_updateAlarmHandler.postDelayed(_updateAlarmViewRunnable, _invertTime);
 		}
 	};
 
@@ -139,6 +161,7 @@ public class BirthdayViewController {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_screenEnabled = false;
+			_updateAlarmHandler.removeCallbacks(_updateAlarmViewRunnable);
 		}
 	};
 
@@ -152,11 +175,16 @@ public class BirthdayViewController {
 			}
 
 			_logger.Debug("Inverting birthday alarm view!");
-			if (invert) {
-				_birthdayAlarmView.setBackgroundResource(R.drawable.circle_red);
-			} else {
-				_birthdayAlarmView.setBackgroundResource(R.drawable.circle_yellow);
+			for (int index = 0; index < 3; index++) {
+				if (_hasBirthday[index]) {
+					if (invert) {
+						_birthdayAlarmViewArray[index].setBackgroundResource(R.drawable.circle_red);
+					} else {
+						_birthdayAlarmViewArray[index].setBackgroundResource(R.drawable.circle_yellow);
+					}
+				}
 			}
+
 			invert = !invert;
 			_updateAlarmHandler.postDelayed(this, _invertTime);
 		}

@@ -98,11 +98,15 @@ containing a value of this type.
         public static final int yellowstar=0x7f020014;
     }
     public static final class id {
-        public static final int batteryAlarm=0x7f090037;
-        public static final int batteryTextView=0x7f090036;
-        public static final int birthdayAlarmView=0x7f090035;
-        public static final int birthdayLayout=0x7f090033;
-        public static final int birthdayTextView=0x7f090034;
+        public static final int batteryAlarm=0x7f09003a;
+        public static final int batteryTextView=0x7f090039;
+        public static final int birthday1AlarmView=0x7f090033;
+        public static final int birthday1TextView=0x7f090034;
+        public static final int birthday2AlarmView=0x7f090035;
+        public static final int birthday2TextView=0x7f090036;
+        public static final int birthday3AlarmView=0x7f090037;
+        public static final int birthday3TextView=0x7f090038;
+        public static final int birthdayLayout=0x7f09003c;
         public static final int centerTextView=0x7f090028;
         public static final int centerWebView=0x7f090029;
         public static final int centerYoutubePlayer=0x7f090027;
@@ -116,7 +120,7 @@ containing a value of this type.
         public static final int floating_message_background=0x7f090006;
         public static final int floating_message_text=0x7f090008;
         public static final int floating_message_title=0x7f090007;
-        public static final int ipAdressTextView=0x7f090038;
+        public static final int ipAdressTextView=0x7f09003b;
         public static final int rssDescriptionTextView1=0x7f09002e;
         public static final int rssDescriptionTextView2=0x7f090030;
         public static final int rssDescriptionTextView3=0x7f090032;

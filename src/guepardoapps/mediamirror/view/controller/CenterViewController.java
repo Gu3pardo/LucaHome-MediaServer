@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Keys;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.database.DBController;
 import guepardoapps.mediamirror.model.*;
@@ -121,8 +122,8 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		});
 
 		_youTubePlayerView = (YouTubePlayerView) ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
-		if (Constants.YOUTUBE_API_KEY != null) {
-			_youTubePlayerView.initialize(Constants.YOUTUBE_API_KEY, this);
+		if (Keys.YOUTUBE_API != null) {
+			_youTubePlayerView.initialize(Keys.YOUTUBE_API, this);
 		} else {
 			_logger.Warn("Please enter your youtube api key!");
 			Toast.makeText(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
@@ -306,8 +307,8 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			});
 
 			_youTubePlayerView = (YouTubePlayerView) ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
-			if (Constants.YOUTUBE_API_KEY != null) {
-				_youTubePlayerView.initialize(Constants.YOUTUBE_API_KEY, CenterViewController.this);
+			if (Keys.YOUTUBE_API != null) {
+				_youTubePlayerView.initialize(Keys.YOUTUBE_API, CenterViewController.this);
 			} else {
 				_logger.Warn("Please enter your youtube api key!");
 				Toast.makeText(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();

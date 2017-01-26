@@ -1,14 +1,16 @@
 package guepardoapps.mediamirror.server;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 import android.content.Context;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.toolset.controller.NetworkController;
 
@@ -92,7 +94,6 @@ public class ServerThread {
 
 		@Override
 		public void run() {
-			OutputStream outputStream;
 			String response;
 			boolean fail = false;
 
@@ -122,17 +123,32 @@ public class ServerThread {
 			}
 
 			try {
-				outputStream = _hostThreadSocket.getOutputStream();
-				_logger.Debug("outputStream: " + outputStream.toString());
+				OutputStreamWriter outputStreamWriter = new OutputStreamWriter(_hostThreadSocket.getOutputStream());
+				_logger.Info("outputStreamWriter is " + outputStreamWriter.toString());
 
-				PrintStream printStream = new PrintStream(outputStream);
-				_logger.Debug("printStream: " + printStream.toString());
-				printStream.print(response);
-				printStream.close();
+				BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+				_logger.Info("bufferedWriter is " + bufferedWriter.toString());
+
+				PrintWriter printWriter = new PrintWriter(bufferedWriter, true);
+				_logger.Info("printWriter is " + printWriter.toString());
+
+				printWriter.println(response);
+				_logger.Info("printWriter println");
+				printWriter.flush();
+				_logger.Info("printWriter flush");
+
+				printWriter.close();
+				bufferedWriter.close();
+				outputStreamWriter.close();
 			} catch (IOException e) {
 				_logger.Error(e.toString());
 			} finally {
 				_logger.Debug("response: " + response);
+				try {
+					_hostThreadSocket.close();
+				} catch (IOException e) {
+					_logger.Error(e.toString());
+				}
 			}
 		}
 	}

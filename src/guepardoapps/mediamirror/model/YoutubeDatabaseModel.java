@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class YoutubeDatabaseModel implements Serializable {
 
-	private static final long serialVersionUID = -5191090331487655914L;
-
+	private static final long serialVersionUID = 1167790558127364021L;
+	
 	private int _id;
 	private String _youtubeId;
 	private int _playCount;
@@ -30,6 +30,10 @@ public class YoutubeDatabaseModel implements Serializable {
 
 	public void IncreasePlayCount() {
 		_playCount++;
+	}
+
+	public String GetCommunicationString() {
+		return _id + ":" + _youtubeId + ":" + _playCount + ";";
 	}
 
 	@Override

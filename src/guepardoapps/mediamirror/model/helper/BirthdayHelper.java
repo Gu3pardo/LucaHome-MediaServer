@@ -3,6 +3,8 @@ package guepardoapps.mediamirror.model.helper;
 import java.io.Serializable;
 import java.util.Calendar;
 
+import guepardoapps.mediamirror.common.enums.BirthdayDateType;
+
 public class BirthdayHelper implements Serializable {
 
 	private static final long serialVersionUID = 5994640560542747092L;
@@ -55,6 +57,21 @@ public class BirthdayHelper implements Serializable {
 			age = today.get(Calendar.YEAR) - _birthday.get(Calendar.YEAR) - 1;
 		}
 		return age;
+	}
+	
+	public BirthdayDateType GetDateType(){
+		if(HasBirthday()){
+			return BirthdayDateType.TODAY;
+		} else {
+			Calendar today = Calendar.getInstance();
+			if ((today.get(Calendar.MONTH) > _birthday.get(Calendar.MONTH))
+					|| (today.get(Calendar.MONTH) == _birthday.get(Calendar.MONTH)
+							&& today.get(Calendar.DAY_OF_MONTH) >= _birthday.get(Calendar.DAY_OF_MONTH))) {
+				return BirthdayDateType.PREVIOUS;
+			} else {
+				return BirthdayDateType.UPCOMING;
+			}
+		}
 	}
 
 	public String toString() {

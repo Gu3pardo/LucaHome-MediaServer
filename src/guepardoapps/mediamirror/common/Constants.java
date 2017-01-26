@@ -4,7 +4,7 @@ public class Constants {
 	// TESTING
 	public static final boolean TESTING_ENABLED = false;
 	// DEBUGGING
-	public static final boolean DEBUGGING_ENABLED = false;
+	public static final boolean DEBUGGING_ENABLED = true;
 	// DATE VIEW
 	public static final int DATE_UPDATE_TIMEOUT = 15 * 1000;
 	public static final String BUNDLE_DATE_MODEL = "BUNDLE_DATE_MODEL";
@@ -75,6 +75,8 @@ public class Constants {
 	// SOCKET DATA
 	public static final String ACTION_SET_SOCKET = "setsocket&socket=";
 	public static final String SOCKET_NAME = "MediaMirror1";
+	// TODO find a better solution to activate the corresponding socket of a mediaserver!
+	// public static final String SOCKET_NAME = "MediaMirror2";
 	public static final String SOCKET_STATE_ON = "&state=1";
 	public static final String SOCKET_STATE_OFF = "&state=0";
 	// GAME DATA
@@ -95,8 +97,6 @@ public class Constants {
 	public static final String BROADCAST_SCREEN_ON = "guepardoapps.mediamirror.screen.on";
 	public static final String BROADCAST_SCREEN_OFF = "guepardoapps.mediamirror.screen.off";
 	public static final String BROADCAST_SCREEN_ENABLED = "guepardoapps.mediamirror.screen.enabled";
-	// YOUTUBE API
-	public static final String YOUTUBE_API_KEY = null;
 	// SERVER
 	public static final int SERVERPORT = 8080;
 	// TIME

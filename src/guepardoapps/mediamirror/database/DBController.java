@@ -24,6 +24,7 @@ public class DBController {
 	}
 
 	public ArrayList<YoutubeDatabaseModel> GetYoutubeIds() {
+		_logger.Debug("Loading youtube ids from database");
 		_databaseYoutubeIds.Open();
 		ArrayList<YoutubeDatabaseModel> entries = _databaseYoutubeIds.GetYoutubeIds();
 		_databaseYoutubeIds.Close();
@@ -31,18 +32,21 @@ public class DBController {
 	}
 
 	public void SaveYoutubeId(YoutubeDatabaseModel newEntry) {
+		_logger.Debug("Saving new youtube id to database");
 		_databaseYoutubeIds.Open();
 		_databaseYoutubeIds.CreateEntry(newEntry);
 		_databaseYoutubeIds.Close();
 	}
 
 	public void UpdateYoutubeId(YoutubeDatabaseModel updateEntry) {
+		_logger.Debug("Updating youtube id to database");
 		_databaseYoutubeIds.Open();
 		_databaseYoutubeIds.Update(updateEntry);
 		_databaseYoutubeIds.Close();
 	}
 
 	public int GetHighesId() {
+		_logger.Debug("Loading highest id from database");
 		_databaseYoutubeIds.Open();
 		int highestId = _databaseYoutubeIds.GetHighestId();
 		_databaseYoutubeIds.Close();

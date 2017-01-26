@@ -1,17 +1,21 @@
 package guepardoapps.mediamirror.server;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.content.Intent;
 import guepardoapps.games.common.GameConstants;
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.enums.RSSFeed;
+import guepardoapps.mediamirror.common.enums.ServerAction;
 import guepardoapps.mediamirror.common.enums.YoutubeId;
 import guepardoapps.mediamirror.controller.MediaVolumeController;
 import guepardoapps.mediamirror.controller.ScreenController;
+import guepardoapps.mediamirror.database.DBController;
 import guepardoapps.mediamirror.model.CenterModel;
 import guepardoapps.mediamirror.model.RSSModel;
-
+import guepardoapps.mediamirror.model.YoutubeDatabaseModel;
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.CommandController;
 
@@ -22,8 +26,9 @@ public class DataHandler {
 
 	private Context _context;
 
-	private CommandController _commandController;
 	private BroadcastController _broadcastController;
+	private CommandController _commandController;
+	private DBController _dbController;
 	private MediaVolumeController _mediaVolumeController;
 
 	public DataHandler(Context context) {
@@ -31,8 +36,9 @@ public class DataHandler {
 
 		_context = context;
 
-		_commandController = new CommandController(_context);
 		_broadcastController = new BroadcastController(_context);
+		_commandController = new CommandController(_context);
+		_dbController = new DBController(_context);
 		_mediaVolumeController = new MediaVolumeController(_context);
 	}
 
@@ -154,6 +160,13 @@ public class DataHandler {
 					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
 				case GET_CURRENT_VOLUME:
 					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
+				case GET_SAVED_YOUTUBE_IDS:
+					ArrayList<YoutubeDatabaseModel> loadedList = _dbController.GetYoutubeIds();
+					String answer = "";
+					for (YoutubeDatabaseModel entry : loadedList) {
+						answer += entry.GetCommunicationString();
+					}
+					return answer;
 				case INCREASE_SCREEN_BRIGHTNESS:
 					_broadcastController.SendIntBroadcast(Constants.BROADCAST_ACTION_SCREEN_BRIGHTNESS,
 							Constants.BUNDLE_SCREEN_BRIGHTNESS, ScreenController.INCREASE);

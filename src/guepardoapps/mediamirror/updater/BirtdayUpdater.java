@@ -1,12 +1,11 @@
 package guepardoapps.mediamirror.updater;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Calendar;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -47,64 +46,82 @@ public class BirtdayUpdater {
 			_logger.Debug("_updateReceiver onReceive");
 			String[] birthdayStringArray = intent.getStringArrayExtra(Constants.BUNDLE_BIRTHDAY_MODEL);
 			if (birthdayStringArray != null) {
-				ArrayList<BirthdayHelper> _nextBirthdaysList = new ArrayList<BirthdayHelper>();
-				ArrayList<BirthdayHelper> nextBirthdaysList = JsonDataToBirthdayConverter.GetList(birthdayStringArray);
+				ArrayList<BirthdayHelper> loadedBirthdayList = JsonDataToBirthdayConverter.GetList(birthdayStringArray);
 
-				if (nextBirthdaysList != null) {
-					if (nextBirthdaysList.size() == 3) {
-						_nextBirthdaysList = nextBirthdaysList;
-					} else if (nextBirthdaysList.size() < 3) {
-						int count = nextBirthdaysList.size();
+				ArrayList<BirthdayHelper> _nextBirthdaysList = new ArrayList<BirthdayHelper>();
+
+				if (loadedBirthdayList != null) {
+					if (loadedBirthdayList.size() == 3) {
+						_nextBirthdaysList = loadedBirthdayList;
+					} else if (loadedBirthdayList.size() < 3) {
+						int count = loadedBirthdayList.size();
 						for (int index = 0; index < count - 1; index++) {
-							_nextBirthdaysList.set(index, nextBirthdaysList.get(index));
+							_nextBirthdaysList.set(index, loadedBirthdayList.get(index));
 						}
 						for (int index = 2; index > count - 1; index--) {
 							_nextBirthdaysList.set(index, null);
 						}
-					} else if (nextBirthdaysList.size() > 3) {
-						nextBirthdaysList.sort(new Comparator<BirthdayHelper>() {
-							@Override
-							public int compare(BirthdayHelper entry0, BirthdayHelper entry1) {
-								return entry0.GetBirthday().compareTo(entry1.GetBirthday());
-							}
-						});
+					} else if (loadedBirthdayList.size() > 3) {
+						// wrong sort algorithm! sorts due to age not birthday
+						// in month!
+						/*
+						 * nextBirthdaysList.sort(new
+						 * Comparator<BirthdayHelper>() {
+						 * 
+						 * @Override public int compare(BirthdayHelper entry0,
+						 * BirthdayHelper entry1) { return
+						 * entry0.GetBirthday().compareTo(entry1.GetBirthday());
+						 * } });
+						 */
 
 						Calendar today = Calendar.getInstance();
 						ArrayList<BirthdayHelper> nextDateList = new ArrayList<BirthdayHelper>();
 						ArrayList<BirthdayHelper> prevDateList = new ArrayList<BirthdayHelper>();
 
-						for (BirthdayHelper entry : nextBirthdaysList) {
-							if (entry.GetBirthday().get(Calendar.MONTH) >= today.get(Calendar.MONTH)) {
-								if (entry.GetBirthday().get(Calendar.DAY_OF_MONTH) >= today
-										.get(Calendar.DAY_OF_MONTH)) {
-									nextDateList.add(entry);
-								} else {
-									prevDateList.add(entry);
-								}
-							} else {
+						_logger.Info("Today:");
+						_logger.Info(today.toString());
+
+						for (BirthdayHelper entry : loadedBirthdayList) {
+							_logger.Info("Entry:");
+							_logger.Info(entry.GetBirthday().toString());
+
+							switch (entry.GetDateType()) {
+							case UPCOMING:
+							case TODAY:
+								_logger.Info("Next: " + entry.GetName());
+								nextDateList.add(entry);
+								break;
+							case PREVIOUS:
+								_logger.Info("Prev:" + entry.GetName());
 								prevDateList.add(entry);
+								break;
+							default:
+								_logger.Error("Not supported BirthdayDateType: " + entry.GetDateType());
+								break;
 							}
 						}
 
 						int nextDateCount = nextDateList.size();
 						if (nextDateCount >= 3) {
 							for (int index = 0; index < 3; index++) {
-								_nextBirthdaysList.set(index, nextDateList.get(index));
+								_nextBirthdaysList.add(index, nextDateList.get(index));
 							}
 						} else {
 							for (int index = 0; index < nextDateCount; index++) {
-								_nextBirthdaysList.set(index, nextDateList.get(index));
+								_nextBirthdaysList.add(index, nextDateList.get(index));
+								// _nextBirthdaysList.set(index,
+								// nextDateList.get(index));
 							}
 							if (prevDateList.size() > 3 - nextDateCount) {
 								for (int index = nextDateCount; index < 3; index++) {
-									_nextBirthdaysList.set(index, prevDateList.get(index));
+									_nextBirthdaysList.add(index, prevDateList.get(index));
 								}
 							} else {
 								for (int index = nextDateCount; index < prevDateList.size() + nextDateCount; index++) {
-									_nextBirthdaysList.set(index, prevDateList.get(index));
+									_nextBirthdaysList.add(index, prevDateList.get(index));
 								}
 								for (int index = 2; index > prevDateList.size() + nextDateCount - 1; index--) {
-									_nextBirthdaysList.set(index, null);
+									_nextBirthdaysList.add(index, null);
 								}
 							}
 						}

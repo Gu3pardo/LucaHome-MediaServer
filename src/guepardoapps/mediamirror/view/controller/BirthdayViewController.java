@@ -115,7 +115,7 @@ public class BirthdayViewController {
 						} else {
 							_hasBirthday[index] = false;
 							_birthdayTextViewArray[index]
-									.setText(entry.GetName() + ": " + entry.GetBirthday().toString());
+									.setText(entry.GetName() + ": " + entry.GetBirthdayString());
 							_birthdayAlarmViewArray[index].setVisibility(View.INVISIBLE);
 						}
 					} else {

@@ -4,7 +4,7 @@ public class Constants {
 	// TESTING
 	public static final boolean TESTING_ENABLED = false;
 	// DEBUGGING
-	public static final boolean DEBUGGING_ENABLED = true;
+	public static final boolean DEBUGGING_ENABLED = false;
 	// DATE VIEW
 	public static final int DATE_UPDATE_TIMEOUT = 15 * 1000;
 	public static final String BUNDLE_DATE_MODEL = "BUNDLE_DATE_MODEL";

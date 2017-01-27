@@ -33,7 +33,7 @@ public class YoutubeDatabaseModel implements Serializable {
 	}
 
 	public String GetCommunicationString() {
-		return _id + ":" + _youtubeId + ":" + _playCount + ";";
+		return _id + "." + _youtubeId + "." + _playCount + ";";
 	}
 
 	@Override

@@ -166,7 +166,7 @@ public class DataHandler {
 					for (YoutubeDatabaseModel entry : loadedList) {
 						answer += entry.GetCommunicationString();
 					}
-					return answer;
+					return action.toString() + ":" + answer;
 				case INCREASE_SCREEN_BRIGHTNESS:
 					_broadcastController.SendIntBroadcast(Constants.BROADCAST_ACTION_SCREEN_BRIGHTNESS,
 							Constants.BUNDLE_SCREEN_BRIGHTNESS, ScreenController.INCREASE);

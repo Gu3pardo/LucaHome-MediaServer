@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="guepardoapps.mediamirror"
     android:versionCode="914"
-    android:versionName="0.9.14.170126" >
+    android:versionName="0.9.14.170127" >
 
     <uses-sdk
         android:minSdkVersion="24"

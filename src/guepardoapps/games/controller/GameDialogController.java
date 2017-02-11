@@ -11,11 +11,10 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import guepardoapps.games.snake.SnakeView;
-
 import guepardoapps.games.tetris.GameSurfaceView;
 
 import guepardoapps.mediamirror.R;
-import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 
 import guepardoapps.toolset.common.Logger;
 import guepardoapps.toolset.controller.DialogController;
@@ -43,7 +42,7 @@ public class GameDialogController extends DialogController {
 	public GameDialogController(Context context) {
 		super(context, ContextCompat.getColor(context, R.color.TextIcon),
 				ContextCompat.getColor(context, R.color.Primary));
-		_logger = new Logger(TAG, Constants.DEBUGGING_ENABLED);
+		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
 		_logger.Debug("GameDialogController created...");
 
 		_context = context;

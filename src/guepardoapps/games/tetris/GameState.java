@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Random;
 
 import guepardoapps.games.common.basic.Coordinates;
-import guepardoapps.mediamirror.common.Constants;
+
+import guepardoapps.mediamirror.common.Enables;
 
 import guepardoapps.toolset.common.Logger;
 
@@ -22,7 +23,7 @@ public class GameState {
 	private List<int[]> _deleteMe;
 
 	public GameState(GameSurfaceView gameSurfaceView) {
-		_logger = new Logger(TAG, Constants.DEBUGGING_ENABLED);
+		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
 		_logger.Debug("Created GameState...");
 
 		Shape tShape = Shape.l(gameSurfaceView);
@@ -157,7 +158,7 @@ public class GameState {
 
 		for (int index = 0; index < getCoordinatess().size(); index++) {
 			int[] CoordinatesPair = getCoordinatess.get(index);
-			
+
 			switch (CoordinatesPair[1]) {
 			case 900:
 				nine.add(CoordinatesPair);

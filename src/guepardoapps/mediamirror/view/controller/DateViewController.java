@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.widget.TextView;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.test.DateViewControllerTest;
@@ -63,7 +64,7 @@ public class DateViewController {
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				if (_dateViewTest == null) {
 					_dateViewTest = new DateViewControllerTest(_context);
 				}
@@ -101,7 +102,7 @@ public class DateViewController {
 				_logger.Warn("model is null!");
 			}
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				_dateViewTest.ValidateView(_weekdayTextView.getText().toString(), _dateTextView.getText().toString(),
 						_timeTextView.getText().toString());
 			}

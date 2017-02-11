@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.enums.RSSFeed;
 import guepardoapps.mediamirror.model.*;
@@ -91,7 +92,7 @@ public class RSSViewController {
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				if (_rssViewTest == null) {
 					_rssViewTest = new RSSViewControllerTest(_context);
 				}
@@ -140,7 +141,7 @@ public class RSSViewController {
 				}
 			}
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				_rssViewTest.ValidateView(model.GetRSSFeed(), _rssTextView1.getVisibility() == View.VISIBLE);
 			}
 		}

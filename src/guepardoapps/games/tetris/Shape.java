@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import guepardoapps.games.common.basic.Coordinates;
-import guepardoapps.mediamirror.common.Constants;
+
+import guepardoapps.mediamirror.common.Enables;
 
 import guepardoapps.toolset.common.Logger;
 
@@ -64,7 +65,7 @@ public class Shape {
 
 		_gameSurfaceView = gameSurfaceView;
 
-		_logger = new Logger(TAG, Constants.DEBUGGING_ENABLED);
+		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
 		_logger.Debug("Created Shape...");
 	}
 

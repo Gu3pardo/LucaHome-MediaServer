@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.test.IpAdressViewControllerTest;
@@ -60,7 +61,7 @@ public class IpAdressViewController {
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				if (_ipAdressViewTest == null) {
 					_ipAdressViewTest = new IpAdressViewControllerTest(_context);
 				}
@@ -100,7 +101,7 @@ public class IpAdressViewController {
 				_logger.Warn("model is null!");
 			}
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				_ipAdressViewTest.ValidateView(_ipAdressTextView.getVisibility() == View.VISIBLE,
 						_ipAdressTextView.getText().toString());
 			}

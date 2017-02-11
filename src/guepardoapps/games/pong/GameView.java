@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 import guepardoapps.games.common.GameConstants;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 
 import guepardoapps.toolset.common.Logger;
 import guepardoapps.toolset.controller.ReceiverController;
@@ -93,7 +94,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	public GameView(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
 
-		_logger = new Logger(TAG, Constants.DEBUGGING_ENABLED);
+		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
 		_logger.Debug("GameView created...");
 
 		_context = context;

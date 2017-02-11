@@ -13,9 +13,12 @@ import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
 import guepardoapps.games.common.GameConstants;
 import guepardoapps.games.common.basic.Coordinates;
+
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 
 import guepardoapps.toolset.common.Logger;
 import guepardoapps.toolset.controller.ReceiverController;
@@ -70,7 +73,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 	public GameSurfaceView(Context context) {
 		super(context);
-		_logger = new Logger(TAG, Constants.DEBUGGING_ENABLED);
+		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
 		_logger.Debug("GameSurfaceView created...");
 
 		_context = context;

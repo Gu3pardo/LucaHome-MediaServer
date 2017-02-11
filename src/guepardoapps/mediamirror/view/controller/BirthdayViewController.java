@@ -6,16 +6,18 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.model.helper.BirthdayHelper;
 import guepardoapps.mediamirror.test.BirthdayViewControllerTest;
 import guepardoapps.mediamirror.R;
-
+import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class BirthdayViewController {
@@ -27,6 +29,7 @@ public class BirthdayViewController {
 	private boolean _screenEnabled;
 
 	private Context _context;
+	private BroadcastController _broadcastController;
 	private ReceiverController _receiverController;
 
 	private View[] _birthdayAlarmViewArray = new View[3];
@@ -38,9 +41,16 @@ public class BirthdayViewController {
 
 	private BirthdayViewControllerTest _birthdayViewTest;
 
+	private static IntentFilter _dateIntentFilter;
+	static {
+		_dateIntentFilter = new IntentFilter();
+		_dateIntentFilter.addAction(Intent.ACTION_DATE_CHANGED);
+	}
+
 	public BirthdayViewController(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
 		_context = context;
+		_broadcastController = new BroadcastController(_context);
 		_receiverController = new ReceiverController(_context);
 	}
 
@@ -70,10 +80,13 @@ public class BirthdayViewController {
 					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
 					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+
+			_context.registerReceiver(_dateChangedReceiver, _dateIntentFilter);
+
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				if (_birthdayViewTest == null) {
 					_birthdayViewTest = new BirthdayViewControllerTest(_context);
 				}
@@ -88,8 +101,23 @@ public class BirthdayViewController {
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+
+		_context.unregisterReceiver(_dateChangedReceiver);
+
 		_isInitialized = false;
 	}
+
+	private BroadcastReceiver _dateChangedReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_logger.Debug("_dateChangedReceiver onReceive");
+			final String action = intent.getAction();
+			if (action.equals(Intent.ACTION_DATE_CHANGED)) {
+				_logger.Debug("ACTION_DATE_CHANGED");
+				_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_BIRTHDAY_UPDATE);
+			}
+		}
+	};
 
 	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
 		@SuppressWarnings("unchecked")
@@ -112,10 +140,10 @@ public class BirthdayViewController {
 							_hasBirthday[index] = true;
 							_birthdayTextViewArray[index].setText(entry.GetNotificationString());
 							_birthdayAlarmViewArray[index].setVisibility(View.VISIBLE);
+							checkPlayBirthdaySong(entry);
 						} else {
 							_hasBirthday[index] = false;
-							_birthdayTextViewArray[index]
-									.setText(entry.GetName() + ": " + entry.GetBirthdayString());
+							_birthdayTextViewArray[index].setText(entry.GetName() + ": " + entry.GetBirthdayString());
 							_birthdayAlarmViewArray[index].setVisibility(View.INVISIBLE);
 						}
 					} else {
@@ -138,6 +166,12 @@ public class BirthdayViewController {
 			 * View.VISIBLE, _birthdayTextView.getText().toString(),
 			 * hasBirthday); }
 			 */
+		}
+
+		private void checkPlayBirthdaySong(BirthdayHelper entry) {
+			if (entry.GetName().contains("Sandra Huber") || entry.GetName().contains("Jonas Schubert")) {
+				_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PLAY_BIRTHDAY_SONG);
+			}
 		}
 	};
 

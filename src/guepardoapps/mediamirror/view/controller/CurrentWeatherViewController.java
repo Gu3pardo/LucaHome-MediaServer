@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.test.CurrentWeatherViewControllerTest;
@@ -70,7 +71,7 @@ public class CurrentWeatherViewController {
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				if (_currentWeatherViewTest == null) {
 					_currentWeatherViewTest = new CurrentWeatherViewControllerTest(_context);
 				}
@@ -111,7 +112,7 @@ public class CurrentWeatherViewController {
 				_logger.Warn("model is null!");
 			}
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				_currentWeatherViewTest.ValidateView(_conditionTextView.getText().toString(),
 						_temperatureTextView.getText().toString(), _humidityTextView.getText().toString(),
 						_pressureTextView.getText().toString(), _updatedTimeTextView.getText().toString(), -1);

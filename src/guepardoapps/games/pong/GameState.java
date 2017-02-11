@@ -7,7 +7,7 @@ import android.graphics.Rect;
 
 import guepardoapps.games.common.GameConstants;
 
-import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 
 import guepardoapps.toolset.common.Logger;
 
@@ -45,7 +45,7 @@ public class GameState {
 	private boolean _gameIsPaused;
 
 	public GameState() {
-		_logger = new Logger(TAG, Constants.DEBUGGING_ENABLED);
+		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
 		_logger.Debug("GameState created...");
 	}
 

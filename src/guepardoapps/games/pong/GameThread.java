@@ -6,7 +6,7 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 
-import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 
 import guepardoapps.toolset.common.Logger;
 
@@ -22,7 +22,7 @@ public class GameThread extends Thread {
 	private boolean _gameIsRunning = true;
 
 	public GameThread(SurfaceHolder surfaceHolder, Context context, Handler handler) {
-		_logger = new Logger(TAG, Constants.DEBUGGING_ENABLED);
+		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
 		_logger.Debug("GameThread created...");
 
 		_surfaceHolder = surfaceHolder;

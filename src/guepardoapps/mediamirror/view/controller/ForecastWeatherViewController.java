@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.test.ForecastWeatherViewControllerTest;
@@ -97,7 +98,7 @@ public class ForecastWeatherViewController {
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				if (_forecastWeatherViewTest == null) {
 					_forecastWeatherViewTest = new ForecastWeatherViewControllerTest(_context);
 				}
@@ -145,7 +146,7 @@ public class ForecastWeatherViewController {
 				_logger.Warn("model is null!");
 			}
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				_forecastWeatherViewTest.ValidateView(-1, _weatherForecastWeekdayTextViews[0].getText().toString(),
 						_weatherForecastDateTextViews[0].getText().toString(),
 						_weatherForecastTimeTextViews[0].getText().toString(),

@@ -5,7 +5,9 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.enums.RSSFeed;
 import guepardoapps.mediamirror.common.enums.YoutubeId;
@@ -16,6 +18,7 @@ import guepardoapps.mediamirror.server.ServerThread;
 import guepardoapps.mediamirror.test.ConverterTest;
 import guepardoapps.mediamirror.tts.TTSService;
 import guepardoapps.mediamirror.updater.*;
+
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
 
@@ -139,7 +142,7 @@ public class MainService extends Service {
 			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_RSS_DATA_MODEL,
 					Constants.BUNDLE_RSS_DATA_MODEL, rssModel);
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				_converterTest = new ConverterTest();
 				_converterTest.PerformTests();
 			}

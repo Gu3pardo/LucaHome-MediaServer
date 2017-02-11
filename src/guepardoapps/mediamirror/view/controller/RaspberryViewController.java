@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.model.helper.RaspberryTemperatureHelper;
@@ -67,7 +68,7 @@ public class RaspberryViewController {
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				if (_raspberryViewTest == null) {
 					_raspberryViewTest = new RaspberryViewControllerTest(_context);
 				}
@@ -106,7 +107,7 @@ public class RaspberryViewController {
 				_logger.Warn("model is null!");
 			}
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				_raspberryViewTest.ValidateView(_raspberryName1TextView.getText().toString(),
 						_raspberryTemperature1TextView.getText().toString());
 			}

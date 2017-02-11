@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.Keys;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.database.DBController;
@@ -141,6 +142,8 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 					new String[] { Constants.BROADCAST_SHOW_CENTER_MODEL });
 			_receiverController.RegisterReceiver(_playVideoReceiver, new String[] { Constants.BROADCAST_PLAY_VIDEO });
 			_receiverController.RegisterReceiver(_stopVideoReceiver, new String[] { Constants.BROADCAST_STOP_VIDEO });
+			_receiverController.RegisterReceiver(_playBirthdaySongReceiver,
+					new String[] { Constants.BROADCAST_PLAY_BIRTHDAY_SONG });
 			_receiverController.RegisterReceiver(_screenEnableReceiver,
 					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
@@ -149,7 +152,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				if (_centerViewTest == null) {
 					_centerViewTest = new CenterViewControllerTest(_context);
 				}
@@ -165,6 +168,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
 		_receiverController.UnregisterReceiver(_playVideoReceiver);
 		_receiverController.UnregisterReceiver(_stopVideoReceiver);
+		_receiverController.UnregisterReceiver(_playBirthdaySongReceiver);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 
@@ -242,7 +246,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 				_logger.Warn("model is null!");
 			}
 
-			if (Constants.TESTING_ENABLED) {
+			if (Enables.TESTING_ENABLED) {
 				_centerViewTest.ValidateView((_centerTextView.getVisibility() == View.VISIBLE),
 						_centerTextView.getText().toString(), (_youTubePlayerView.getVisibility() == View.VISIBLE),
 						model.GetYoutubeId(), (_centerWebView.getVisibility() == View.VISIBLE), "-1");
@@ -278,6 +282,19 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 			_logger.Debug("_stopVideoReceiver onReceive");
 			stopVideo();
+		}
+	};
+
+	private BroadcastReceiver _playBirthdaySongReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
+			_logger.Debug("_playBirthdaySongReceiver onReceive");
+			startVideo(Constants.BIRTHDAY_SONG_ID);
 		}
 	};
 

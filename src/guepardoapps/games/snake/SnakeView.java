@@ -3,13 +3,6 @@ package guepardoapps.games.snake;
 import java.util.ArrayList;
 import java.util.Random;
 
-import guepardoapps.games.snake.library.Game;
-import guepardoapps.games.snake.library.GameFactory;
-import guepardoapps.games.snake.library.Snake;
-import guepardoapps.games.snake.library.exceptions.SnakeHitYardWallException;
-import guepardoapps.games.snake.library.interfaces.SnakeRenderer;
-import guepardoapps.games.snake.library.Yard;
-
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,10 +15,20 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+
 import guepardoapps.games.common.GameConstants;
 import guepardoapps.games.common.basic.Coordinates;
+
+import guepardoapps.games.snake.library.Game;
+import guepardoapps.games.snake.library.GameFactory;
+import guepardoapps.games.snake.library.Snake;
+import guepardoapps.games.snake.library.exceptions.SnakeHitYardWallException;
+import guepardoapps.games.snake.library.interfaces.SnakeRenderer;
+import guepardoapps.games.snake.library.Yard;
+
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 
 import guepardoapps.toolset.common.Logger;
 import guepardoapps.toolset.controller.ReceiverController;
@@ -271,7 +274,7 @@ public class SnakeView extends TileView {
 
 	@SuppressWarnings("deprecation")
 	private void initSnakeView() {
-		_logger = new Logger(TAG, Constants.DEBUGGING_ENABLED);
+		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
 		_logger.Debug("SnakeView created...");
 
 		setFocusable(true);

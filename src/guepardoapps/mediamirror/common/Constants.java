@@ -1,10 +1,6 @@
 package guepardoapps.mediamirror.common;
 
 public class Constants {
-	// TESTING
-	public static final boolean TESTING_ENABLED = false;
-	// DEBUGGING
-	public static final boolean DEBUGGING_ENABLED = false;
 	// DATE VIEW
 	public static final int DATE_UPDATE_TIMEOUT = 15 * 1000;
 	public static final String BUNDLE_DATE_MODEL = "BUNDLE_DATE_MODEL";
@@ -45,6 +41,7 @@ public class Constants {
 	public static final String BROADCAST_PLAY_VIDEO = "guepardoapps.mediamirror.video.play";
 	public static final String BROADCAST_STOP_VIDEO = "guepardoapps.mediamirror.video.stop";
 	public static final String BROADCAST_SET_VIDEOVIEW_VISIBILITY = "guepardoapps.mediamirror.videoview.set.visibility";
+	public static final String BROADCAST_PLAY_BIRTHDAY_SONG = "guepardoapps.mediamirror.play.birthdaysong";
 	// RSS VIEW
 	public static final int RSS_UPDATE_TIMEOUT = 5 * 60 * 1000;
 	public static final String BUNDLE_RSS_DATA_MODEL = "BUNDLE_RSS_DATA_MODEL";
@@ -75,7 +72,8 @@ public class Constants {
 	// SOCKET DATA
 	public static final String ACTION_SET_SOCKET = "setsocket&socket=";
 	public static final String SOCKET_NAME = "MediaMirror1";
-	// TODO find a better solution to activate the corresponding socket of a mediaserver!
+	// TODO find a better solution to activate the corresponding socket of a
+	// mediaserver!
 	// public static final String SOCKET_NAME = "MediaMirror2";
 	public static final String SOCKET_STATE_ON = "&state=1";
 	public static final String SOCKET_STATE_OFF = "&state=0";
@@ -112,5 +110,7 @@ public class Constants {
 	public static final String BUNDLE_REST_BROADCAST = "BUNDLE_REST_BROADCAST";
 	// SERVER ID
 	public static final int SERVER_ID = 1;
+	// YOUTUBE ID
+	public static final String BIRTHDAY_SONG_ID = "inS9gAgSENE";
 
 }

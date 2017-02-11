@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import guepardoapps.mediamirror.R;
-import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 
 import guepardoapps.toolset.common.Logger;
 
@@ -33,7 +33,7 @@ public class TileView extends View {
 
 	public TileView(Context context, AttributeSet attributeSet, int defStyle) {
 		super(context, attributeSet, defStyle);
-		_logger = new Logger(TAG, Constants.DEBUGGING_ENABLED);
+		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
 		_logger.Debug("Created TileView...");
 
 		TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.TileView);
@@ -43,7 +43,7 @@ public class TileView extends View {
 
 	public TileView(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
-		_logger = new Logger(TAG, Constants.DEBUGGING_ENABLED);
+		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
 		_logger.Debug("Created TileView...");
 
 		TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.TileView);

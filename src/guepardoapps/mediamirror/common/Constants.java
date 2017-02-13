@@ -60,9 +60,6 @@ public class Constants {
 	// SPEAK DATA
 	public static final String BUNDLE_SPEAK_TEXT = "BUNDLE_SPEAK_TEXT";
 	public static final String BROADCAST_SPEAK_TEXT = "guepardoapps.mediamirror.speak.text";
-	// TOAST DATA
-	public static final String BUNDLE_TOAST_TEXT = "BUNDLE_TOAST_TEXT";
-	public static final String BROADCAST_TOAST_TEXT = "guepardoapps.mediamirror.toast.text";
 	// SCHEDULE DATA
 	public static final int SCHEDULE_UPDATE_TIMEOUT = 2 * 60 * 60 * 1000;
 	public static final String ACTION_GET_SCHEDULES = "getschedules";
@@ -110,7 +107,5 @@ public class Constants {
 	public static final String BUNDLE_REST_BROADCAST = "BUNDLE_REST_BROADCAST";
 	// SERVER ID
 	public static final int SERVER_ID = 1;
-	// YOUTUBE ID
-	public static final String BIRTHDAY_SONG_ID = "inS9gAgSENE";
 
 }

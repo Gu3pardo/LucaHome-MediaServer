@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import es.dmoral.toasty.Toasty;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
@@ -195,7 +197,7 @@ public class RSSViewController {
 				_rssTextView3.setVisibility(View.GONE);
 				_rssTextView3Description.setVisibility(View.GONE);
 
-				Toast.makeText(_context, "An error occured while downloading the rss feed.", Toast.LENGTH_LONG).show();
+				Toasty.error(_context, "An error occured while downloading the rss feed.", Toast.LENGTH_LONG).show();
 			}
 		};
 	};

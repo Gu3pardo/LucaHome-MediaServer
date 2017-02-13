@@ -12,7 +12,7 @@ public class BootReceiver extends BroadcastReceiver {
 	private static final String TAG = BootReceiver.class.getName();
 	private SmartMirrorLogger _logger;
 
-	private static final int DELAY = 30 * 1000;
+	private static final int DELAY = 15 * 1000;
 
 	@Override
 	public void onReceive(final Context context, Intent intent) {

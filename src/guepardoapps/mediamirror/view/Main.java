@@ -42,7 +42,6 @@ public class Main extends YouTubeBaseActivity {
 	private LayoutController _layoutController;
 	private RaspberryViewController _raspberryViewController;
 	private RSSViewController _rssViewController;
-	private ToastController _toastController;
 	private VolumeViewController _volumeViewController;
 
 	private ScreenController _screenController;
@@ -62,7 +61,7 @@ public class Main extends YouTubeBaseActivity {
 		initializeController();
 
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		setContentView(R.layout.main);
+		setContentView(R.layout.main_remote);
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 				| WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD 
@@ -90,7 +89,6 @@ public class Main extends YouTubeBaseActivity {
 		_layoutController.onCreate();
 		_raspberryViewController.onCreate();
 		_rssViewController.onCreate();
-		_toastController.onCreate();
 		_volumeViewController.onCreate();
 
 		_screenController.onCreate();
@@ -116,7 +114,6 @@ public class Main extends YouTubeBaseActivity {
 		_layoutController.onResume();
 		_raspberryViewController.onResume();
 		_rssViewController.onResume();
-		_toastController.onResume();
 		_volumeViewController.onResume();
 
 		_screenController.onResume();
@@ -138,7 +135,6 @@ public class Main extends YouTubeBaseActivity {
 		_layoutController.onPause();
 		_raspberryViewController.onPause();
 		_rssViewController.onPause();
-		_toastController.onPause();
 		_volumeViewController.onPause();
 
 		_screenController.onPause();
@@ -160,7 +156,6 @@ public class Main extends YouTubeBaseActivity {
 		_layoutController.onDestroy();
 		_raspberryViewController.onDestroy();
 		_rssViewController.onDestroy();
-		_toastController.onDestroy();
 		_volumeViewController.onDestroy();
 
 		_screenController.onDestroy();
@@ -180,7 +175,6 @@ public class Main extends YouTubeBaseActivity {
 		_layoutController = new LayoutController(_context);
 		_raspberryViewController = new RaspberryViewController(_context);
 		_rssViewController = new RSSViewController(_context);
-		_toastController = new ToastController(_context);
 		_volumeViewController = new VolumeViewController(_context);
 
 		_screenController = new ScreenController(_context);

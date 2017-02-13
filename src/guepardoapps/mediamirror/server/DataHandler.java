@@ -1,12 +1,17 @@
 package guepardoapps.mediamirror.server;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+
 import guepardoapps.games.common.GameConstants;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.YoutubeIDs;
 import guepardoapps.mediamirror.common.enums.RSSFeed;
 import guepardoapps.mediamirror.common.enums.ServerAction;
 import guepardoapps.mediamirror.common.enums.YoutubeId;
@@ -16,6 +21,7 @@ import guepardoapps.mediamirror.database.DBController;
 import guepardoapps.mediamirror.model.CenterModel;
 import guepardoapps.mediamirror.model.RSSModel;
 import guepardoapps.mediamirror.model.YoutubeDatabaseModel;
+
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.CommandController;
 
@@ -24,12 +30,28 @@ public class DataHandler {
 	private static final String TAG = DataHandler.class.getName();
 	private SmartMirrorLogger _logger;
 
+	private static final int TIMEOUT_SHUTDOWN = 5 * 1000;
+	private static final int TIMEOUT_REBOOT = 3 * 1000;
+
 	private Context _context;
 
 	private BroadcastController _broadcastController;
 	private CommandController _commandController;
 	private DBController _dbController;
 	private MediaVolumeController _mediaVolumeController;
+
+	private static final int SEA_SOUND_TIMEOUT = 25 * 60 * 1000;
+	private Handler _seaSoundHandler = new Handler();
+	private Runnable _seaSoundRunnable = new Runnable() {
+		@Override
+		public void run() {
+			_logger.Debug("_seaSoundRunnable run");
+			CenterModel goodNightModel = new CenterModel(true, "Sleep well!", false, "", false, "");
+			_logger.Info("Created center model: " + goodNightModel.toString());
+			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
+					Constants.BUNDLE_CENTER_MODEL, goodNightModel);
+		}
+	};
 
 	public DataHandler(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
@@ -96,6 +118,35 @@ public class DataHandler {
 				case STOP_YOUTUBE_VIDEO:
 					_context.sendBroadcast(new Intent(Constants.BROADCAST_STOP_VIDEO));
 					break;
+				case GET_SAVED_YOUTUBE_IDS:
+					ArrayList<YoutubeDatabaseModel> loadedList = _dbController.GetYoutubeIds();
+					// sort the list in descending order
+					loadedList.sort(new Comparator<YoutubeDatabaseModel>() {
+						@Override
+						public int compare(YoutubeDatabaseModel elementOne, YoutubeDatabaseModel elementTwo) {
+							return Integer.valueOf(elementTwo.GetPlayCount()).compareTo(elementOne.GetPlayCount());
+						}
+					});
+					String answer = "";
+					for (YoutubeDatabaseModel entry : loadedList) {
+						answer += entry.GetCommunicationString();
+					}
+					return action.toString() + ":" + answer;
+				case PLAY_SEA_SOUND:
+					CenterModel playSeaSoundModel = new CenterModel(false, "", true, YoutubeIDs.SEA_SOUND_ID, false,
+							"");
+					_logger.Info("Created center model: " + playSeaSoundModel.toString());
+					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
+							Constants.BUNDLE_CENTER_MODEL, playSeaSoundModel);
+					_seaSoundHandler.postDelayed(_seaSoundRunnable, SEA_SOUND_TIMEOUT);
+					break;
+				case STOP_SEA_SOUND:
+					CenterModel stopSeaSoundModel = new CenterModel(true, "", false, "", false, "");
+					_logger.Info("Created center model: " + stopSeaSoundModel.toString());
+					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
+							Constants.BUNDLE_CENTER_MODEL, stopSeaSoundModel);
+					_seaSoundHandler.removeCallbacks(_seaSoundRunnable);
+					break;
 				case SHOW_WEBVIEW:
 					CenterModel webviewModel = new CenterModel(false, "", false, null, true, data);
 					_logger.Info("Created center model: " + webviewModel.toString());
@@ -160,13 +211,6 @@ public class DataHandler {
 					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
 				case GET_CURRENT_VOLUME:
 					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
-				case GET_SAVED_YOUTUBE_IDS:
-					ArrayList<YoutubeDatabaseModel> loadedList = _dbController.GetYoutubeIds();
-					String answer = "";
-					for (YoutubeDatabaseModel entry : loadedList) {
-						answer += entry.GetCommunicationString();
-					}
-					return action.toString() + ":" + answer;
 				case INCREASE_SCREEN_BRIGHTNESS:
 					_broadcastController.SendIntBroadcast(Constants.BROADCAST_ACTION_SCREEN_BRIGHTNESS,
 							Constants.BUNDLE_SCREEN_BRIGHTNESS, ScreenController.INCREASE);
@@ -228,10 +272,10 @@ public class DataHandler {
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_NORMAL);
 					break;
 				case SYSTEM_REBOOT:
-					_commandController.RebootDevice();
+					_commandController.RebootDevice(TIMEOUT_REBOOT);
 					break;
 				case SYSTEM_SHUTDOWN:
-					_commandController.ShutDownDevice();
+					_commandController.ShutDownDevice(TIMEOUT_SHUTDOWN);
 					break;
 				default:
 					_logger.Warn("Action not handled!\n" + action.toString());

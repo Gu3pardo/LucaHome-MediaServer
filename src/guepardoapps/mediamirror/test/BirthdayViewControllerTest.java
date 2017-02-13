@@ -38,6 +38,7 @@ public class BirthdayViewControllerTest {
 		// _sendNewBirthdayHandler.postDelayed(_sendNewBirthday, 5000);
 	}
 
+	@SuppressWarnings("unused")
 	private Runnable _sendNewBirthday = new Runnable() {
 		public void run() {
 			_logger.Debug("_sendNewBirthday");

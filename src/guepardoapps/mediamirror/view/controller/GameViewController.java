@@ -3,9 +3,12 @@ package guepardoapps.mediamirror.view.controller;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 import guepardoapps.games.controller.GameDialogController;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class GameViewController {

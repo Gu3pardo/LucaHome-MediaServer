@@ -22,10 +22,13 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import es.dmoral.toasty.Toasty;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.Keys;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.YoutubeIDs;
 import guepardoapps.mediamirror.database.DBController;
 import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.test.CenterViewControllerTest;
@@ -127,7 +130,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			_youTubePlayerView.initialize(Keys.YOUTUBE_API, this);
 		} else {
 			_logger.Warn("Please enter your youtube api key!");
-			Toast.makeText(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
+			Toasty.error(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -294,7 +297,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			}
 
 			_logger.Debug("_playBirthdaySongReceiver onReceive");
-			startVideo(Constants.BIRTHDAY_SONG_ID);
+			startVideo(YoutubeIDs.BIRTHDAY_SONG_ID);
 		}
 	};
 
@@ -328,7 +331,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 				_youTubePlayerView.initialize(Keys.YOUTUBE_API, CenterViewController.this);
 			} else {
 				_logger.Warn("Please enter your youtube api key!");
-				Toast.makeText(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
+				Toasty.error(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
 			}
 		}
 	};
@@ -359,7 +362,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		}
 
 		if (_playingVideo) {
-			Toast.makeText(_context, "Stopping current played video!", Toast.LENGTH_SHORT).show();
+			Toasty.info(_context, "Stopping current played video!", Toast.LENGTH_SHORT).show();
 			_logger.Warn("Stopping current played video!");
 			stopVideo();
 		}

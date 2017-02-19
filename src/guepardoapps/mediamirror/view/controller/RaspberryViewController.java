@@ -6,10 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import es.dmoral.toasty.Toasty;
 
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.controller.MediaMirrorDialogController;
 import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.model.helper.RaspberryTemperatureHelper;
 import guepardoapps.mediamirror.test.RaspberryViewControllerTest;
@@ -25,7 +29,10 @@ public class RaspberryViewController {
 	private boolean _isInitialized;
 	private boolean _screenEnabled;
 
+	private RaspberryModel _raspberryModel;
+
 	private Context _context;
+	private MediaMirrorDialogController _dialogController;
 	private ReceiverController _receiverController;
 
 	private View _raspberryAlarm1TextView;
@@ -35,9 +42,58 @@ public class RaspberryViewController {
 	private RaspberryTemperatureHelper _raspberryTemperatureHelper;
 	private RaspberryViewControllerTest _raspberryViewTest;
 
+	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
+			_logger.Debug("_updateViewReceiver onReceive");
+			RaspberryModel model = (RaspberryModel) intent.getSerializableExtra(Constants.BUNDLE_RASPBERRY_DATA_MODEL);
+			if (model != null) {
+				_logger.Debug(model.toString());
+				_raspberryModel = model;
+
+				_raspberryAlarm1TextView.setBackgroundResource(
+						_raspberryTemperatureHelper.GetIcon(_raspberryModel.GetRaspberry1Temperature()));
+				_raspberryName1TextView.setText(_raspberryModel.GetRaspberry1Name());
+				_raspberryTemperature1TextView.setText(_raspberryModel.GetRaspberry1Temperature());
+			} else {
+				_logger.Warn("model is null!");
+			}
+
+			if (Enables.TESTING_ENABLED) {
+				_raspberryViewTest.ValidateView(_raspberryName1TextView.getText().toString(),
+						_raspberryTemperature1TextView.getText().toString());
+			}
+		}
+	};
+
+	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = true;
+
+			_raspberryAlarm1TextView = (View) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Alarm);
+			_raspberryName1TextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Name);
+			_raspberryTemperature1TextView = (TextView) ((Activity) _context)
+					.findViewById(R.id.temperatureRaspberry1Value);
+		}
+	};
+
+	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_screenEnabled = false;
+		}
+	};
+
 	public RaspberryViewController(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
 		_context = context;
+		_dialogController = new MediaMirrorDialogController(_context);
 		_receiverController = new ReceiverController(_context);
 		_raspberryTemperatureHelper = new RaspberryTemperatureHelper();
 	}
@@ -86,49 +142,20 @@ public class RaspberryViewController {
 		_isInitialized = false;
 	}
 
-	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (!_screenEnabled) {
-				_logger.Debug("Screen is not enabled!");
-				return;
-			}
-
-			_logger.Debug("_updateViewReceiver onReceive");
-			RaspberryModel model = (RaspberryModel) intent.getSerializableExtra(Constants.BUNDLE_RASPBERRY_DATA_MODEL);
-			if (model != null) {
-				_logger.Debug(model.toString());
-
-				_raspberryAlarm1TextView
-						.setBackgroundResource(_raspberryTemperatureHelper.GetIcon(model.GetRaspberry1Temperature()));
-				_raspberryName1TextView.setText(model.GetRaspberry1Name());
-				_raspberryTemperature1TextView.setText(model.GetRaspberry1Temperature());
-			} else {
-				_logger.Warn("model is null!");
-			}
-
-			if (Enables.TESTING_ENABLED) {
-				_raspberryViewTest.ValidateView(_raspberryName1TextView.getText().toString(),
-						_raspberryTemperature1TextView.getText().toString());
-			}
+	public void showTemperatureGraph(View view) {
+		_logger.Debug("showTemperatureGraph");
+		String url = _raspberryModel.GetRaspberry1TemperatureGraphUrl();
+		if (url.length() > 0) {
+			_dialogController.ShowTemperatureGraphDialog(_raspberryModel.GetRaspberry1TemperatureGraphUrl());
+		} else {
+			_logger.Warn("invalid URL!");
+			Toasty.warning(_context, "Invalid URL!", Toast.LENGTH_LONG).show();
 		}
-	};
+	}
 
-	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			_screenEnabled = true;
-
-			_raspberryAlarm1TextView = (View) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Alarm);
-			_raspberryName1TextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Name);
-			_raspberryTemperature1TextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberry1Value);
-		}
-	};
-
-	private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			_screenEnabled = false;
-		}
-	};
+	public void showSocketsDialog(View view) {
+		_logger.Debug("showSocketsDialog");
+		_logger.Warn("Not yet implemented!");
+		Toasty.warning(_context, "Not yet implemented!", Toast.LENGTH_LONG).show();
+	}
 }

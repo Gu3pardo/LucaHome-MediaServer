@@ -1,5 +1,6 @@
 <resources>
 
+    <color name="Background">#d32f2f</color>
     <color name="DarkPrimary">#d32f2f</color>
     <color name="Primary">#f44336</color>
     <color name="LightPrimary">#ffcdd2</color>
@@ -8,5 +9,6 @@
     <color name="PrimaryText">#212121</color>
     <color name="SecondaryText">#727272</color>
     <color name="Divider">#b6b6b6</color>
+    <color name="LightGreen">#4CAF50</color>
 
 </resources>

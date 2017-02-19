@@ -66,6 +66,8 @@ public final class JsonDataToTemperatureConverter {
 
 				String area = data[1].replace("{area:", "").replace("};", "");
 
+				String graphPath = data[3].replace("{graphPath:", "").replace("};", "");
+
 				Calendar calendar = Calendar.getInstance();
 				int hour = calendar.get(Calendar.HOUR_OF_DAY);
 				int minute = calendar.get(Calendar.MINUTE);
@@ -73,7 +75,7 @@ public final class JsonDataToTemperatureConverter {
 				@SuppressWarnings("deprecation")
 				Time time = new Time(hour, minute, second);
 
-				TemperatureHelper newValue = new TemperatureHelper(temperature, area, time);
+				TemperatureHelper newValue = new TemperatureHelper(temperature, area, time, graphPath);
 				return newValue;
 			}
 		}

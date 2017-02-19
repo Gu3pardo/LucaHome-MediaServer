@@ -63,18 +63,6 @@ public class BirtdayUpdater {
 							_nextBirthdaysList.set(index, null);
 						}
 					} else if (loadedBirthdayList.size() > 3) {
-						// wrong sort algorithm! sorts due to age not birthday
-						// in month!
-						/*
-						 * nextBirthdaysList.sort(new
-						 * Comparator<BirthdayHelper>() {
-						 * 
-						 * @Override public int compare(BirthdayHelper entry0,
-						 * BirthdayHelper entry1) { return
-						 * entry0.GetBirthday().compareTo(entry1.GetBirthday());
-						 * } });
-						 */
-
 						Calendar today = Calendar.getInstance();
 						ArrayList<BirthdayHelper> nextDateList = new ArrayList<BirthdayHelper>();
 						ArrayList<BirthdayHelper> prevDateList = new ArrayList<BirthdayHelper>();
@@ -110,8 +98,6 @@ public class BirtdayUpdater {
 						} else {
 							for (int index = 0; index < nextDateCount; index++) {
 								_nextBirthdaysList.add(index, nextDateList.get(index));
-								// _nextBirthdaysList.set(index,
-								// nextDateList.get(index));
 							}
 							if (prevDateList.size() > 3 - nextDateCount) {
 								for (int index = nextDateCount; index < 3; index++) {

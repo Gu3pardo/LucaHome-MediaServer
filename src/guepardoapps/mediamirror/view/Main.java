@@ -76,9 +76,9 @@ public class Main extends YouTubeBaseActivity {
 		getWindow().getDecorView()
 				.setSystemUiVisibility(
 						View.SYSTEM_UI_FLAG_LAYOUT_STABLE 
-						| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+						//| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 						| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN 
-						| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+						//| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 						| View.SYSTEM_UI_FLAG_FULLSCREEN 
 						| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
@@ -144,6 +144,14 @@ public class Main extends YouTubeBaseActivity {
 		_volumeViewController.onPause();
 
 		_screenController.onPause();
+	}
+
+	public void showTemperatureGraph(View view) {
+		_raspberryViewController.showTemperatureGraph(view);
+	}
+
+	public void showSocketsDialog(View view) {
+		_raspberryViewController.showSocketsDialog(view);
 	}
 
 	@Override

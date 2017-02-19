@@ -30,7 +30,7 @@ public class RaspberryViewControllerTest {
 	private void sendTestBroadcast() {
 		_logger.Debug("sendTestBroadcast");
 
-		RaspberryModel model = new RaspberryModel(_rasperryPi1Name, _rasperryPi1Temperature);
+		RaspberryModel model = new RaspberryModel(_rasperryPi1Name, _rasperryPi1Temperature, "");
 		_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_RASPBERRY_DATA_MODEL,
 				Constants.BUNDLE_RASPBERRY_DATA_MODEL, model);
 	}

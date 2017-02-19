@@ -61,7 +61,7 @@ public class DataHandler {
 		_broadcastController = new BroadcastController(_context);
 		_commandController = new CommandController(_context);
 		_dbController = new DBController(_context);
-		_mediaVolumeController = new MediaVolumeController(_context);
+		_mediaVolumeController = MediaVolumeController.getInstance();
 	}
 
 	public String PerformAction(String command) {

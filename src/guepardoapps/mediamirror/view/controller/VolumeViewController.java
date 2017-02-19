@@ -8,9 +8,14 @@ import android.widget.TextView;
 
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.controller.MediaVolumeController;
 import guepardoapps.mediamirror.R;
 
 import guepardoapps.toolset.controller.ReceiverController;
+
+import guepardoapps.views.verticalseekbar.OnVerticalSeebarMoveListener;
+import guepardoapps.views.verticalseekbar.VerticalSeekbarStyle;
+import guepardoapps.views.verticalseekbar.VerticalSeekbarView;
 
 public class VolumeViewController {
 
@@ -20,14 +25,20 @@ public class VolumeViewController {
 	private boolean _isInitialized;
 	private boolean _screenEnabled;
 
+	private int _maxVolume;
+
+	private static final long LOOP_INTERVAL = 250;
+
 	private Context _context;
+	private MediaVolumeController _mediaVolumeController;
 	private ReceiverController _receiverController;
 
 	private TextView _volumeValueTextView;
+	private VerticalSeekbarView _volumeControl;
 
 	private BroadcastReceiver _volumeInfoReveicer = new BroadcastReceiver() {
 		@Override
-		public void onReceive(Context ctxt, Intent intent) {
+		public void onReceive(Context context, Intent intent) {
 			if (!_screenEnabled) {
 				_logger.Debug("Screen is not enabled!");
 				return;
@@ -37,7 +48,19 @@ public class VolumeViewController {
 			String newVolumeText = intent.getStringExtra(Constants.BUNDLE_VOLUME_MODEL);
 			if (newVolumeText != null) {
 				_logger.Debug("newVolumeText: " + newVolumeText);
-				_volumeValueTextView.setText(newVolumeText);
+				_volumeValueTextView.setText("Vol.: " + newVolumeText);
+
+				if (!newVolumeText.contains("mute")) {
+					int currentVolume = -1;
+					try {
+						currentVolume = Integer.parseInt(newVolumeText);
+					} catch (Exception ex) {
+						_logger.Error(ex.toString());
+					} finally {
+						_logger.Debug("Setting _mediaVolumeController currentVolume to: " + currentVolume);
+						_mediaVolumeController.SetCurrentVolume(currentVolume);
+					}
+				}
 			}
 		}
 	};
@@ -46,7 +69,22 @@ public class VolumeViewController {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_screenEnabled = true;
+
+			_maxVolume = _mediaVolumeController.GetMaxVolume();
+
 			_volumeValueTextView = (TextView) ((Activity) _context).findViewById(R.id.volumeTextView);
+			_volumeControl = (VerticalSeekbarView) ((Activity) _context).findViewById(R.id.volumeSlider);
+			_volumeControl.setStyle(VerticalSeekbarStyle.VOLUME_SLIDER);
+			_volumeControl.setOnVerticalSeebarMoveListener(new OnVerticalSeebarMoveListener() {
+				@Override
+				public void onValueChanged(int volumePercentage) {
+					_logger.Debug(String.format("VolumePercentage: %s", volumePercentage));
+					if (volumePercentage < 0) {
+						volumePercentage *= -1;
+					}
+					_mediaVolumeController.SetVolume((int) (_maxVolume * volumePercentage / 100));
+				}
+			}, LOOP_INTERVAL);
 		}
 	};
 
@@ -60,6 +98,8 @@ public class VolumeViewController {
 	public VolumeViewController(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
 		_context = context;
+		_mediaVolumeController = MediaVolumeController.getInstance();
+		_mediaVolumeController.initialize(_context);
 		_receiverController = new ReceiverController(_context);
 	}
 
@@ -68,7 +108,21 @@ public class VolumeViewController {
 
 		_screenEnabled = true;
 
+		_maxVolume = _mediaVolumeController.GetMaxVolume();
+
 		_volumeValueTextView = (TextView) ((Activity) _context).findViewById(R.id.volumeTextView);
+		_volumeControl = (VerticalSeekbarView) ((Activity) _context).findViewById(R.id.volumeSlider);
+		_volumeControl.setStyle(VerticalSeekbarStyle.VOLUME_SLIDER);
+		_volumeControl.setOnVerticalSeebarMoveListener(new OnVerticalSeebarMoveListener() {
+			@Override
+			public void onValueChanged(int volumePercentage) {
+				_logger.Debug(String.format("VolumePercentage: %s", volumePercentage));
+				if (volumePercentage < 0) {
+					volumePercentage *= -1;
+				}
+				_mediaVolumeController.SetVolume((int) (_maxVolume * volumePercentage / 100));
+			}
+		}, LOOP_INTERVAL);
 	}
 
 	public void onPause() {
@@ -96,6 +150,7 @@ public class VolumeViewController {
 		_receiverController.UnregisterReceiver(_volumeInfoReveicer);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+		_mediaVolumeController.Dispose();
 		_isInitialized = false;
 	}
 }

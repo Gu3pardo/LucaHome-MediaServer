@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.Tools;
 import guepardoapps.mediamirror.common.converter.JsonDataToTemperatureConverter;
@@ -51,7 +52,7 @@ public class TemperatureUpdater {
 
 				RaspberryModel model = null;
 				if (temperatureList != null) {
-					if (temperatureList.size() == Constants.SERVER_URLs.length) {
+					if (temperatureList.size() == RaspPiConstants.SERVER_URLs.length) {
 						model = new RaspberryModel(temperatureList.get(0).GetArea(),
 								temperatureList.get(0).GetTemperatureString());
 
@@ -111,9 +112,9 @@ public class TemperatureUpdater {
 		Intent serviceIntent = new Intent(_context, RESTService.class);
 		Bundle serviceData = new Bundle();
 
-		serviceData.putString(Constants.BUNDLE_REST_ACTION, Constants.ACTION_GET_TEMPERATURES);
-		serviceData.putString(Constants.BUNDLE_REST_DATA, Constants.BUNDLE_RASPBERRY_DATA_MODEL);
-		serviceData.putString(Constants.BUNDLE_REST_BROADCAST, Constants.BROADCAST_DOWNLOAD_TEMPERATURE_FINISHED);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, Constants.ACTION_GET_TEMPERATURES);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Constants.BUNDLE_RASPBERRY_DATA_MODEL);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, Constants.BROADCAST_DOWNLOAD_TEMPERATURE_FINISHED);
 
 		serviceIntent.putExtras(serviceData);
 		_context.startService(serviceIntent);

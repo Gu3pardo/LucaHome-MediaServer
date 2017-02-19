@@ -113,7 +113,7 @@ containing a value of this type.
         public static final int birthday2TextView=0x7f090036;
         public static final int birthday3AlarmView=0x7f090037;
         public static final int birthday3TextView=0x7f090038;
-        public static final int birthdayLayout=0x7f09003c;
+        public static final int birthdayLayout=0x7f09003d;
         public static final int centerTextView=0x7f090028;
         public static final int centerWebView=0x7f090029;
         public static final int centerYoutubePlayer=0x7f090027;
@@ -143,9 +143,10 @@ containing a value of this type.
         public static final int temperatureRaspberry1Value=0x7f090026;
         public static final int text=0x7f09000a;
         public static final int timeTextView=0x7f09000d;
-        public static final int toast_icon=0x7f09003e;
-        public static final int toast_root=0x7f09003d;
-        public static final int toast_text=0x7f09003f;
+        public static final int toast_icon=0x7f09003f;
+        public static final int toast_root=0x7f09003e;
+        public static final int toast_text=0x7f090040;
+        public static final int volumeSlider=0x7f09003c;
         public static final int volumeTextView=0x7f09002a;
         public static final int weatherConditionImageView=0x7f09000f;
         public static final int weatherConditionTextView=0x7f09000e;

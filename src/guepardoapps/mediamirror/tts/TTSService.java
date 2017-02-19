@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.speech.tts.TextToSpeech;
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.toolset.controller.ReceiverController;
 
@@ -75,6 +76,10 @@ public class TTSService {
 
 	private void speak(String text) {
 		_logger.Debug("Speak: " + text);
+		if (!Enables.TTS_ENABLED) {
+			_logger.Warn("TTS is disabled!");
+			return;
+		}
 		if (_ttsInitialized) {
 			_ttsSpeaker.speak(text, TextToSpeech.QUEUE_FLUSH, null, "");
 		} else {

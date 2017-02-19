@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.Tools;
 import guepardoapps.mediamirror.common.converter.JsonDataToBirthdayConverter;
@@ -189,9 +190,9 @@ public class BirtdayUpdater {
 		Intent serviceIntent = new Intent(_context, RESTService.class);
 		Bundle serviceData = new Bundle();
 
-		serviceData.putString(Constants.BUNDLE_REST_ACTION, Constants.ACTION_GET_BIRTHDAYS);
-		serviceData.putString(Constants.BUNDLE_REST_DATA, Constants.BUNDLE_BIRTHDAY_MODEL);
-		serviceData.putString(Constants.BUNDLE_REST_BROADCAST, Constants.BROADCAST_DOWNLOAD_BIRTHDAY_FINISHED);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, Constants.ACTION_GET_BIRTHDAYS);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Constants.BUNDLE_BIRTHDAY_MODEL);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, Constants.BROADCAST_DOWNLOAD_BIRTHDAY_FINISHED);
 
 		serviceIntent.putExtras(serviceData);
 		_context.startService(serviceIntent);

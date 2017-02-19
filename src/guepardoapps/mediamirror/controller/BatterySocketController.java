@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Bundle;
+
 import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.services.RESTService;
 
@@ -89,10 +91,10 @@ public class BatterySocketController {
 		Intent serviceIntent = new Intent(_context, RESTService.class);
 		Bundle serviceData = new Bundle();
 
-		serviceData.putString(Constants.BUNDLE_REST_ACTION, Constants.ACTION_SET_SOCKET + Constants.SOCKET_NAME
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, Constants.ACTION_SET_SOCKET + Constants.SOCKET_NAME
 				+ ((enable) ? Constants.SOCKET_STATE_ON : Constants.SOCKET_STATE_OFF));
-		serviceData.putString(Constants.BUNDLE_REST_DATA, "");
-		serviceData.putString(Constants.BUNDLE_REST_BROADCAST, "");
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, "");
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, "");
 
 		serviceIntent.putExtras(serviceData);
 		_context.startService(serviceIntent);

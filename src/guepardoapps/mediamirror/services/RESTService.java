@@ -12,7 +12,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import guepardoapps.mediamirror.common.Constants;
+
+import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
 public class RESTService extends Service {
@@ -31,7 +32,7 @@ public class RESTService extends Service {
 			return -1;
 		}
 
-		String action = bundle.getString(Constants.BUNDLE_REST_ACTION);
+		String action = bundle.getString(RaspPiConstants.BUNDLE_REST_ACTION);
 		if (action == null) {
 			_logger.Warn("Action is null!");
 			stopSelf();
@@ -39,16 +40,16 @@ public class RESTService extends Service {
 		}
 		_logger.Debug("Action: " + action);
 
-		String[] actions = new String[Constants.SERVER_URLs.length];
-		for (int index = 0; index < Constants.SERVER_URLs.length; index++) {
-			actions[index] = Constants.SERVER_URLs[index] + Constants.ACTION_PATH + Constants.USER_NAME + "&password="
-					+ Constants.PASS_PHRASE + "&action=" + action;
+		String[] actions = new String[RaspPiConstants.SERVER_URLs.length];
+		for (int index = 0; index < RaspPiConstants.SERVER_URLs.length; index++) {
+			actions[index] = RaspPiConstants.SERVER_URLs[index] + RaspPiConstants.ACTION_PATH
+					+ RaspPiConstants.USER_NAME + "&password=" + RaspPiConstants.PASS_PHRASE + "&action=" + action;
 			_logger.Debug("index " + String.valueOf(index) + ": " + actions[index]);
 		}
 
-		String data = bundle.getString(Constants.BUNDLE_REST_DATA);
+		String data = bundle.getString(RaspPiConstants.BUNDLE_REST_DATA);
 		_logger.Debug("data: " + data);
-		String broadcast = bundle.getString(Constants.BUNDLE_REST_BROADCAST);
+		String broadcast = bundle.getString(RaspPiConstants.BUNDLE_REST_BROADCAST);
 		_logger.Debug("broadcast: " + broadcast);
 
 		RestCommunicationTask task = new RestCommunicationTask();

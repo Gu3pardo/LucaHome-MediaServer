@@ -60,7 +60,7 @@ public class TimeListenerService extends Service {
 				_broadcastController = new BroadcastController(_context);
 			}
 			if (_mediaVolumeController == null) {
-				_mediaVolumeController = new MediaVolumeController(_context);
+				_mediaVolumeController = MediaVolumeController.getInstance();
 			}
 			if (_screenController == null) {
 				_screenController = new ScreenController(_context);

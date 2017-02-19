@@ -13,6 +13,8 @@ import guepardoapps.toolset.controller.ReceiverController;
 
 public class MediaVolumeController {
 
+	private static final MediaVolumeController SINGLETON_CONTROLLER = new MediaVolumeController();
+
 	private static final String TAG = MediaVolumeController.class.getName();
 	private SmartMirrorLogger _logger;
 
@@ -23,77 +25,120 @@ public class MediaVolumeController {
 	private static final int VOLUME_CHANGE_STEP = 1;
 
 	private AudioManager _audioManager;
-	private int _currentVolume;
-	private int _maxVolume;
+	private int _currentVolume = -1;
+	private int _maxVolume = -1;
 	private boolean _mute;
 
-	public MediaVolumeController(Context context) {
-		_logger = new SmartMirrorLogger(TAG);
+	private boolean _isInitialized;
 
-		_context = context;
-		_broadcastController = new BroadcastController(_context);
-		_receiverController = new ReceiverController(_context);
-		_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Constants.BROADCAST_SCREEN_ENABLED });
-
-		_audioManager = (AudioManager) _context.getSystemService(Context.AUDIO_SERVICE);
-		_currentVolume = _audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-		_maxVolume = _audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		_mute = _audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
-
-		sendVolumeBroadcast();
+	public static MediaVolumeController getInstance() {
+		return SINGLETON_CONTROLLER;
 	}
 
-	public void IncreaseVolume() {
+	private MediaVolumeController() {
+		_logger = new SmartMirrorLogger(TAG);
+	}
+
+	public void initialize(Context context) {
+		if (!_isInitialized) {
+			_context = context;
+			_broadcastController = new BroadcastController(_context);
+			_receiverController = new ReceiverController(_context);
+			_receiverController.RegisterReceiver(_screenEnableReceiver,
+					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
+
+			_audioManager = (AudioManager) _context.getSystemService(Context.AUDIO_SERVICE);
+			_currentVolume = _audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+			_maxVolume = _audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+			_mute = _audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
+
+			sendVolumeBroadcast();
+
+			_isInitialized = true;
+		}
+	}
+
+	public boolean IncreaseVolume() {
 		_logger.Debug("IncreaseVolume");
+
+		if (!_isInitialized) {
+			_logger.Error("not initialized!");
+			return false;
+		}
+
 		if (_mute) {
 			_logger.Warn("Audio stream is muted!");
-			return;
+			return false;
 		}
+
 		if (_currentVolume >= _maxVolume) {
 			_logger.Warn("Current volume is already _maxVolume: " + String.valueOf(_maxVolume));
-			return;
+			return false;
 		}
+
 		int newVolume = _currentVolume + VOLUME_CHANGE_STEP;
 		if (newVolume > _maxVolume) {
 			newVolume = _maxVolume;
 		}
+
 		_logger.Debug("newVolume: " + String.valueOf(newVolume));
 		_audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0);
 		sendVolumeBroadcast();
+
+		return true;
 	}
 
-	public void DecreaseVolume() {
+	public boolean DecreaseVolume() {
 		_logger.Debug("DecreaseVolume");
+
+		if (!_isInitialized) {
+			_logger.Error("not initialized!");
+			return false;
+		}
+
 		if (_mute) {
 			_logger.Warn("Audio stream is muted!");
-			return;
+			return false;
 		}
+
 		if (_currentVolume <= 0) {
 			_logger.Warn("Current volume is already 0!");
-			return;
+			return false;
 		}
+
 		int newVolume = _currentVolume - VOLUME_CHANGE_STEP;
 		if (newVolume < 0) {
 			newVolume = 0;
 		}
+
 		_logger.Debug("newVolume: " + String.valueOf(newVolume));
 		_audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0);
 		sendVolumeBroadcast();
+
+		return true;
 	}
 
-	public void SetVolume(int volume) {
+	public boolean SetVolume(int volume) {
 		_logger.Debug("SetVolume: " + String.valueOf(volume));
+
+		if (!_isInitialized) {
+			_logger.Error("not initialized!");
+			return false;
+		}
+
 		if (_mute) {
 			_logger.Warn("Audio stream is muted!");
 			UnmuteVolume();
 		}
+
 		if (_currentVolume <= 0) {
 			_logger.Warn("Current volume is already 0!");
-			return;
+			return false;
 		}
+
 		if (_currentVolume >= _maxVolume) {
 			_logger.Warn("Current volume is already _maxVolume: " + String.valueOf(_maxVolume));
-			return;
+			return false;
 		}
 
 		if (volume < 0) {
@@ -102,45 +147,100 @@ public class MediaVolumeController {
 		if (volume > _maxVolume) {
 			volume = _maxVolume;
 		}
+
 		_logger.Debug("newVolume: " + String.valueOf(volume));
 		_audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
 		sendVolumeBroadcast();
+
+		return true;
 	}
 
 	@SuppressWarnings("deprecation")
-	public void MuteVolume() {
+	public boolean MuteVolume() {
 		_logger.Debug("MuteVolume");
+
+		if (!_isInitialized) {
+			_logger.Error("not initialized!");
+			return false;
+		}
+
 		if (_mute) {
 			_logger.Warn("Audio stream is already muted!");
-			return;
+			return false;
 		}
+
 		_audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
 		_mute = _audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
 		sendVolumeBroadcast();
+
+		return true;
 	}
 
 	@SuppressWarnings("deprecation")
-	public void UnmuteVolume() {
+	public boolean UnmuteVolume() {
 		_logger.Debug("UnmuteVolume");
+
+		if (!_isInitialized) {
+			_logger.Error("not initialized!");
+			return false;
+		}
+
 		if (!_mute) {
 			_logger.Warn("Audio stream is already unmuted!");
-			return;
+			return false;
 		}
+
 		_audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
 		_mute = _audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
 		sendVolumeBroadcast();
+
+		return true;
 	}
 
 	public int GetMaxVolume() {
 		return _maxVolume;
 	}
 
-	public String GetCurrentVolume() {
-		return String.valueOf(_currentVolume);
+	public int GetCurrentVolume() {
+		return _currentVolume;
 	}
 
-	public void Dispose() {
+	public boolean IsInitialized() {
+		return _isInitialized;
+	}
+
+	@SuppressWarnings("deprecation")
+	public boolean SetCurrentVolume(int currentVolume) {
+		_logger.Debug("SetCurrentVolume: " + String.valueOf(currentVolume));
+
+		if (!_isInitialized) {
+			_logger.Error("not initialized!");
+			return false;
+		}
+
+		if (currentVolume == 0) {
+			_audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+			_mute = _audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
+		} else {
+			_audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+			_mute = _audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
+		}
+		_currentVolume = currentVolume;
+
+		return true;
+	}
+
+	public boolean Dispose() {
+		_logger.Debug("Dispose");
+
+		if (!_isInitialized) {
+			_logger.Error("not initialized!");
+			return false;
+		}
+
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+
+		return true;
 	}
 
 	private void sendVolumeBroadcast() {
@@ -148,9 +248,9 @@ public class MediaVolumeController {
 		_mute = _audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
 		String volumeText = "";
 		if (_mute) {
-			volumeText = "Vol.: mute";
+			volumeText = "mute";
 		} else {
-			volumeText = "Vol.: " + String.valueOf(_currentVolume);
+			volumeText = String.valueOf(_currentVolume);
 		}
 		_broadcastController.SendStringBroadcast(Constants.BROADCAST_SHOW_VOLUME_MODEL, Constants.BUNDLE_VOLUME_MODEL,
 				volumeText);

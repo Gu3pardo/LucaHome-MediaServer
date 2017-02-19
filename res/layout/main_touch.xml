@@ -551,6 +551,15 @@
         android:text="Vol.: 85"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
+    <guepardoapps.views.verticalseekbar.VerticalSeekbarView
+        android:id="@+id/volumeSlider"
+        android:layout_width="25dp"
+        android:layout_height="125dp"
+        android:layout_above="@+id/volumeTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/centerTextView"
+        android:layout_margin="5dp" />
+
     <View
         android:id="@+id/batteryAlarm"
         android:layout_width="18dp"

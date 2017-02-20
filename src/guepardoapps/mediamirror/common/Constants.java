@@ -2,16 +2,21 @@ package guepardoapps.mediamirror.common;
 
 public class Constants {
 	// DATE VIEW
-	public static final int DATE_UPDATE_TIMEOUT = 15 * 1000;
 	public static final String BUNDLE_DATE_MODEL = "BUNDLE_DATE_MODEL";
 	public static final String BROADCAST_SHOW_DATE_MODEL = "guepardoapps.mediamirror.show.date_model";
 	// RASPBERRY VIEW
 	public static final int TEMPERATURE_UPDATE_TIMEOUT = 5 * 60 * 1000;
+	public static final int SOCKET_LIST_UPDATE_TIMEOUT = 30 * 60 * 1000;
 	public static final String ACTION_GET_TEMPERATURES = "getcurrenttemperaturerest";
+	public static final String ACTION_GET_SOCKETS = "getsockets";
 	public static final String BUNDLE_RASPBERRY_DATA_MODEL = "BUNDLE_RASPBERRY_DATA_MODEL";
+	public static final String BUNDLE_SOCKET_LIST = "BUNDLE_SOCKET_LIST";
 	public static final String BROADCAST_SHOW_RASPBERRY_DATA_MODEL = "guepardoapps.mediamirror.show.raspberry_data_model";
 	public static final String BROADCAST_DOWNLOAD_TEMPERATURE_FINISHED = "guepardoapps.mediamirror.broadcast.DOWNLOAD_TEMPERATURE_FINISHED";
 	public static final String BROADCAST_PERFORM_TEMPERATURE_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_TEMPERATURE_UPDATE";
+	public static final String BROADCAST_DOWNLOAD_SOCKET_FINISHED = "guepardoapps.mediamirror.broadcast.DOWNLOAD_SOCKET_FINISHED";
+	public static final String BROADCAST_PERFORM_SOCKET_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_SOCKET_UPDATE";
+	public static final String BROADCAST_SOCKET_LIST = "guepardoapps.mediamirror.broadcast.SOCKET_LIST";
 	// BIRTHDAY VIEW
 	public static final int BIRTHDAY_UPDATE_TIMEOUT = 12 * 60 * 60 * 1000;
 	public static final String ACTION_GET_BIRTHDAYS = "getbirthdays";

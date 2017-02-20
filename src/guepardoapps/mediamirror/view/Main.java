@@ -14,11 +14,14 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import guepardoapps.mediamirror.common.Enables;
+import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.controller.ScreenController;
 import guepardoapps.mediamirror.services.*;
 import guepardoapps.mediamirror.tts.TTSService;
 import guepardoapps.mediamirror.view.controller.*;
+import guepardoapps.toolset.controller.SharedPrefController;
+import guepardoapps.lucahomelibrary.common.constants.SharedPrefConstants;
 import guepardoapps.mediamirror.R;
 
 public class Main extends YouTubeBaseActivity {
@@ -42,6 +45,7 @@ public class Main extends YouTubeBaseActivity {
 	private LayoutController _layoutController;
 	private RaspberryViewController _raspberryViewController;
 	private RSSViewController _rssViewController;
+	private SharedPrefController _sharedPrefController;
 	private VolumeViewController _volumeViewController;
 
 	private ScreenController _screenController;
@@ -56,6 +60,7 @@ public class Main extends YouTubeBaseActivity {
 		_logger.Debug("onCreate");
 
 		_context = this;
+		install();
 		checkPermissions();
 
 		initializeController();
@@ -67,20 +72,16 @@ public class Main extends YouTubeBaseActivity {
 			setContentView(R.layout.main_remote);
 		}
 
-		getWindow().addFlags(
-				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-				| WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD 
-				| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+				| WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
 				| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
 		getWindow().getDecorView()
-				.setSystemUiVisibility(
-						View.SYSTEM_UI_FLAG_LAYOUT_STABLE 
-						//| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-						| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN 
-						//| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-						| View.SYSTEM_UI_FLAG_FULLSCREEN 
-						| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+				.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+						// | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+						| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+						// | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+						| View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
 		initializeServices();
 
@@ -102,6 +103,17 @@ public class Main extends YouTubeBaseActivity {
 		_ttsService.Init();
 
 		startServices();
+	}
+
+	private void install() {
+		_logger.Debug("install");
+		_sharedPrefController = new SharedPrefController(_context, SharedPrefConstants.SHARED_PREF_NAME);
+		if (!_sharedPrefController.LoadBooleanValueFromSharedPreferences(SharedPrefConstants.SHARED_PREF_INSTALLED)) {
+			_logger.Info("Installing shared preferences!");
+			_sharedPrefController.SaveStringValue(SharedPrefConstants.USER_NAME, RaspPiConstants.USER_NAME);
+			_sharedPrefController.SaveStringValue(SharedPrefConstants.USER_PASSPHRASE, RaspPiConstants.PASS_PHRASE);
+			_sharedPrefController.SaveBooleanValue(SharedPrefConstants.SHARED_PREF_INSTALLED, true);
+		}
 	}
 
 	@Override

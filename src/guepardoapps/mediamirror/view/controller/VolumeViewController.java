@@ -111,6 +111,7 @@ public class VolumeViewController {
 		_maxVolume = _mediaVolumeController.GetMaxVolume();
 
 		_volumeValueTextView = (TextView) ((Activity) _context).findViewById(R.id.volumeTextView);
+		_volumeValueTextView.setText(String.valueOf(_mediaVolumeController.GetCurrentVolume()));
 		_volumeControl = (VerticalSeekbarView) ((Activity) _context).findViewById(R.id.volumeSlider);
 		_volumeControl.setStyle(VerticalSeekbarStyle.VOLUME_SLIDER);
 		_volumeControl.setOnVerticalSeebarMoveListener(new OnVerticalSeebarMoveListener() {

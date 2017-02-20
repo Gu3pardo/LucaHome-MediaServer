@@ -297,7 +297,9 @@
         android:layout_alignStart="@+id/weatherConditionImageView"
         android:layout_below="@+id/weatherForecast3TemperatureRange"
         android:layout_marginTop="25dp"
+        android:clickable="true"
         android:contentDescription="@string/contentDescription"
+        android:onClick="showTemperatureGraph"
         android:src="@drawable/temperature_icon" />
 
     <View
@@ -307,7 +309,9 @@
         android:layout_alignTop="@+id/temperatureRaspberry1"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/temperatureRaspberry1"
-        android:background="@drawable/circle_green" />
+        android:background="@drawable/circle_green"
+        android:clickable="true"
+        android:onClick="showTemperatureGraph" />
 
     <TextView
         android:id="@+id/temperatureRaspberry1Name"
@@ -317,7 +321,9 @@
         android:layout_alignTop="@+id/temperatureRaspberry1"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/temperatureRaspberry1Alarm"
+        android:clickable="true"
         android:gravity="center_vertical"
+        android:onClick="showTemperatureGraph"
         android:text="@string/raspberryText"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="bold" />
@@ -330,10 +336,24 @@
         android:layout_alignTop="@+id/temperatureRaspberry1"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/temperatureRaspberry1Name"
+        android:clickable="true"
         android:gravity="center_vertical"
+        android:onClick="showTemperatureGraph"
         android:text="@string/temperatureText"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/socketView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/weatherConditionImageView"
+        android:layout_below="@+id/temperatureRaspberry1"
+        android:layout_marginTop="25dp"
+        android:clickable="true"
+        android:contentDescription="@string/contentDescription"
+        android:onClick="showSocketsDialog"
+        android:src="@drawable/socket" />
 
     <com.google.android.youtube.player.YouTubePlayerView
         android:id="@+id/centerYoutubePlayer"

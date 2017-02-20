@@ -1,8 +1,11 @@
 <resources>
 
-    <color name="Background">#d32f2f</color>
-    <color name="DarkPrimary">#d32f2f</color>
-    <color name="Primary">#f44336</color>
+    <color name="Background">#000000</color>
+    <color name="DarkPrimary">#000000</color>
+    <color name="Primary">#000000</color>
+    <color name="OldBackground">#d32f2f</color>
+    <color name="OldDarkPrimary">#d32f2f</color>
+    <color name="OldPrimary">#f44336</color>
     <color name="LightPrimary">#ffcdd2</color>
     <color name="TextIcon">#ffffff</color>
     <color name="Accent">#ff5722</color>

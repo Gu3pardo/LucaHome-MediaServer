@@ -13,7 +13,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import guepardoapps.lucahomelibrary.common.classes.SerializableList;
+import guepardoapps.lucahomelibrary.common.dto.WirelessSocketDto;
+import guepardoapps.lucahomelibrary.view.customadapter.SocketListAdapter;
 
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
@@ -63,6 +69,28 @@ public class MediaMirrorDialogController extends DialogController {
 
 		Button btnOk = (Button) _dialog.findViewById(R.id.temperature_dialog_button);
 		btnOk.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				CloseDialogCallback.run();
+			}
+		});
+
+		showDialog(false);
+	}
+
+	public void ShowSocketListDialog(SerializableList<WirelessSocketDto> socketList) {
+		checkOpenDialog();
+
+		createDialog("ShowSocketListDialog", R.layout.dialog_skeleton_list);
+
+		TextView titleTextView = (TextView) _dialog.findViewById(R.id.dialog_list_title);
+		titleTextView.setText("Sockets");
+		ListView listView = (ListView) _dialog.findViewById(R.id.dialog_list_view);
+		SocketListAdapter listAdapter = new SocketListAdapter(_context, socketList);
+		listView.setAdapter(listAdapter);
+
+		Button btnClose = (Button) _dialog.findViewById(R.id.btnDialogClose);
+		btnClose.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				CloseDialogCallback.run();

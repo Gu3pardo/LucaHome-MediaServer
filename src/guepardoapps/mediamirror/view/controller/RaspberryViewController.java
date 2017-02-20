@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import es.dmoral.toasty.Toasty;
 
+import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
@@ -17,7 +18,9 @@ import guepardoapps.mediamirror.controller.MediaMirrorDialogController;
 import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.model.helper.RaspberryTemperatureHelper;
 import guepardoapps.mediamirror.test.RaspberryViewControllerTest;
-import guepardoapps.mediamirror.R;
+
+import guepardoapps.lucahomelibrary.common.classes.SerializableList;
+import guepardoapps.lucahomelibrary.common.dto.WirelessSocketDto;
 
 import guepardoapps.toolset.controller.ReceiverController;
 
@@ -30,6 +33,7 @@ public class RaspberryViewController {
 	private boolean _screenEnabled;
 
 	private RaspberryModel _raspberryModel;
+	private SerializableList<WirelessSocketDto> _socketList;
 
 	private Context _context;
 	private MediaMirrorDialogController _dialogController;
@@ -90,6 +94,18 @@ public class RaspberryViewController {
 		}
 	};
 
+	private BroadcastReceiver _socketListReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			@SuppressWarnings("unchecked")
+			SerializableList<WirelessSocketDto> socketList = (SerializableList<WirelessSocketDto>) intent
+					.getSerializableExtra(Constants.BUNDLE_SOCKET_LIST);
+			if (socketList != null) {
+				_socketList = socketList;
+			}
+		}
+	};
+
 	public RaspberryViewController(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
 		_context = context;
@@ -121,6 +137,7 @@ public class RaspberryViewController {
 					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
 					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+			_receiverController.RegisterReceiver(_socketListReceiver, new String[] { Constants.BROADCAST_SOCKET_LIST });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
@@ -139,6 +156,7 @@ public class RaspberryViewController {
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+		_receiverController.UnregisterReceiver(_socketListReceiver);
 		_isInitialized = false;
 	}
 
@@ -155,7 +173,11 @@ public class RaspberryViewController {
 
 	public void showSocketsDialog(View view) {
 		_logger.Debug("showSocketsDialog");
-		_logger.Warn("Not yet implemented!");
-		Toasty.warning(_context, "Not yet implemented!", Toast.LENGTH_LONG).show();
+		if (_socketList != null) {
+			_dialogController.ShowSocketListDialog(_socketList);
+		} else {
+			_logger.Error("_socketList is null!");
+			Toasty.warning(_context, "SocketList is null!!", Toast.LENGTH_LONG).show();
+		}
 	}
 }

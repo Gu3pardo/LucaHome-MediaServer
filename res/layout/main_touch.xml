@@ -605,11 +605,22 @@
         android:id="@+id/ipAdressTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/serverVersionTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/ipAdressText"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/serverVersionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="10dp"
-        android:text="@string/ipAdressText"
+        android:text="@string/serverVersion"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

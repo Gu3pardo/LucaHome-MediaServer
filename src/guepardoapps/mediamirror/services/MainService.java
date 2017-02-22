@@ -43,6 +43,7 @@ public class MainService extends Service {
 	private ForecastWeatherUpdater _forecastWeatherUpdater;
 	private IpAdressViewUpdater _ipAdressViewUpdater;
 	private RSSViewUpdater _rssViewUpdater;
+	private SocketListUpdater _socketListUpdater;
 	private TemperatureUpdater _temperatureUpdater;
 
 	private TTSService _ttsService;
@@ -58,6 +59,7 @@ public class MainService extends Service {
 			_forecastWeatherUpdater.DownloadWeather();
 			_ipAdressViewUpdater.GetCurrentLocalIpAddress();
 			_rssViewUpdater.LoadRss();
+			_socketListUpdater.DownloadSocketList();
 			_temperatureUpdater.DownloadTemperature();
 		}
 	};
@@ -105,7 +107,7 @@ public class MainService extends Service {
 
 			if (_dateViewUpdater == null) {
 				_dateViewUpdater = new DateViewUpdater(_context);
-				_dateViewUpdater.Start(Constants.DATE_UPDATE_TIMEOUT);
+				_dateViewUpdater.Start();
 			}
 
 			if (_forecastWeatherUpdater == null) {
@@ -121,6 +123,11 @@ public class MainService extends Service {
 			if (_rssViewUpdater == null) {
 				_rssViewUpdater = new RSSViewUpdater(_context);
 				_rssViewUpdater.Start(Constants.RSS_UPDATE_TIMEOUT);
+			}
+
+			if (_socketListUpdater == null) {
+				_socketListUpdater = new SocketListUpdater(_context);
+				_socketListUpdater.Start(Constants.SOCKET_LIST_UPDATE_TIMEOUT);
 			}
 
 			if (_temperatureUpdater == null) {
@@ -184,6 +191,7 @@ public class MainService extends Service {
 		_forecastWeatherUpdater.Dispose();
 		_ipAdressViewUpdater.Dispose();
 		_rssViewUpdater.Dispose();
+		_socketListUpdater.Dispose();
 		_temperatureUpdater.Dispose();
 
 		_ttsService.Dispose();

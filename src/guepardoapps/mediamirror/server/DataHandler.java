@@ -6,7 +6,8 @@ import java.util.Comparator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-
+import android.widget.Toast;
+import es.dmoral.toasty.Toasty;
 import guepardoapps.games.common.GameConstants;
 
 import guepardoapps.mediamirror.common.Constants;
@@ -40,7 +41,7 @@ public class DataHandler {
 	private DBController _dbController;
 	private MediaVolumeController _mediaVolumeController;
 
-	private static final int SEA_SOUND_TIMEOUT = 25 * 60 * 1000;
+	private static final int SEA_SOUND_STOP_TIMEOUT = 30 * 60 * 1000;
 	private Handler _seaSoundHandler = new Handler();
 	private Runnable _seaSoundRunnable = new Runnable() {
 		@Override
@@ -133,12 +134,22 @@ public class DataHandler {
 					}
 					return action.toString() + ":" + answer;
 				case PLAY_SEA_SOUND:
+					_logger.Debug(String.format("Received data for PLAY_SEA_SOUND is %s", data));
+					int timeOut;
+					try {
+						timeOut = Integer.parseInt(data) * 60 * 1000;
+						_logger.Debug(String.format("timeOut for PLAY_SEA_SOUND is %s", timeOut));
+					} catch (Exception ex) {
+						_logger.Error(ex.toString());
+						Toasty.error(_context, ex.toString(), Toast.LENGTH_LONG).show();
+						timeOut = SEA_SOUND_STOP_TIMEOUT;
+					}
 					CenterModel playSeaSoundModel = new CenterModel(false, "", true, YoutubeIDs.SEA_SOUND_ID, false,
 							"");
 					_logger.Info("Created center model: " + playSeaSoundModel.toString());
 					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
 							Constants.BUNDLE_CENTER_MODEL, playSeaSoundModel);
-					_seaSoundHandler.postDelayed(_seaSoundRunnable, SEA_SOUND_TIMEOUT);
+					_seaSoundHandler.postDelayed(_seaSoundRunnable, timeOut);
 					break;
 				case STOP_SEA_SOUND:
 					CenterModel stopSeaSoundModel = new CenterModel(true, "", false, "", false, "");

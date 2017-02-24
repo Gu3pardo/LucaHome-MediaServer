@@ -51,6 +51,7 @@ public class DataHandler {
 			_logger.Info("Created center model: " + goodNightModel.toString());
 			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
 					Constants.BUNDLE_CENTER_MODEL, goodNightModel);
+			_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_OFF);
 		}
 	};
 

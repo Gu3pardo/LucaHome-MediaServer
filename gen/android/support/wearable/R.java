@@ -167,7 +167,7 @@ public final class R {
 		public static final int right = 0x7f0f0003;
 		public static final int start = 0x7f0f0012;
 		public static final int text = 0x7f0f0088;
-		public static final int title = 0x7f0f012e;
+		public static final int title = 0x7f0f012f;
 		public static final int top = 0x7f0f0004;
 		public static final int width = 0x7f0f0007;
 	}
@@ -189,7 +189,7 @@ public final class R {
 		public static final int alert_dialog_wearable = 0x7f030000;
 		public static final int dismiss_overlay = 0x7f030011;
 		public static final int error_layout = 0x7f030012;
-		public static final int watch_card_content = 0x7f03002d;
+		public static final int watch_card_content = 0x7f03002f;
 	}
 	public static final class string {
 		public static final int dismiss_overlay_button_label = 0x7f0d0000;

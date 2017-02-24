@@ -1,6 +1,7 @@
 package guepardoapps.mediamirror.services;
 
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -49,6 +50,9 @@ public class MainService extends Service {
 	private TTSService _ttsService;
 
 	private ConverterTest _converterTest;
+
+	private PowerManager _powerManager;
+	private PowerManager.WakeLock _wakeLock;
 
 	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
 		@Override
@@ -149,6 +153,10 @@ public class MainService extends Service {
 			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_RSS_DATA_MODEL,
 					Constants.BUNDLE_RSS_DATA_MODEL, rssModel);
 
+			_powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+			_wakeLock = _powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MediaServerMainService");
+			_wakeLock.acquire();
+
 			if (Enables.TESTING_ENABLED) {
 				_converterTest = new ConverterTest();
 				_converterTest.PerformTests();
@@ -195,5 +203,7 @@ public class MainService extends Service {
 		_temperatureUpdater.Dispose();
 
 		_ttsService.Dispose();
+
+		_wakeLock.release();
 	}
 }

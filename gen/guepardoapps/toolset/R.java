@@ -78,16 +78,16 @@ public final class R {
 		public static final int floating_message_background = 0x7f0f0084;
 		public static final int floating_message_text = 0x7f0f0086;
 		public static final int floating_message_title = 0x7f0f0085;
-		public static final int toast_icon = 0x7f0f012c;
-		public static final int toast_root = 0x7f0f012b;
-		public static final int toast_text = 0x7f0f012d;
+		public static final int toast_icon = 0x7f0f012d;
+		public static final int toast_root = 0x7f0f012c;
+		public static final int toast_text = 0x7f0f012e;
 	}
 	public static final class layout {
 		public static final int custom_dialog_1 = 0x7f030002;
 		public static final int custom_dialog_2 = 0x7f030003;
 		public static final int custom_dialog_3 = 0x7f030004;
 		public static final int floating_message = 0x7f030013;
-		public static final int toast_layout = 0x7f03002c;
+		public static final int toast_layout = 0x7f03002e;
 	}
 	public static final class string {
 		public static final int about = 0x7f0d002b;

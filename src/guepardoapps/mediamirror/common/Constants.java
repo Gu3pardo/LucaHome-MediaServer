@@ -6,7 +6,7 @@ public class Constants {
 	public static final String BROADCAST_SHOW_DATE_MODEL = "guepardoapps.mediamirror.show.date_model";
 	// RASPBERRY VIEW
 	public static final int TEMPERATURE_UPDATE_TIMEOUT = 5 * 60 * 1000;
-	public static final int SOCKET_LIST_UPDATE_TIMEOUT = 30 * 60 * 1000;
+	public static final int SOCKET_LIST_UPDATE_TIMEOUT = 5 * 60 * 1000;
 	public static final String ACTION_GET_TEMPERATURES = "getcurrenttemperaturerest";
 	public static final String ACTION_GET_SOCKETS = "getsockets";
 	public static final String BUNDLE_RASPBERRY_DATA_MODEL = "BUNDLE_RASPBERRY_DATA_MODEL";
@@ -18,7 +18,7 @@ public class Constants {
 	public static final String BROADCAST_PERFORM_SOCKET_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_SOCKET_UPDATE";
 	public static final String BROADCAST_SOCKET_LIST = "guepardoapps.mediamirror.broadcast.SOCKET_LIST";
 	// BIRTHDAY VIEW
-	public static final int BIRTHDAY_UPDATE_TIMEOUT = 12 * 60 * 60 * 1000;
+	public static final int BIRTHDAY_UPDATE_TIMEOUT = 3 * 60 * 60 * 1000;
 	public static final String ACTION_GET_BIRTHDAYS = "getbirthdays";
 	public static final String BUNDLE_BIRTHDAY_MODEL = "BUNDLE_BIRTHDAY_MODEL";
 	public static final String BROADCAST_SHOW_BIRTHDAY_MODEL = "guepardoapps.mediamirror.show.birthday_model";
@@ -26,7 +26,7 @@ public class Constants {
 	public static final String BROADCAST_PERFORM_BIRTHDAY_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_BIRTHDAY_UPDATE";
 	// CURRENT WEATHER VIEW
 	public static final String CITY = "Munich";
-	public static final int CURRENT_WEATHER_UPDATE_TIMEOUT = 15 * 60 * 1000;
+	public static final int CURRENT_WEATHER_UPDATE_TIMEOUT = 5 * 60 * 1000;
 	public static final String BUNDLE_CURRENT_WEATHER_MODEL = "BUNDLE_CURRENT_WEATHER_MODEL";
 	public static final String BROADCAST_SHOW_CURRENT_WEATHER_MODEL = "guepardoapps.mediamirror.show.current_weather_model";
 	public static final String BROADCAST_PERFORM_CURRENT_WEATHER_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_CURRENT_WEATHER_UPDATE";
@@ -36,7 +36,7 @@ public class Constants {
 	public static final String BROADCAST_SHOW_FORECAST_WEATHER_MODEL = "guepardoapps.mediamirror.show.forecast_weather_model";
 	public static final String BROADCAST_PERFORM_FORECAST_WEATHER_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_FORECAST_WEATHER_UPDATE";
 	// IP ADRESS VIEW
-	public static final int IP_ADRESS_UPDATE_TIMEOUT = 12 * 60 * 60 * 1000;
+	public static final int IP_ADRESS_UPDATE_TIMEOUT = 24 * 60 * 60 * 1000;
 	public static final String BUNDLE_IP_ADRESS_MODEL = "BUNDLE_IP_ADRESS_MODEL";
 	public static final String BROADCAST_SHOW_IP_ADRESS_MODEL = "guepardoapps.mediamirror.show.ip_adress_model";
 	public static final String BROADCAST_PERFORM_IP_ADDRESS_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_IP_ADDRESS_UPDATE";

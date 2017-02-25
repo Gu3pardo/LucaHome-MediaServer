@@ -153,10 +153,12 @@ public class RaspberryViewController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
+
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 		_receiverController.UnregisterReceiver(_socketListReceiver);
+
 		_isInitialized = false;
 	}
 

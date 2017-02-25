@@ -87,7 +87,7 @@ public final class R {
 		public static final int custom_dialog_2 = 0x7f030003;
 		public static final int custom_dialog_3 = 0x7f030004;
 		public static final int floating_message = 0x7f030013;
-		public static final int toast_layout = 0x7f03002e;
+		public static final int toast_layout = 0x7f03002d;
 	}
 	public static final class string {
 		public static final int about = 0x7f0d002b;

@@ -83,8 +83,10 @@ public class ScreenController extends DisplayController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
+
 		_receiverController.UnregisterReceiver(_actionReceiver);
 		_receiverController.UnregisterReceiver(_valueReceiver);
+
 		_isInitialized = false;
 	}
 

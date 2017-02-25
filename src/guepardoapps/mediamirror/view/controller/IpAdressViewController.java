@@ -41,7 +41,7 @@ public class IpAdressViewController {
 		_logger.Debug("onCreate");
 
 		_screenEnabled = true;
-		
+
 		_ipAdressTextView = (TextView) ((Activity) _context).findViewById(R.id.ipAdressTextView);
 	}
 
@@ -73,9 +73,11 @@ public class IpAdressViewController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
+
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+
 		_isInitialized = false;
 	}
 
@@ -112,7 +114,7 @@ public class IpAdressViewController {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_screenEnabled = true;
-			
+
 			_ipAdressTextView = (TextView) ((Activity) _context).findViewById(R.id.ipAdressTextView);
 		}
 	};

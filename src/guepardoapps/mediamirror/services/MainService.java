@@ -1,11 +1,16 @@
 package guepardoapps.mediamirror.services;
 
-import android.os.IBinder;
-import android.os.PowerManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
+import android.os.IBinder;
+import android.os.PowerManager;
+import android.widget.Toast;
+
+import es.dmoral.toasty.Toasty;
 
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.Enables;
@@ -17,11 +22,12 @@ import guepardoapps.mediamirror.model.CenterModel;
 import guepardoapps.mediamirror.model.RSSModel;
 import guepardoapps.mediamirror.server.ServerThread;
 import guepardoapps.mediamirror.test.ConverterTest;
-import guepardoapps.mediamirror.tts.TTSService;
 import guepardoapps.mediamirror.updater.*;
+import guepardoapps.mediamirror.view.Main;
 
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
+import guepardoapps.toolset.controller.TTSController;
 
 public class MainService extends Service {
 
@@ -31,6 +37,7 @@ public class MainService extends Service {
 	private Context _context;
 	private BroadcastController _broadcastController;
 	private ReceiverController _receiverController;
+	private TTSController _ttsController;
 
 	private boolean _isInitialized;
 
@@ -47,12 +54,13 @@ public class MainService extends Service {
 	private SocketListUpdater _socketListUpdater;
 	private TemperatureUpdater _temperatureUpdater;
 
-	private TTSService _ttsService;
-
 	private ConverterTest _converterTest;
 
 	private PowerManager _powerManager;
 	private PowerManager.WakeLock _wakeLock;
+
+	private WifiManager _wifiManager;
+	private WifiLock _wifiLock;
 
 	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {
 		@Override
@@ -139,9 +147,9 @@ public class MainService extends Service {
 				_temperatureUpdater.Start(Constants.TEMPERATURE_UPDATE_TIMEOUT);
 			}
 
-			if (_ttsService == null) {
-				_ttsService = new TTSService(_context);
-				_ttsService.Init();
+			if (_ttsController == null) {
+				_ttsController = new TTSController(_context, Enables.TTS_ENABLED);
+				_ttsController.Init();
 			}
 
 			CenterModel centerModel = new CenterModel(false, "", true, YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId(),
@@ -153,9 +161,18 @@ public class MainService extends Service {
 			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_RSS_DATA_MODEL,
 					Constants.BUNDLE_RSS_DATA_MODEL, rssModel);
 
-			_powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-			_wakeLock = _powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MediaServerMainService");
+			if (_powerManager == null) {
+				_powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+			}
+			_wakeLock = _powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MediaServerMainService_WakeLock");
 			_wakeLock.acquire();
+
+			if (_wifiManager == null) {
+				_wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+			}
+			_wifiLock = _wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF,
+					"MediaServerMainService_WifiLock");
+			_wifiLock.acquire();
 
 			if (Enables.TESTING_ENABLED) {
 				_converterTest = new ConverterTest();
@@ -202,8 +219,20 @@ public class MainService extends Service {
 		_socketListUpdater.Dispose();
 		_temperatureUpdater.Dispose();
 
-		_ttsService.Dispose();
+		_ttsController.Dispose();
 
 		_wakeLock.release();
+		_wifiLock.release();
+
+		restartActivity();
+	}
+
+	private void restartActivity() {
+		_logger.Info("Restarting activity Main.class!");
+		Toasty.info(_context, "Restarting activity Main.class!", Toast.LENGTH_LONG).show();
+
+		Intent intent = new Intent(_context, Main.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
 	}
 }

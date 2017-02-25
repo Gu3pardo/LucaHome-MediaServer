@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.view.View;
 import android.widget.TextView;
@@ -55,7 +54,7 @@ public class BatteryViewController {
 		_logger.Debug("onResume");
 		if (!_isInitialized) {
 			_logger.Debug("Initializing!");
-			_context.registerReceiver(_batteryInfoReveicer, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+			_receiverController.RegisterReceiver(_batteryInfoReveicer, new String[] { Intent.ACTION_BATTERY_CHANGED });
 			_receiverController.RegisterReceiver(_screenEnableReceiver,
 					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
@@ -68,9 +67,11 @@ public class BatteryViewController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
-		_context.unregisterReceiver(_batteryInfoReveicer);
+
+		_receiverController.UnregisterReceiver(_batteryInfoReveicer);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+
 		_isInitialized = false;
 	}
 

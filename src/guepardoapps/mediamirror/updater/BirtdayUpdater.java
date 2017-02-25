@@ -117,8 +117,10 @@ public class BirtdayUpdater {
 					for (BirthdayHelper entry : _nextBirthdaysList) {
 						if (entry != null) {
 							if (entry.HasBirthday()) {
-								_broadcastController.SendStringBroadcast(Constants.BROADCAST_SPEAK_TEXT,
-										Constants.BUNDLE_SPEAK_TEXT, entry.GetNotificationString());
+								_broadcastController.SendStringBroadcast(
+										guepardoapps.toolset.common.Constants.BROADCAST_SPEAK_TEXT,
+										guepardoapps.toolset.common.Constants.BUNDLE_SPEAK_TEXT,
+										entry.GetNotificationString());
 								break;
 							}
 						}

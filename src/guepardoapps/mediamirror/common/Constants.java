@@ -62,9 +62,6 @@ public class Constants {
 	public static final String BUNDLE_SCREEN_BRIGHTNESS = "BUNDLE_SCREEN_BRIGHTNESS";
 	public static final String BROADCAST_ACTION_SCREEN_BRIGHTNESS = "guepardoapps.mediamirror.action.screen_brightness";
 	public static final String BROADCAST_VALUE_SCREEN_BRIGHTNESS = "guepardoapps.mediamirror.value.screen_brightness";
-	// SPEAK DATA
-	public static final String BUNDLE_SPEAK_TEXT = "BUNDLE_SPEAK_TEXT";
-	public static final String BROADCAST_SPEAK_TEXT = "guepardoapps.mediamirror.speak.text";
 	// SCHEDULE DATA
 	public static final int SCHEDULE_UPDATE_TIMEOUT = 2 * 60 * 60 * 1000;
 	public static final String ACTION_GET_SCHEDULES = "getschedules";
@@ -102,7 +99,5 @@ public class Constants {
 	// TIME
 	public static final int START_MUTE_TIME = 23;
 	public static final int END_MUTE_TIME = 6;
-	// SERVER ID
-	public static final int SERVER_ID = 1;
 
 }

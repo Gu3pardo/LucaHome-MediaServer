@@ -22,7 +22,7 @@ public final class R {
 		public static final int toast_text = 0x7f0f012e;
 	}
 	public static final class layout {
-		public static final int toast_layout = 0x7f03002e;
+		public static final int toast_layout = 0x7f03002d;
 	}
 	public static final class string {
 		public static final int app_name = 0x7f0d0024;

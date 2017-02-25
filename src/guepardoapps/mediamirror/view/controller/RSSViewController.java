@@ -106,9 +106,11 @@ public class RSSViewController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
+
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+
 		_isInitialized = false;
 	}
 

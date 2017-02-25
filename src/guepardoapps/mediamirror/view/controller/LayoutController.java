@@ -30,7 +30,7 @@ public class LayoutController {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_screenNormalReceiver onReceive");
-			((Activity) _context).setContentView(R.layout.main_remote);
+			((Activity) _context).setContentView(R.layout.main_touch);
 			_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_ENABLED);
 		}
 	};
@@ -47,18 +47,14 @@ public class LayoutController {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_screenOnReceiver onReceive");
-			_screenController.ScreenOn(new int[] { 
-					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
-					WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD, 
-					WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED,
+			_screenController.ScreenOn(new int[] { WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+					WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD, WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED,
 					WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON },
-					new int[] { 
-							View.SYSTEM_UI_FLAG_LAYOUT_STABLE, 
-							//View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION,
-							View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN, 
-							//View.SYSTEM_UI_FLAG_HIDE_NAVIGATION,
-							View.SYSTEM_UI_FLAG_FULLSCREEN, 
-							View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY });
+					new int[] { View.SYSTEM_UI_FLAG_LAYOUT_STABLE,
+							// View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION,
+							View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN,
+							// View.SYSTEM_UI_FLAG_HIDE_NAVIGATION,
+							View.SYSTEM_UI_FLAG_FULLSCREEN, View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY });
 			_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_ENABLED);
 		}
 	};
@@ -81,7 +77,7 @@ public class LayoutController {
 		_receiverController = new ReceiverController(_context);
 		_screenController = new ScreenController(_context);
 
-		((Activity) _context).setContentView(R.layout.main_remote);
+		((Activity) _context).setContentView(R.layout.main_touch);
 	}
 
 	public void onCreate() {
@@ -110,10 +106,12 @@ public class LayoutController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
+
 		_receiverController.UnregisterReceiver(_screenNormalReceiver);
 		_receiverController.UnregisterReceiver(_screenSaverReceiver);
 		_receiverController.UnregisterReceiver(_screenOnReceiver);
 		_receiverController.UnregisterReceiver(_screenOffReceiver);
+
 		_isInitialized = false;
 	}
 }

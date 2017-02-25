@@ -154,7 +154,9 @@ public class GameViewController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
+
 		_gameDialogController.CloseDialogCallback.run();
+
 		_receiverController.UnregisterReceiver(_pongStartReveicer);
 		_receiverController.UnregisterReceiver(_pongStopReveicer);
 		_receiverController.UnregisterReceiver(_snakeStartReveicer);
@@ -163,6 +165,7 @@ public class GameViewController {
 		_receiverController.UnregisterReceiver(_tetrisStopReveicer);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+
 		_isInitialized = false;
 	}
 }

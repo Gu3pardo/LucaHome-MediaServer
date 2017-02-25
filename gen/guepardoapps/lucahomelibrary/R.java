@@ -698,14 +698,14 @@ public final class R {
 		public static final int list_temperature_item = 0x7f030022;
 		public static final int list_timer_item = 0x7f030023;
 		public static final int list_youtube_video_item = 0x7f030024;
-		public static final int notification_play_sound = 0x7f030027;
-		public static final int notification_play_youtube = 0x7f030028;
-		public static final int notification_skeleton = 0x7f030029;
-		public static final int notification_skeleton_socket = 0x7f03002a;
-		public static final int notification_skeleton_textview = 0x7f03002b;
-		public static final int notification_sleep = 0x7f03002c;
-		public static final int toast_layout = 0x7f03002e;
-		public static final int watch_card_content = 0x7f03002f;
+		public static final int notification_play_sound = 0x7f030026;
+		public static final int notification_play_youtube = 0x7f030027;
+		public static final int notification_skeleton = 0x7f030028;
+		public static final int notification_skeleton_socket = 0x7f030029;
+		public static final int notification_skeleton_textview = 0x7f03002a;
+		public static final int notification_sleep = 0x7f03002b;
+		public static final int toast_layout = 0x7f03002d;
+		public static final int watch_card_content = 0x7f03002e;
 	}
 	public static final class raw {
 		public static final int gtm_analytics = 0x7f070000;

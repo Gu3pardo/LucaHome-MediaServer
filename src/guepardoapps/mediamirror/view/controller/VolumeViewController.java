@@ -148,10 +148,13 @@ public class VolumeViewController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
+
 		_receiverController.UnregisterReceiver(_volumeInfoReveicer);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+
 		_mediaVolumeController.Dispose();
+
 		_isInitialized = false;
 	}
 }

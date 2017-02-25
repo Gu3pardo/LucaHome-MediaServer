@@ -343,18 +343,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/socketView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignStart="@+id/weatherConditionImageView"
-        android:layout_below="@+id/temperatureRaspberry1"
-        android:layout_marginTop="25dp"
-        android:clickable="true"
-        android:contentDescription="@string/contentDescription"
-        android:onClick="showSocketsDialog"
-        android:src="@drawable/socket" />
-
     <com.google.android.youtube.player.YouTubePlayerView
         android:id="@+id/centerYoutubePlayer"
         android:layout_width="480dp"
@@ -622,5 +610,17 @@
         android:layout_marginEnd="10dp"
         android:text="@string/serverVersion"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ImageView
+        android:id="@+id/socketView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/timeTextView"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:contentDescription="@string/contentDescription"
+        android:onClick="showSocketsDialog"
+        android:src="@drawable/socket" />
 
 </RelativeLayout>

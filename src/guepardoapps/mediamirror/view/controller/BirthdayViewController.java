@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
@@ -42,12 +41,6 @@ public class BirthdayViewController {
 
 	private BirthdayViewControllerTest _birthdayViewTest;
 
-	private static IntentFilter _dateIntentFilter;
-	static {
-		_dateIntentFilter = new IntentFilter();
-		_dateIntentFilter.addAction(Intent.ACTION_DATE_CHANGED);
-	}
-
 	public BirthdayViewController(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
 		_context = context;
@@ -81,8 +74,7 @@ public class BirthdayViewController {
 					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
 					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
-
-			_context.registerReceiver(_dateChangedReceiver, _dateIntentFilter);
+			_receiverController.RegisterReceiver(_dateChangedReceiver, new String[] { Intent.ACTION_DATE_CHANGED });
 
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
@@ -99,11 +91,11 @@ public class BirthdayViewController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
+
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
-
-		_context.unregisterReceiver(_dateChangedReceiver);
+		_receiverController.UnregisterReceiver(_dateChangedReceiver);
 
 		_isInitialized = false;
 	}

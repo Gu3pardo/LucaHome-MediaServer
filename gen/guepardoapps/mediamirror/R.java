@@ -1182,7 +1182,7 @@ containing a value of this type.
         public static final int alertTitle=0x7f0f002b;
         public static final int all=0x7f0f0000;
         public static final int animatedWrapperContainer=0x7f0f002a;
-        public static final int batteryAlarm=0x7f0f0104;
+        public static final int batteryAlarm=0x7f0f0105;
         public static final int batteryTextView=0x7f0f0103;
         public static final int birthday1AlarmView=0x7f0f00fd;
         public static final int birthday1TextView=0x7f0f00fe;
@@ -1325,7 +1325,7 @@ containing a value of this type.
         public static final int hybrid=0x7f0f0015;
         public static final int information_item_key=0x7f0f00a6;
         public static final int information_item_value=0x7f0f00a7;
-        public static final int ipAdressTextView=0x7f0f0105;
+        public static final int ipAdressTextView=0x7f0f0106;
         public static final int left=0x7f0f0002;
         public static final int match_parent=0x7f0f0020;
         public static final int message=0x7f0f0083;
@@ -1372,9 +1372,9 @@ containing a value of this type.
         public static final int scheduler_item_border=0x7f0f00b0;
         public static final int scheduler_item_image=0x7f0f00af;
         public static final int selectionDetails=0x7f0f001f;
-        public static final int serverVersionTextView=0x7f0f0108;
+        public static final int serverVersionTextView=0x7f0f0107;
         public static final int snake=0x7f0f0087;
-        public static final int socketView=0x7f0f0106;
+        public static final int socketView=0x7f0f0108;
         public static final int socket_10_off=0x7f0f0125;
         public static final int socket_10_on=0x7f0f0124;
         public static final int socket_1_off=0x7f0f0113;
@@ -1439,7 +1439,7 @@ containing a value of this type.
         public static final int toast_root=0x7f0f012c;
         public static final int toast_text=0x7f0f012e;
         public static final int top=0x7f0f0004;
-        public static final int volumeSlider=0x7f0f0107;
+        public static final int volumeSlider=0x7f0f0104;
         public static final int volumeTextView=0x7f0f00f4;
         public static final int weatherConditionImageView=0x7f0f00d9;
         public static final int weatherConditionTextView=0x7f0f00d8;
@@ -1530,17 +1530,16 @@ containing a value of this type.
         public static final int list_temperature_item=0x7f030022;
         public static final int list_timer_item=0x7f030023;
         public static final int list_youtube_video_item=0x7f030024;
-        public static final int main_remote=0x7f030025;
-        public static final int main_touch=0x7f030026;
-        public static final int notification_play_sound=0x7f030027;
-        public static final int notification_play_youtube=0x7f030028;
-        public static final int notification_skeleton=0x7f030029;
-        public static final int notification_skeleton_socket=0x7f03002a;
-        public static final int notification_skeleton_textview=0x7f03002b;
-        public static final int notification_sleep=0x7f03002c;
-        public static final int screensaver=0x7f03002d;
-        public static final int toast_layout=0x7f03002e;
-        public static final int watch_card_content=0x7f03002f;
+        public static final int main_touch=0x7f030025;
+        public static final int notification_play_sound=0x7f030026;
+        public static final int notification_play_youtube=0x7f030027;
+        public static final int notification_skeleton=0x7f030028;
+        public static final int notification_skeleton_socket=0x7f030029;
+        public static final int notification_skeleton_textview=0x7f03002a;
+        public static final int notification_sleep=0x7f03002b;
+        public static final int screensaver=0x7f03002c;
+        public static final int toast_layout=0x7f03002d;
+        public static final int watch_card_content=0x7f03002e;
     }
     public static final class raw {
         public static final int gtm_analytics=0x7f070000;

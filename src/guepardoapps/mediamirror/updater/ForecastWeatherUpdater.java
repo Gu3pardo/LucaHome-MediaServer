@@ -13,6 +13,7 @@ import guepardoapps.mediamirror.model.ForecastWeatherModel;
 
 import guepardoapps.toolset.openweather.OpenWeatherController;
 import guepardoapps.toolset.openweather.common.OpenWeatherConstants;
+import guepardoapps.toolset.openweather.enums.ForecastListType;
 import guepardoapps.toolset.openweather.model.*;
 
 import guepardoapps.toolset.controller.BroadcastController;
@@ -49,18 +50,101 @@ public class ForecastWeatherUpdater {
 			if (forecastWeather != null) {
 				_logger.Debug("forecastWeather is: " + forecastWeather.toString());
 
-				if (forecastWeather.GetList().size() < 3) {
+				int listSize = forecastWeather.GetList().size();
+
+				if (listSize < 3) {
 					_logger.Warn("Forecast weather is smaller then three forecasts!");
 					return;
 				}
 
-				guepardoapps.toolset.openweather.model.ForecastWeatherModel weather1 = forecastWeather.GetList().get(0);
+				int entryIndex = 0;
+				guepardoapps.toolset.openweather.model.ForecastWeatherModel weather1 = forecastWeather.GetList()
+						.get(entryIndex);
+				entryIndex++;
+				if (entryIndex > listSize - 1) {
+					_logger.Error(
+							String.format("EntryIndex %s is bigger then listSize-1 %s!", entryIndex, listSize - 1));
+					return;
+				}
+
+				int tries = 0;
+				while (weather1.GetForecastListType() == ForecastListType.DATE_DIVIDER && tries < 5) {
+					tries++;
+
+					weather1 = forecastWeather.GetList().get(entryIndex);
+					entryIndex++;
+					if (entryIndex > listSize - 1) {
+						_logger.Error(
+								String.format("EntryIndex %s is bigger then listSize-1 %s!", entryIndex, listSize - 1));
+						return;
+					}
+				}
+
+				if (tries == 5) {
+					_logger.Error("Error selecting forecastweather for entry 1!");
+					return;
+				}
+
 				CurrentWeatherModel forecast1 = new CurrentWeatherModel("", "", "", "", "", weather1.GetIcon(), "",
 						weather1.GetDate(), weather1.GetTime(), weather1.GetTempMin() + " - " + weather1.GetTempMax());
-				guepardoapps.toolset.openweather.model.ForecastWeatherModel weather2 = forecastWeather.GetList().get(1);
+
+				guepardoapps.toolset.openweather.model.ForecastWeatherModel weather2 = forecastWeather.GetList()
+						.get(entryIndex);
+				entryIndex++;
+				if (entryIndex > listSize - 1) {
+					_logger.Error(
+							String.format("EntryIndex %s is bigger then listSize-1 %s!", entryIndex, listSize - 1));
+					return;
+				}
+
+				tries = 0;
+				while (weather2.GetForecastListType() == ForecastListType.DATE_DIVIDER && tries < 5) {
+					tries++;
+
+					weather2 = forecastWeather.GetList().get(entryIndex);
+					entryIndex++;
+					if (entryIndex > listSize - 1) {
+						_logger.Error(
+								String.format("EntryIndex %s is bigger then listSize-1 %s!", entryIndex, listSize - 1));
+						return;
+					}
+				}
+
+				if (tries == 5) {
+					_logger.Error("Error selecting forecastweather for entry 2!");
+					return;
+				}
+
 				CurrentWeatherModel forecast2 = new CurrentWeatherModel("", "", "", "", "", weather2.GetIcon(), "",
 						weather2.GetDate(), weather2.GetTime(), weather2.GetTempMin() + " - " + weather2.GetTempMax());
-				guepardoapps.toolset.openweather.model.ForecastWeatherModel weather3 = forecastWeather.GetList().get(2);
+
+				guepardoapps.toolset.openweather.model.ForecastWeatherModel weather3 = forecastWeather.GetList()
+						.get(entryIndex);
+				entryIndex++;
+				if (entryIndex > listSize - 1) {
+					_logger.Error(
+							String.format("EntryIndex %s is bigger then listSize-1 %s!", entryIndex, listSize - 1));
+					return;
+				}
+
+				tries = 0;
+				while (weather3.GetForecastListType() == ForecastListType.DATE_DIVIDER && tries < 5) {
+					tries++;
+
+					weather3 = forecastWeather.GetList().get(entryIndex);
+					entryIndex++;
+					if (entryIndex > listSize - 1) {
+						_logger.Error(
+								String.format("EntryIndex %s is bigger then listSize-1 %s!", entryIndex, listSize - 1));
+						return;
+					}
+				}
+
+				if (tries == 5) {
+					_logger.Error("Error selecting forecastweather for entry 3!");
+					return;
+				}
+
 				CurrentWeatherModel forecast3 = new CurrentWeatherModel("", "", "", "", "", weather3.GetIcon(), "",
 						weather3.GetDate(), weather3.GetTime(), weather3.GetTempMin() + " - " + weather3.GetTempMax());
 

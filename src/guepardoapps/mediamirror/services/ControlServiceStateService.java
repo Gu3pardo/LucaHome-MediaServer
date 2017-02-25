@@ -1,13 +1,15 @@
 package guepardoapps.mediamirror.services;
 
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.view.Main;
+
+import guepardoapps.toolset.controller.AndroidSystemController;
 
 public class ControlServiceStateService extends Service {
 
@@ -18,6 +20,7 @@ public class ControlServiceStateService extends Service {
 	private int _errorCount;
 
 	private Context _context;
+	private AndroidSystemController _systemController;
 
 	private Handler _checkServicesHandler;
 
@@ -25,7 +28,7 @@ public class ControlServiceStateService extends Service {
 		public void run() {
 			_logger.Debug("_checkServices");
 
-			if (!isServiceRunning(MainService.class)) {
+			if (!_systemController.isServiceRunning(MainService.class)) {
 				_logger.Warn("MainService not running! Restarting!");
 				_errorCount++;
 				_logger.Warn("_errorCount: " + String.valueOf(_errorCount));
@@ -40,7 +43,7 @@ public class ControlServiceStateService extends Service {
 				_errorCount = 0;
 			}
 
-			if (!isServiceRunning(TimeListenerService.class)) {
+			if (!_systemController.isServiceRunning(TimeListenerService.class)) {
 				_logger.Warn("TimeListenerService not running! Restarting!");
 				_errorCount++;
 				_logger.Warn("_errorCount: " + String.valueOf(_errorCount));
@@ -50,6 +53,22 @@ public class ControlServiceStateService extends Service {
 				} else {
 					Intent serviceIntent = new Intent(_context, TimeListenerService.class);
 					startService(serviceIntent);
+				}
+			} else {
+				_errorCount = 0;
+			}
+
+			if (!_systemController.isBaseActivityRunning()) {
+				_logger.Warn("MainActivity not running! Restarting!");
+				_errorCount++;
+				_logger.Warn("_errorCount: " + String.valueOf(_errorCount));
+				if (_errorCount >= 5) {
+					// TODO: send warning mail to me!
+					_logger.Info("TODO: send warning mail to me!");
+				} else {
+					Intent intent = new Intent(_context, Main.class);
+					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(intent);
 				}
 			} else {
 				_errorCount = 0;
@@ -68,6 +87,7 @@ public class ControlServiceStateService extends Service {
 			_errorCount = 0;
 
 			_context = this;
+			_systemController = new AndroidSystemController(_context);
 
 			_checkServicesHandler = new Handler();
 			_checkServices.run();
@@ -81,15 +101,5 @@ public class ControlServiceStateService extends Service {
 	@Override
 	public IBinder onBind(Intent arg0) {
 		return null;
-	}
-
-	private boolean isServiceRunning(Class<?> serviceClass) {
-		ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-		for (RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
-			if (serviceClass.getName().equals(service.service.getClassName())) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

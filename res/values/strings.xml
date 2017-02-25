@@ -22,5 +22,5 @@
     <string name="mode_lose_suffix">\nKlicke auf den Bildschirm</string>
     <string name="snake_layout_text_text"/>
     <string name="example">Example</string>
-    <string name="serverVersion">0.10.3.170225</string>
+    <string name="serverVersion">0.10.5.170225</string>
 </resources>

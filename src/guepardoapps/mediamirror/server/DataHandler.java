@@ -40,6 +40,7 @@ public class DataHandler {
 	private CommandController _commandController;
 	private DBController _dbController;
 	private MediaVolumeController _mediaVolumeController;
+	private ScreenController _screenController;
 
 	private static final int SEA_SOUND_STOP_TIMEOUT = 30 * 60 * 1000;
 	private Handler _seaSoundHandler = new Handler();
@@ -64,6 +65,7 @@ public class DataHandler {
 		_commandController = new CommandController(_context);
 		_dbController = new DBController(_context);
 		_mediaVolumeController = MediaVolumeController.getInstance();
+		_screenController = new ScreenController(_context);
 	}
 
 	public String PerformAction(String command) {
@@ -85,6 +87,11 @@ public class DataHandler {
 				case PING:
 					return "Mediamirror available!";
 				case SHOW_YOUTUBE_VIDEO:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					if (data.length() < 4) {
 						int youtubeIdInt = -1;
 						try {
@@ -115,9 +122,19 @@ public class DataHandler {
 					}
 					break;
 				case PLAY_YOUTUBE_VIDEO:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_context.sendBroadcast(new Intent(Constants.BROADCAST_PLAY_VIDEO));
 					break;
 				case STOP_YOUTUBE_VIDEO:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_context.sendBroadcast(new Intent(Constants.BROADCAST_STOP_VIDEO));
 					break;
 				case GET_SAVED_YOUTUBE_IDS:
@@ -135,6 +152,11 @@ public class DataHandler {
 					}
 					return action.toString() + ":" + answer;
 				case PLAY_SEA_SOUND:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_logger.Debug(String.format("Received data for PLAY_SEA_SOUND is %s", data));
 					int timeOut;
 					try {
@@ -153,6 +175,11 @@ public class DataHandler {
 					_seaSoundHandler.postDelayed(_seaSoundRunnable, timeOut);
 					break;
 				case STOP_SEA_SOUND:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					CenterModel stopSeaSoundModel = new CenterModel(true, "", false, "", false, "");
 					_logger.Info("Created center model: " + stopSeaSoundModel.toString());
 					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
@@ -160,18 +187,33 @@ public class DataHandler {
 					_seaSoundHandler.removeCallbacks(_seaSoundRunnable);
 					break;
 				case SHOW_WEBVIEW:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					CenterModel webviewModel = new CenterModel(false, "", false, null, true, data);
 					_logger.Info("Created center model: " + webviewModel.toString());
 					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
 							Constants.BUNDLE_CENTER_MODEL, webviewModel);
 					break;
 				case SHOW_CENTER_TEXT:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					CenterModel centerTextModel = new CenterModel(true, data, false, null, false, "");
 					_logger.Info("Created center model: " + centerTextModel.toString());
 					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
 							Constants.BUNDLE_CENTER_MODEL, centerTextModel);
 					break;
 				case SET_RSS_FEED:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					int feedIdInt = -1;
 					try {
 						feedIdInt = Integer.parseInt(data);
@@ -192,21 +234,51 @@ public class DataHandler {
 					}
 					break;
 				case RESET_RSS_FEED:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_RESET_RSS_FEED);
 					break;
 				case UPDATE_CURRENT_WEATHER:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_CURRENT_WEATHER_UPDATE);
 					break;
 				case UPDATE_FORECAST_WEATHER:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_FORECAST_WEATHER_UPDATE);
 					break;
 				case UPDATE_RASPBERRY_TEMPERATURE:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_TEMPERATURE_UPDATE);
 					break;
 				case UPDATE_IP_ADDRESS:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_IP_ADDRESS_UPDATE);
 					break;
 				case UPDATE_BIRTHDAY_ALARM:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_BIRTHDAY_UPDATE);
 					break;
 				case INCREASE_VOLUME:
@@ -224,10 +296,20 @@ public class DataHandler {
 				case GET_CURRENT_VOLUME:
 					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
 				case INCREASE_SCREEN_BRIGHTNESS:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendIntBroadcast(Constants.BROADCAST_ACTION_SCREEN_BRIGHTNESS,
 							Constants.BUNDLE_SCREEN_BRIGHTNESS, ScreenController.INCREASE);
 					break;
 				case DECREASE_SCREEN_BRIGHTNESS:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendIntBroadcast(Constants.BROADCAST_ACTION_SCREEN_BRIGHTNESS,
 							Constants.BUNDLE_SCREEN_BRIGHTNESS, ScreenController.DECREASE);
 					break;
@@ -238,37 +320,87 @@ public class DataHandler {
 					// TODO implement
 					break;
 				case GAME_COMMAND:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendStringBroadcast(Constants.BROADCAST_GAME_COMMAND,
 							Constants.BUNDLE_GAME_COMMAND, data);
 					break;
 				case GAME_PONG_START:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_START_PONG);
 					break;
 				case GAME_PONG_STOP:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_STOP_PONG);
 					break;
 				case GAME_PONG_PAUSE:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendStringBroadcast(Constants.BROADCAST_GAME_COMMAND,
 							Constants.BUNDLE_GAME_COMMAND, GameConstants.GAME + ":" + GameConstants.PAUSE);
 					break;
 				case GAME_PONG_RESUME:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendStringBroadcast(Constants.BROADCAST_GAME_COMMAND,
 							Constants.BUNDLE_GAME_COMMAND, GameConstants.GAME + ":" + GameConstants.RESUME);
 					break;
 				case GAME_PONG_RESTART:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendStringBroadcast(Constants.BROADCAST_GAME_COMMAND,
 							Constants.BUNDLE_GAME_COMMAND, GameConstants.GAME + ":" + GameConstants.RESTART);
 					break;
 				case GAME_SNAKE_START:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_START_SNAKE);
 					break;
 				case GAME_SNAKE_STOP:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_STOP_SNAKE);
 					break;
 				case GAME_TETRIS_START:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_START_TETRIS);
 					break;
 				case GAME_TETRIS_STOP:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_STOP_TETRIS);
 					break;
 				case SCREEN_ON:
@@ -278,9 +410,19 @@ public class DataHandler {
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_OFF);
 					break;
 				case SCREEN_SAVER:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_SAVER);
 					break;
 				case SCREEN_NORMAL:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_NORMAL);
 					break;
 				case SYSTEM_REBOOT:

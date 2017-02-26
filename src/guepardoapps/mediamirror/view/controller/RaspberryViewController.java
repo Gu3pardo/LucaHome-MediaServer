@@ -20,6 +20,7 @@ import guepardoapps.mediamirror.model.helper.RaspberryTemperatureHelper;
 import guepardoapps.mediamirror.test.RaspberryViewControllerTest;
 
 import guepardoapps.lucahomelibrary.common.classes.SerializableList;
+import guepardoapps.lucahomelibrary.common.dto.ShoppingEntryDto;
 import guepardoapps.lucahomelibrary.common.dto.WirelessSocketDto;
 
 import guepardoapps.toolset.controller.ReceiverController;
@@ -33,6 +34,7 @@ public class RaspberryViewController {
 	private boolean _screenEnabled;
 
 	private RaspberryModel _raspberryModel;
+	private SerializableList<ShoppingEntryDto> _shoppingList;
 	private SerializableList<WirelessSocketDto> _socketList;
 
 	private Context _context;
@@ -94,6 +96,18 @@ public class RaspberryViewController {
 		}
 	};
 
+	private BroadcastReceiver _shoppingListReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			@SuppressWarnings("unchecked")
+			SerializableList<ShoppingEntryDto> shoppingList = (SerializableList<ShoppingEntryDto>) intent
+					.getSerializableExtra(Constants.BUNDLE_SHOPPING_LIST);
+			if (shoppingList != null) {
+				_shoppingList = shoppingList;
+			}
+		}
+	};
+
 	private BroadcastReceiver _socketListReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -137,7 +151,10 @@ public class RaspberryViewController {
 					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
 					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+			_receiverController.RegisterReceiver(_shoppingListReceiver,
+					new String[] { Constants.BROADCAST_SHOPPING_LIST });
 			_receiverController.RegisterReceiver(_socketListReceiver, new String[] { Constants.BROADCAST_SOCKET_LIST });
+
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
@@ -157,6 +174,7 @@ public class RaspberryViewController {
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+		_receiverController.UnregisterReceiver(_shoppingListReceiver);
 		_receiverController.UnregisterReceiver(_socketListReceiver);
 
 		_isInitialized = false;
@@ -180,6 +198,16 @@ public class RaspberryViewController {
 		} else {
 			_logger.Error("_socketList is null!");
 			Toasty.warning(_context, "SocketList is null!!", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	public void showShoppingListDialog(View view) {
+		_logger.Debug("showShoppingListDialog");
+		if (_shoppingList != null) {
+			_dialogController.ShowShoppingListDialog(_shoppingList);
+		} else {
+			_logger.Error("_shoppingList is null!");
+			Toasty.warning(_context, "ShoppingList is null!!", Toast.LENGTH_LONG).show();
 		}
 	}
 }

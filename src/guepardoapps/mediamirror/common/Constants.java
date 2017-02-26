@@ -6,17 +6,11 @@ public class Constants {
 	public static final String BROADCAST_SHOW_DATE_MODEL = "guepardoapps.mediamirror.show.date_model";
 	// RASPBERRY VIEW
 	public static final int TEMPERATURE_UPDATE_TIMEOUT = 5 * 60 * 1000;
-	public static final int SOCKET_LIST_UPDATE_TIMEOUT = 5 * 60 * 1000;
 	public static final String ACTION_GET_TEMPERATURES = "getcurrenttemperaturerest";
-	public static final String ACTION_GET_SOCKETS = "getsockets";
 	public static final String BUNDLE_RASPBERRY_DATA_MODEL = "BUNDLE_RASPBERRY_DATA_MODEL";
-	public static final String BUNDLE_SOCKET_LIST = "BUNDLE_SOCKET_LIST";
 	public static final String BROADCAST_SHOW_RASPBERRY_DATA_MODEL = "guepardoapps.mediamirror.show.raspberry_data_model";
 	public static final String BROADCAST_DOWNLOAD_TEMPERATURE_FINISHED = "guepardoapps.mediamirror.broadcast.DOWNLOAD_TEMPERATURE_FINISHED";
 	public static final String BROADCAST_PERFORM_TEMPERATURE_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_TEMPERATURE_UPDATE";
-	public static final String BROADCAST_DOWNLOAD_SOCKET_FINISHED = "guepardoapps.mediamirror.broadcast.DOWNLOAD_SOCKET_FINISHED";
-	public static final String BROADCAST_PERFORM_SOCKET_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_SOCKET_UPDATE";
-	public static final String BROADCAST_SOCKET_LIST = "guepardoapps.mediamirror.broadcast.SOCKET_LIST";
 	// BIRTHDAY VIEW
 	public static final int BIRTHDAY_UPDATE_TIMEOUT = 3 * 60 * 60 * 1000;
 	public static final String ACTION_GET_BIRTHDAYS = "getbirthdays";
@@ -69,13 +63,26 @@ public class Constants {
 	public static final String BROADCAST_SHOW_SCHEDULE_MODEL = "guepardoapps.mediamirror.show.schedule_model";
 	public static final String BROADCAST_DOWNLOAD_SCHEDULE_FINISHED = "guepardoapps.mediamirror.broadcast.DOWNLOAD_SCHEDULE_FINISHED";
 	// SOCKET DATA
+	public static final int SOCKET_LIST_UPDATE_TIMEOUT = 5 * 60 * 1000;
 	public static final String ACTION_SET_SOCKET = "setsocket&socket=";
+	public static final String ACTION_GET_SOCKETS = "getsockets";
+	public static final String BUNDLE_SOCKET_LIST = "BUNDLE_SOCKET_LIST";
+	public static final String BROADCAST_DOWNLOAD_SOCKET_FINISHED = "guepardoapps.mediamirror.broadcast.DOWNLOAD_SOCKET_FINISHED";
+	public static final String BROADCAST_PERFORM_SOCKET_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_SOCKET_UPDATE";
+	public static final String BROADCAST_SOCKET_LIST = "guepardoapps.mediamirror.broadcast.SOCKET_LIST";
 	public static final String SOCKET_NAME = "MediaMirror1";
 	// TODO find a better solution to activate the corresponding socket of a
 	// mediaserver!
 	// public static final String SOCKET_NAME = "MediaMirror2";
 	public static final String SOCKET_STATE_ON = "&state=1";
 	public static final String SOCKET_STATE_OFF = "&state=0";
+	// SHOPPING LIST DATA
+	public static final int SHOPPING_LIST_UPDATE_TIMEOUT = 5 * 60 * 1000;
+	public static final String ACTION_GET_SHOPPING_LIST = "getshoppinglist";
+	public static final String BUNDLE_SHOPPING_LIST = "BUNDLE_SHOPPING_LIST";
+	public static final String BROADCAST_DOWNLOAD_SHOPPING_LIST_FINISHED = "guepardoapps.mediamirror.broadcast.DOWNLOAD_SHOPPING_LIST_FINISHED";
+	public static final String BROADCAST_PERFORM_SHOPPING_LIST_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_SHOPPING_LIST_UPDATE";
+	public static final String BROADCAST_SHOPPING_LIST = "guepardoapps.mediamirror.broadcast.SHOPPING_LIST";
 	// GAME DATA
 	public static final String BUNDLE_GAME_COMMAND = "BUNDLE_GAME_COMMAND";
 	public static final String BROADCAST_GAME_COMMAND = "guepardoapps.mediamirror.game.command";

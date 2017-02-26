@@ -51,6 +51,7 @@ public class MainService extends Service {
 	private ForecastWeatherUpdater _forecastWeatherUpdater;
 	private IpAdressViewUpdater _ipAdressViewUpdater;
 	private RSSViewUpdater _rssViewUpdater;
+	private ShoppingListUpdater _shoppingListUpdater;
 	private SocketListUpdater _socketListUpdater;
 	private TemperatureUpdater _temperatureUpdater;
 
@@ -71,6 +72,7 @@ public class MainService extends Service {
 			_forecastWeatherUpdater.DownloadWeather();
 			_ipAdressViewUpdater.GetCurrentLocalIpAddress();
 			_rssViewUpdater.LoadRss();
+			_shoppingListUpdater.DownloadShoppingList();
 			_socketListUpdater.DownloadSocketList();
 			_temperatureUpdater.DownloadTemperature();
 		}
@@ -135,6 +137,11 @@ public class MainService extends Service {
 			if (_rssViewUpdater == null) {
 				_rssViewUpdater = new RSSViewUpdater(_context);
 				_rssViewUpdater.Start(Constants.RSS_UPDATE_TIMEOUT);
+			}
+
+			if (_shoppingListUpdater == null) {
+				_shoppingListUpdater = new ShoppingListUpdater(_context);
+				_shoppingListUpdater.Start(Constants.SHOPPING_LIST_UPDATE_TIMEOUT);
 			}
 
 			if (_socketListUpdater == null) {
@@ -216,6 +223,7 @@ public class MainService extends Service {
 		_forecastWeatherUpdater.Dispose();
 		_ipAdressViewUpdater.Dispose();
 		_rssViewUpdater.Dispose();
+		_shoppingListUpdater.Dispose();
 		_socketListUpdater.Dispose();
 		_temperatureUpdater.Dispose();
 

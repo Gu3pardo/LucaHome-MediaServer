@@ -190,6 +190,10 @@ public class Main extends YouTubeBaseActivity {
 		_raspberryViewController.showSocketsDialog(view);
 	}
 
+	public void showShoppingListDialog(View view) {
+		_raspberryViewController.showShoppingListDialog(view);
+	}
+
 	private void initializeController() {
 		_batteryViewController = new BatteryViewController(_context);
 		_birthdayViewController = new BirthdayViewController(_context);

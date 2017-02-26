@@ -46,4 +46,15 @@
         android:text="Close"
         android:textColor="#ffffff" />
 
+    <Button
+        android:id="@+id/btnAddListView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnDialogClose"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/add_round"
+        android:text="@string/addPlus"
+        android:textColor="@color/TextIcon" />
+
 </RelativeLayout>

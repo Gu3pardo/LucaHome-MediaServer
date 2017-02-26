@@ -1,35 +1,38 @@
 package guepardoapps.mediamirror.controller;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
-import android.webkit.CookieManager;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import guepardoapps.lucahomelibrary.common.classes.SerializableList;
+import guepardoapps.lucahomelibrary.common.controller.LucaDialogController;
+import guepardoapps.lucahomelibrary.common.dto.ShoppingEntryDto;
 import guepardoapps.lucahomelibrary.common.dto.WirelessSocketDto;
+import guepardoapps.lucahomelibrary.view.customadapter.ShoppingListAdapter;
 import guepardoapps.lucahomelibrary.view.customadapter.SocketListAdapter;
 
 import guepardoapps.mediamirror.R;
+import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
-import guepardoapps.toolset.controller.DialogController;
+import guepardoapps.toolset.controller.BroadcastController;
+import guepardoapps.toolset.controller.ReceiverController;
 
-public class MediaMirrorDialogController extends DialogController {
+public class MediaMirrorDialogController extends LucaDialogController {
 
 	private static final String TAG = MediaMirrorDialogController.class.getName();
 	private SmartMirrorLogger _logger;
+
+	private ReceiverController _receiverController;
 
 	public MediaMirrorDialogController(Context context) {
 		super(context, ContextCompat.getColor(context, R.color.TextIcon),
@@ -37,45 +40,10 @@ public class MediaMirrorDialogController extends DialogController {
 		_logger = new SmartMirrorLogger(TAG);
 
 		_context = context;
+		_broadcastController = new BroadcastController(_context);
+		_receiverController = new ReceiverController(_context);
 
 		_isDialogOpen = false;
-	}
-
-	@SuppressLint("SetJavaScriptEnabled")
-	public void ShowTemperatureGraphDialog(String graphPath) {
-		checkOpenDialog();
-
-		createDialog("ShowTemperatureGraphDialog: " + graphPath, R.layout.dialog_temperature_graph);
-
-		final ProgressBar progressBar = (ProgressBar) _dialog.findViewById(R.id.temperature_dialog_progressbar);
-
-		final WebView webView = (WebView) _dialog.findViewById(R.id.temperature_dialog_webview);
-		webView.getSettings().setBuiltInZoomControls(true);
-		webView.getSettings().setSupportZoom(true);
-		webView.getSettings().setJavaScriptEnabled(true);
-		webView.getSettings().setLoadWithOverviewMode(true);
-		webView.setWebViewClient(new WebViewClient());
-		webView.setWebChromeClient(new WebChromeClient());
-		webView.setInitialScale(100);
-		CookieManager cookieManager = CookieManager.getInstance();
-		cookieManager.setAcceptCookie(false);
-		webView.loadUrl("http://" + graphPath);
-		webView.setWebViewClient(new WebViewClient() {
-			public void onPageFinished(WebView view, String url) {
-				progressBar.setVisibility(View.GONE);
-				webView.setVisibility(View.VISIBLE);
-			}
-		});
-
-		Button btnOk = (Button) _dialog.findViewById(R.id.temperature_dialog_button);
-		btnOk.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				CloseDialogCallback.run();
-			}
-		});
-
-		showDialog(false);
 	}
 
 	public void ShowSocketListDialog(SerializableList<WirelessSocketDto> socketList) {
@@ -94,6 +62,70 @@ public class MediaMirrorDialogController extends DialogController {
 			@Override
 			public void onClick(View v) {
 				CloseDialogCallback.run();
+			}
+		});
+
+		Button btnAdd = (Button) _dialog.findViewById(R.id.btnAddListView);
+		btnAdd.setVisibility(View.GONE);
+
+		showDialog(false);
+	}
+
+	public void ShowShoppingListDialog(final SerializableList<ShoppingEntryDto> shoppingList) {
+		checkOpenDialog();
+
+		createDialog("ShowShoppingListDialog", R.layout.dialog_skeleton_list);
+
+		TextView titleTextView = (TextView) _dialog.findViewById(R.id.dialog_list_title);
+		titleTextView.setText("Shopping List");
+		final ListView listView = (ListView) _dialog.findViewById(R.id.dialog_list_view);
+
+		if (shoppingList != null) {
+			ShoppingListAdapter listAdapter = new ShoppingListAdapter(_context, shoppingList);
+			listView.setAdapter(listAdapter);
+		}
+
+		Button btnClose = (Button) _dialog.findViewById(R.id.btnDialogClose);
+		btnClose.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				CloseDialogCallback.run();
+			}
+		});
+
+		final BroadcastReceiver shoppingListReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				@SuppressWarnings("unchecked")
+				SerializableList<ShoppingEntryDto> receivedShoppingList = (SerializableList<ShoppingEntryDto>) intent
+						.getSerializableExtra(Constants.BUNDLE_SHOPPING_LIST);
+				if (receivedShoppingList != null) {
+					ShoppingListAdapter listAdapter = new ShoppingListAdapter(_context, receivedShoppingList);
+					listView.setAdapter(listAdapter);
+				}
+			}
+		};
+
+		_receiverController.RegisterReceiver(shoppingListReceiver, new String[] { Constants.BROADCAST_SHOPPING_LIST });
+
+		Button btnAdd = (Button) _dialog.findViewById(R.id.btnAddListView);
+		btnAdd.setOnClickListener(new OnClickListener() {
+			Runnable getShoppingListDataRunnable = new Runnable() {
+				public void run() {
+					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_SHOPPING_LIST_UPDATE);
+				}
+			};
+
+			@Override
+			public void onClick(View v) {
+				_receiverController.UnregisterReceiver(shoppingListReceiver);
+				CloseDialogCallback.run();
+
+				int size = 0;
+				if (shoppingList != null) {
+					size = shoppingList.getSize();
+				}
+				ShowAddShoppingEntryDialog(getShoppingListDataRunnable, null, true, false, size);
 			}
 		});
 

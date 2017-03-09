@@ -11,7 +11,7 @@ import android.os.Handler;
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.Tools;
+import guepardoapps.mediamirror.common.TimeHelper;
 import guepardoapps.mediamirror.common.converter.JsonDataToTemperatureConverter;
 import guepardoapps.mediamirror.model.RaspberryModel;
 import guepardoapps.mediamirror.model.helper.TemperatureHelper;
@@ -104,7 +104,7 @@ public class TemperatureUpdater {
 	public void DownloadTemperature() {
 		_logger.Debug("startDownloadTemperature");
 
-		if (Tools.IsMuteTime()) {
+		if (TimeHelper.IsMuteTime()) {
 			_logger.Warn("Mute time!");
 			return;
 		}

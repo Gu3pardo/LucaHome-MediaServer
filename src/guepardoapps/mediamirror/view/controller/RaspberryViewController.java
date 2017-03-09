@@ -19,10 +19,10 @@ import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.model.helper.RaspberryTemperatureHelper;
 import guepardoapps.mediamirror.test.RaspberryViewControllerTest;
 
-import guepardoapps.lucahomelibrary.common.classes.SerializableList;
 import guepardoapps.lucahomelibrary.common.dto.ShoppingEntryDto;
 import guepardoapps.lucahomelibrary.common.dto.WirelessSocketDto;
 
+import guepardoapps.toolset.common.classes.SerializableList;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class RaspberryViewController {

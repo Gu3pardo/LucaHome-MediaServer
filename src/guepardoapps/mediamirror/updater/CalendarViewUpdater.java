@@ -4,34 +4,37 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.TimeHelper;
-import guepardoapps.mediamirror.model.IpAdressModel;
 
+import guepardoapps.toolset.common.classes.SerializableList;
+import guepardoapps.toolset.common.dto.CalendarEntry;
 import guepardoapps.toolset.controller.BroadcastController;
+import guepardoapps.toolset.controller.CalendarController;
 import guepardoapps.toolset.controller.ReceiverController;
-import guepardoapps.toolset.controller.UserInformationController;
 
-public class IpAdressViewUpdater {
+public class CalendarViewUpdater {
 
-	private static final String TAG = IpAdressViewUpdater.class.getName();
+	private static final String TAG = CalendarViewUpdater.class.getName();
 	private SmartMirrorLogger _logger;
 
 	private Handler _updater;
 
 	private Context _context;
 	private BroadcastController _broadcastController;
+	private CalendarController _calendarController;
 	private ReceiverController _receiverController;
-	private UserInformationController _userInformationController;
 
 	private int _updateTime;
 
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
 			_logger.Debug("_updateRunnable run");
-			GetCurrentLocalIpAddress();
+
+			SerializableList<CalendarEntry> calendarList = _calendarController.ReadCalendar();
+			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CALENDAR_MODEL,
+					Constants.BUNDLE_CALENDAR_MODEL, calendarList);
+
 			_updater.postDelayed(_updateRunnable, _updateTime);
 		}
 	};
@@ -40,17 +43,20 @@ public class IpAdressViewUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_performUpdateReceiver onReceive");
-			GetCurrentLocalIpAddress();
+
+			SerializableList<CalendarEntry> calendarList = _calendarController.ReadCalendar();
+			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CALENDAR_MODEL,
+					Constants.BUNDLE_CALENDAR_MODEL, calendarList);
 		}
 	};
 
-	public IpAdressViewUpdater(Context context) {
+	public CalendarViewUpdater(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
 		_updater = new Handler();
 		_context = context;
 		_broadcastController = new BroadcastController(_context);
+		_calendarController = new CalendarController(_context);
 		_receiverController = new ReceiverController(_context);
-		_userInformationController = new UserInformationController(_context);
 	}
 
 	public void Start(int updateTime) {
@@ -58,7 +64,7 @@ public class IpAdressViewUpdater {
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
 		_receiverController.RegisterReceiver(_performUpdateReceiver,
-				new String[] { Constants.BROADCAST_PERFORM_IP_ADDRESS_UPDATE });
+				new String[] { Constants.BROADCAST_PERFORM_CALENDAR_UPDATE });
 		_updateRunnable.run();
 	}
 
@@ -66,21 +72,5 @@ public class IpAdressViewUpdater {
 		_logger.Debug("Dispose");
 		_updater.removeCallbacks(_updateRunnable);
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
-	}
-
-	public void GetCurrentLocalIpAddress() {
-		_logger.Debug("getCurrentLocalIpAddress");
-
-		if (TimeHelper.IsMuteTime()) {
-			_logger.Warn("Mute time!");
-			return;
-		}
-
-		String ip = _userInformationController.GetIp();
-		_logger.Debug("IP adress is: " + ip);
-
-		IpAdressModel model = new IpAdressModel(true, ip);
-		_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_IP_ADRESS_MODEL,
-				Constants.BUNDLE_IP_ADRESS_MODEL, model);
 	}
 }

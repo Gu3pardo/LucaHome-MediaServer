@@ -12,11 +12,12 @@ import android.widget.Toast;
 
 import es.dmoral.toasty.Toasty;
 
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.RSSFeed;
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.YoutubeId;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.enums.RSSFeed;
-import guepardoapps.mediamirror.common.enums.YoutubeId;
 import guepardoapps.mediamirror.controller.BatterySocketController;
 import guepardoapps.mediamirror.model.CenterModel;
 import guepardoapps.mediamirror.model.RSSModel;
@@ -28,6 +29,7 @@ import guepardoapps.mediamirror.view.Main;
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
 import guepardoapps.toolset.controller.TTSController;
+import guepardoapps.toolset.scheduler.ScheduleService;
 
 public class MainService extends Service {
 
@@ -46,6 +48,7 @@ public class MainService extends Service {
 	private BatterySocketController _batterySocketController;
 
 	private BirtdayUpdater _birthdayUpdater;
+	private CalendarViewUpdater _calendarViewUpdater;
 	private CurrentWeatherUpdater _currentWeatherUpdater;
 	private DateViewUpdater _dateViewUpdater;
 	private ForecastWeatherUpdater _forecastWeatherUpdater;
@@ -54,6 +57,8 @@ public class MainService extends Service {
 	private ShoppingListUpdater _shoppingListUpdater;
 	private SocketListUpdater _socketListUpdater;
 	private TemperatureUpdater _temperatureUpdater;
+
+	private ScheduleService _scheduleService;
 
 	private ConverterTest _converterTest;
 
@@ -75,6 +80,13 @@ public class MainService extends Service {
 			_shoppingListUpdater.DownloadShoppingList();
 			_socketListUpdater.DownloadSocketList();
 			_temperatureUpdater.DownloadTemperature();
+		}
+	};
+
+	private Runnable _switchBirthdayCalendarViewRunnable = new Runnable() {
+		public void run() {
+			_logger.Debug("_switchBirthdayCalendarViewRunnable run");
+			_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SWITCH_BIRTHDAY_CALENDAR);
 		}
 	};
 
@@ -112,6 +124,11 @@ public class MainService extends Service {
 			if (_birthdayUpdater == null) {
 				_birthdayUpdater = new BirtdayUpdater(_context);
 				_birthdayUpdater.Start(Constants.BIRTHDAY_UPDATE_TIMEOUT);
+			}
+
+			if (_calendarViewUpdater == null) {
+				_calendarViewUpdater = new CalendarViewUpdater(_context);
+				_calendarViewUpdater.Start(Constants.CALENDAR_UPDATE_TIMEOUT);
 			}
 
 			if (_currentWeatherUpdater == null) {
@@ -157,6 +174,12 @@ public class MainService extends Service {
 			if (_ttsController == null) {
 				_ttsController = new TTSController(_context, Enables.TTS_ENABLED);
 				_ttsController.Init();
+			}
+
+			if (_scheduleService == null) {
+				_scheduleService = new ScheduleService();
+				_scheduleService.AddSchedule("ChangeBirthdayCalendarView", _switchBirthdayCalendarViewRunnable,
+						Constants.SWITCH_BIRTHDAY_CALENDAR_TIMEOUT);
 			}
 
 			CenterModel centerModel = new CenterModel(false, "", true, YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId(),
@@ -218,6 +241,7 @@ public class MainService extends Service {
 		_batterySocketController.Dispose();
 
 		_birthdayUpdater.Dispose();
+		_calendarViewUpdater.Dispose();
 		_currentWeatherUpdater.Dispose();
 		_dateViewUpdater.Dispose();
 		_forecastWeatherUpdater.Dispose();
@@ -231,6 +255,8 @@ public class MainService extends Service {
 
 		_wakeLock.release();
 		_wifiLock.release();
+
+		_scheduleService.Dispose();
 
 		restartActivity();
 	}

@@ -3,16 +3,12 @@ package guepardoapps.mediamirror.view;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.WindowManager;
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.Enables;
@@ -22,9 +18,13 @@ import guepardoapps.mediamirror.controller.ScreenController;
 import guepardoapps.mediamirror.services.*;
 import guepardoapps.mediamirror.view.controller.*;
 
+import guepardoapps.toolset.controller.BroadcastController;
+import guepardoapps.toolset.controller.PermissionController;
 import guepardoapps.toolset.controller.SharedPrefController;
 import guepardoapps.toolset.controller.TTSController;
 
+import guepardoapps.lucahomelibrary.common.constants.Broadcasts;
+import guepardoapps.lucahomelibrary.common.constants.Bundles;
 import guepardoapps.lucahomelibrary.common.constants.SharedPrefConstants;
 
 public class Main extends YouTubeBaseActivity {
@@ -32,13 +32,15 @@ public class Main extends YouTubeBaseActivity {
 	private static final String TAG = Main.class.getName();
 	private SmartMirrorLogger _logger;
 
-	private static final int[] PERMISSION_REQUEST_IDS = new int[] { 24565730 };
-	private static final String[] PERMISSIONS = new String[] { Manifest.permission.WRITE_SETTINGS };
+	private static final int PERMISSION_REQUEST_WRITE_SETTINGS_ID = 24565730;
 
 	private Context _context;
+	private BroadcastController _broadcastController;
+	private PermissionController _permissionController;
 
 	private BatteryViewController _batteryViewController;
 	private BirthdayViewController _birthdayViewController;
+	private CalendarViewController _calendarViewController;
 	private CenterViewController _centerViewController;
 	private CurrentWeatherViewController _currentWeatherViewController;
 	private DateViewController _dateViewController;
@@ -63,8 +65,13 @@ public class Main extends YouTubeBaseActivity {
 		_logger.Debug("onCreate");
 
 		_context = this;
+		_broadcastController = new BroadcastController(_context);
+		_permissionController = new PermissionController(_context);
+
 		install();
-		checkPermissions();
+
+		_permissionController.CheckPermissions(PERMISSION_REQUEST_WRITE_SETTINGS_ID,
+				Manifest.permission.WRITE_SETTINGS);
 
 		initializeController();
 
@@ -88,6 +95,7 @@ public class Main extends YouTubeBaseActivity {
 
 		_batteryViewController.onCreate();
 		_birthdayViewController.onCreate();
+		_calendarViewController.onCreate();
 		_centerViewController.onCreate();
 		_currentWeatherViewController.onCreate();
 		_dateViewController.onCreate();
@@ -124,6 +132,7 @@ public class Main extends YouTubeBaseActivity {
 
 		_batteryViewController.onResume();
 		_birthdayViewController.onResume();
+		_calendarViewController.onResume();
 		_centerViewController.onResume();
 		_currentWeatherViewController.onResume();
 		_dateViewController.onResume();
@@ -145,6 +154,7 @@ public class Main extends YouTubeBaseActivity {
 
 		_batteryViewController.onPause();
 		_birthdayViewController.onPause();
+		_calendarViewController.onPause();
 		_centerViewController.onPause();
 		_currentWeatherViewController.onPause();
 		_dateViewController.onPause();
@@ -166,6 +176,7 @@ public class Main extends YouTubeBaseActivity {
 
 		_batteryViewController.onDestroy();
 		_birthdayViewController.onDestroy();
+		_calendarViewController.onDestroy();
 		_centerViewController.onDestroy();
 		_currentWeatherViewController.onDestroy();
 		_dateViewController.onDestroy();
@@ -180,6 +191,31 @@ public class Main extends YouTubeBaseActivity {
 		_screenController.onDestroy();
 
 		_ttsController.Dispose();
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int callbackId, String permissions[], int[] grantResults) {
+		_logger.Debug(String.format("onRequestPermissionsResult with id %s for permissions %s has result %s",
+				callbackId, permissions, grantResults));
+		int index = 0;
+		for (String permission : permissions) {
+			_logger.Info(String.format("Permission %s has been granted: %s", permission, grantResults[index]));
+			switch (permission) {
+			case Manifest.permission.READ_CALENDAR:
+				_broadcastController.SendIntBroadcast(Broadcasts.PERMISSION_READ_CALENDAR,
+						Bundles.PERMISSION_READ_CALENDAR, grantResults[index]);
+				break;
+			case Manifest.permission.WRITE_SETTINGS:
+				_broadcastController.SendIntBroadcast(Broadcasts.PERMISSION_WRITE_SETTINGS,
+						Bundles.PERMISSION_WRITE_SETTINGS, grantResults[index]);
+				break;
+			default:
+				_logger.Info(
+						String.format("Received request for permission %s, but this is not handled here!", permission));
+				break;
+			}
+			index++;
+		}
 	}
 
 	public void showTemperatureGraph(View view) {
@@ -197,6 +233,7 @@ public class Main extends YouTubeBaseActivity {
 	private void initializeController() {
 		_batteryViewController = new BatteryViewController(_context);
 		_birthdayViewController = new BirthdayViewController(_context);
+		_calendarViewController = new CalendarViewController(_context);
 		_centerViewController = new CenterViewController(_context);
 		_currentWeatherViewController = new CurrentWeatherViewController(_context);
 		_dateViewController = new DateViewController(_context);
@@ -217,18 +254,5 @@ public class Main extends YouTubeBaseActivity {
 		startService(new Intent(_context, MainService.class));
 		startService(new Intent(_context, TimeListenerService.class));
 		startService(new Intent(_context, ControlServiceStateService.class));
-	}
-
-	private void checkPermissions() {
-		if (PERMISSION_REQUEST_IDS.length == PERMISSIONS.length) {
-			for (int index = 0; index < PERMISSIONS.length; index++) {
-				if (ContextCompat.checkSelfPermission(_context,
-						PERMISSIONS[index]) != PackageManager.PERMISSION_GRANTED) {
-
-					ActivityCompat.requestPermissions((Activity) _context, new String[] { PERMISSIONS[index] },
-							PERMISSION_REQUEST_IDS[index]);
-				}
-			}
-		}
 	}
 }

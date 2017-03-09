@@ -7,15 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.widget.Toast;
+
 import es.dmoral.toasty.Toasty;
+
 import guepardoapps.games.common.GameConstants;
+
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.RSSFeed;
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.ServerAction;
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.YoutubeId;
 
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.YoutubeIDs;
-import guepardoapps.mediamirror.common.enums.RSSFeed;
-import guepardoapps.mediamirror.common.enums.ServerAction;
-import guepardoapps.mediamirror.common.enums.YoutubeId;
 import guepardoapps.mediamirror.controller.MediaVolumeController;
 import guepardoapps.mediamirror.controller.ScreenController;
 import guepardoapps.mediamirror.database.DBController;
@@ -167,8 +169,8 @@ public class DataHandler {
 						Toasty.error(_context, ex.toString(), Toast.LENGTH_LONG).show();
 						timeOut = SEA_SOUND_STOP_TIMEOUT;
 					}
-					CenterModel playSeaSoundModel = new CenterModel(false, "", true, YoutubeIDs.SEA_SOUND_ID, false,
-							"");
+					CenterModel playSeaSoundModel = new CenterModel(false, "", true, YoutubeId.SEA_SOUND.GetYoutubeId(),
+							false, "");
 					_logger.Info("Created center model: " + playSeaSoundModel.toString());
 					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
 							Constants.BUNDLE_CENTER_MODEL, playSeaSoundModel);

@@ -12,7 +12,7 @@ import android.os.Handler;
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.Tools;
+import guepardoapps.mediamirror.common.TimeHelper;
 import guepardoapps.mediamirror.common.converter.JsonDataToBirthdayConverter;
 import guepardoapps.mediamirror.model.helper.BirthdayHelper;
 import guepardoapps.mediamirror.services.RESTService;
@@ -52,6 +52,11 @@ public class BirtdayUpdater {
 				ArrayList<BirthdayHelper> _nextBirthdaysList = new ArrayList<BirthdayHelper>();
 
 				if (loadedBirthdayList != null) {
+					if (loadedBirthdayList.size() == 0) {
+						_logger.Warn("loadedBirthdayList size is 0!");
+						return;
+					}
+
 					if (loadedBirthdayList.size() == 3) {
 						_nextBirthdaysList = loadedBirthdayList;
 					} else if (loadedBirthdayList.size() < 3) {
@@ -170,7 +175,7 @@ public class BirtdayUpdater {
 	public void DownloadBirthdays() {
 		_logger.Debug("startDownloadBirthdays");
 
-		if (Tools.IsMuteTime()) {
+		if (TimeHelper.IsMuteTime()) {
 			_logger.Warn("Mute time!");
 			return;
 		}

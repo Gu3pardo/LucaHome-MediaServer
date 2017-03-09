@@ -2,7 +2,7 @@ package guepardoapps.mediamirror.model;
 
 import java.io.Serializable;
 
-import guepardoapps.mediamirror.common.enums.RSSFeed;
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.RSSFeed;
 
 public class RSSModel implements Serializable {
 

@@ -24,16 +24,21 @@ import android.widget.Toast;
 
 import es.dmoral.toasty.Toasty;
 
+import guepardoapps.lucahomelibrary.common.constants.Broadcasts;
+import guepardoapps.lucahomelibrary.common.constants.Bundles;
+import guepardoapps.lucahomelibrary.common.constants.Keys;
+import guepardoapps.lucahomelibrary.common.tasks.DownloadYoutubeVideoTask;
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.YoutubeId;
+
+import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.Enables;
-import guepardoapps.mediamirror.common.Keys;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.YoutubeIDs;
 import guepardoapps.mediamirror.database.DBController;
 import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.test.CenterViewControllerTest;
-import guepardoapps.mediamirror.R;
 
+import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class CenterViewController implements YouTubePlayer.OnInitializedListener {
@@ -45,6 +50,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	private boolean _screenEnabled;
 
 	private Context _context;
+	private BroadcastController _broadcastController;
 	private DBController _dbController;
 	private ReceiverController _receiverController;
 
@@ -68,6 +74,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	public CenterViewController(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
 		_context = context;
+		_broadcastController = new BroadcastController(_context);
 		_dbController = new DBController(_context);
 		_receiverController = new ReceiverController(_context);
 	}
@@ -126,8 +133,8 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		});
 
 		_youTubePlayerView = (YouTubePlayerView) ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
-		if (Keys.YOUTUBE_API != null) {
-			_youTubePlayerView.initialize(Keys.YOUTUBE_API, this);
+		if (Keys.YOUTUBE_API_KEY_1 != null) {
+			_youTubePlayerView.initialize(Keys.YOUTUBE_API_KEY_1, this);
 		} else {
 			_logger.Warn("Please enter your youtube api key!");
 			Toasty.error(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
@@ -151,6 +158,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
 					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+			_receiverController.RegisterReceiver(_youtubeIdReceiver, new String[] { Broadcasts.YOUTUBE_ID });
 
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
@@ -174,6 +182,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		_receiverController.UnregisterReceiver(_playBirthdaySongReceiver);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+		_receiverController.UnregisterReceiver(_youtubeIdReceiver);
 
 		_isInitialized = false;
 	}
@@ -297,7 +306,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			}
 
 			_logger.Debug("_playBirthdaySongReceiver onReceive");
-			startVideo(YoutubeIDs.BIRTHDAY_SONG_ID);
+			startVideo(YoutubeId.BIRTHDAY_SONG.toString());
 		}
 	};
 
@@ -327,8 +336,8 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			});
 
 			_youTubePlayerView = (YouTubePlayerView) ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
-			if (Keys.YOUTUBE_API != null) {
-				_youTubePlayerView.initialize(Keys.YOUTUBE_API, CenterViewController.this);
+			if (Keys.YOUTUBE_API_KEY_1 != null) {
+				_youTubePlayerView.initialize(Keys.YOUTUBE_API_KEY_1, CenterViewController.this);
 			} else {
 				_logger.Warn("Please enter your youtube api key!");
 				Toasty.error(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
@@ -342,6 +351,19 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			_screenEnabled = false;
 			_youtubePlayer.release();
 			_youtTubePlayerIsInitialized = false;
+		}
+	};
+
+	private BroadcastReceiver _youtubeIdReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			_logger.Debug("_youtubeIdReceiver onReceive");
+			String youtubeId = intent.getStringExtra(Bundles.YOUTUBE_ID);
+			if (youtubeId != null) {
+				_logger.Debug("received youtubeId: " + youtubeId);
+				_youtubeId = youtubeId;
+				startVideo(_youtubeId);
+			}
 		}
 	};
 
@@ -449,6 +471,20 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 		@Override
 		public void onError(ErrorReason arg0) {
+			_logger.Error(arg0.toString());
+
+			if (arg0 == ErrorReason.USER_DECLINED_RESTRICTED_CONTENT) {
+				if (YoutubeId.GetByYoutubeId(_youtubeId) == YoutubeId.THE_GOOD_LIFE_STREAM) {
+					_logger.Debug("Stream is " + YoutubeId.THE_GOOD_LIFE_STREAM.GetTitle() + "! Searching other id!");
+
+					String url = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=The+Good+Life+24+7&key="
+							+ Keys.YOUTUBE_API_KEY_2;
+
+					DownloadYoutubeVideoTask task = new DownloadYoutubeVideoTask(_context, _broadcastController);
+					task.SetSendFirstEntry(true);
+					task.execute(new String[] { url });
+				}
+			}
 		}
 
 		@Override

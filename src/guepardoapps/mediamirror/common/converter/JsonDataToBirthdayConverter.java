@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.Tools;
 import guepardoapps.mediamirror.model.helper.BirthdayHelper;
+
+import guepardoapps.toolset.common.StringHelper;
 
 public final class JsonDataToBirthdayConverter {
 
@@ -15,11 +16,21 @@ public final class JsonDataToBirthdayConverter {
 	private static String _searchParameter = "{birthday:";
 
 	public static ArrayList<BirthdayHelper> GetList(String[] stringArray) {
-		if (Tools.StringsAreEqual(stringArray)) {
+		if (_logger == null) {
+			_logger = new SmartMirrorLogger(TAG);
+		}
+
+		if (StringHelper.StringsAreEqual(stringArray)) {
 			if (stringArray[0] != null) {
 				return ParseStringToList(stringArray[0]);
 			} else {
-				_logger.Warn("Entry 1 is null!");
+				_logger.Warn("Entry 1 is null! Checking 2nd");
+
+				if (stringArray.length != 2) {
+					_logger.Error("StringArray has no 2nd entry!");
+					return new ArrayList<BirthdayHelper>();
+				}
+
 				if (stringArray[1] != null) {
 					return ParseStringToList(stringArray[1]);
 				} else {
@@ -28,7 +39,7 @@ public final class JsonDataToBirthdayConverter {
 				}
 			}
 		} else {
-			String usedEntry = Tools.SelectString(stringArray, _searchParameter);
+			String usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
 			if (usedEntry != null) {
 				return ParseStringToList(usedEntry);
 			} else {
@@ -39,8 +50,12 @@ public final class JsonDataToBirthdayConverter {
 	}
 
 	public static BirthdayHelper Get(String value) {
+		if (_logger == null) {
+			_logger = new SmartMirrorLogger(TAG);
+		}
+
 		if (!value.contains("Error")) {
-			if (Tools.GetStringCount(value, _searchParameter) == 1) {
+			if (StringHelper.GetStringCount(value, _searchParameter) == 1) {
 				if (value.contains(_searchParameter)) {
 					value = value.replace(_searchParameter, "").replace("};};", "");
 
@@ -52,18 +67,18 @@ public final class JsonDataToBirthdayConverter {
 				}
 			}
 		}
-
-		if (_logger == null) {
-			_logger = new SmartMirrorLogger(TAG);
-		}
 		_logger.Error(value + " has an error!");
 
 		return null;
 	}
 
 	private static ArrayList<BirthdayHelper> ParseStringToList(String value) {
+		if (_logger == null) {
+			_logger = new SmartMirrorLogger(TAG);
+		}
+
 		if (!value.contains("Error")) {
-			if (Tools.GetStringCount(value, _searchParameter) > 1) {
+			if (StringHelper.GetStringCount(value, _searchParameter) > 1) {
 				if (value.contains(_searchParameter)) {
 					ArrayList<BirthdayHelper> list = new ArrayList<BirthdayHelper>();
 
@@ -83,15 +98,16 @@ public final class JsonDataToBirthdayConverter {
 			}
 		}
 
-		if (_logger == null) {
-			_logger = new SmartMirrorLogger(TAG);
-		}
 		_logger.Error(value + " has an error!");
 
 		return null;
 	}
 
 	private static BirthdayHelper ParseStringToValue(String[] data) {
+		if (_logger == null) {
+			_logger = new SmartMirrorLogger(TAG);
+		}
+
 		if (data.length == 5) {
 			if (data[0].contains("{id:") && data[1].contains("{name:") && data[2].contains("{day:")
 					&& data[3].contains("{month:") && data[4].contains("{year:")) {
@@ -117,9 +133,6 @@ public final class JsonDataToBirthdayConverter {
 			}
 		}
 
-		if (_logger == null) {
-			_logger = new SmartMirrorLogger(TAG);
-		}
 		_logger.Error("Data has an error!");
 
 		return null;

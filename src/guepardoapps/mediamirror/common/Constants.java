@@ -18,6 +18,11 @@ public class Constants {
 	public static final String BROADCAST_SHOW_BIRTHDAY_MODEL = "guepardoapps.mediamirror.show.birthday_model";
 	public static final String BROADCAST_DOWNLOAD_BIRTHDAY_FINISHED = "guepardoapps.mediamirror.broadcast.DOWNLOAD_BIRTHDAY_FINISHED";
 	public static final String BROADCAST_PERFORM_BIRTHDAY_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_BIRTHDAY_UPDATE";
+	// CALENDAR VIEW
+	public static final int CALENDAR_UPDATE_TIMEOUT = 6 * 60 * 60 * 1000;
+	public static final String BUNDLE_CALENDAR_MODEL = "BUNDLE_CALENDAR_MODEL";
+	public static final String BROADCAST_SHOW_CALENDAR_MODEL = "guepardoapps.mediamirror.show.calendar_model";
+	public static final String BROADCAST_PERFORM_CALENDAR_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_CALENDAR_UPDATE";
 	// CURRENT WEATHER VIEW
 	public static final String CITY = "Munich";
 	public static final int CURRENT_WEATHER_UPDATE_TIMEOUT = 5 * 60 * 1000;
@@ -74,6 +79,7 @@ public class Constants {
 	// TODO find a better solution to activate the corresponding socket of a
 	// mediaserver!
 	// public static final String SOCKET_NAME = "MediaMirror2";
+	// public static final String SOCKET_NAME = "MediaMirror3";
 	public static final String SOCKET_STATE_ON = "&state=1";
 	public static final String SOCKET_STATE_OFF = "&state=0";
 	// SHOPPING LIST DATA
@@ -101,6 +107,9 @@ public class Constants {
 	public static final String BROADCAST_SCREEN_ON = "guepardoapps.mediamirror.screen.on";
 	public static final String BROADCAST_SCREEN_OFF = "guepardoapps.mediamirror.screen.off";
 	public static final String BROADCAST_SCREEN_ENABLED = "guepardoapps.mediamirror.screen.enabled";
+	//
+	public static final int SWITCH_BIRTHDAY_CALENDAR_TIMEOUT = 30 * 1000;
+	public static final String BROADCAST_SWITCH_BIRTHDAY_CALENDAR = "guepardoapps.mediamirror.SWITCH_BIRTHDAY_CALENDAR";
 	// SERVER
 	public static final int SERVERPORT = 8080;
 	// TIME

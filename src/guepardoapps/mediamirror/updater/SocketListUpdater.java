@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.widget.Toast;
 import es.dmoral.toasty.Toasty;
 
-import guepardoapps.lucahomelibrary.common.classes.SerializableList;
 import guepardoapps.lucahomelibrary.common.converter.json.JsonDataToSocketConverter;
 import guepardoapps.lucahomelibrary.common.dto.WirelessSocketDto;
 
@@ -16,7 +15,7 @@ import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.services.RESTService;
-
+import guepardoapps.toolset.common.classes.SerializableList;
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
 

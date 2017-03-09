@@ -7,7 +7,7 @@ import android.os.Handler;
 
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.Tools;
+import guepardoapps.mediamirror.common.TimeHelper;
 import guepardoapps.mediamirror.model.CurrentWeatherModel;
 import guepardoapps.mediamirror.model.ForecastWeatherModel;
 
@@ -199,7 +199,7 @@ public class ForecastWeatherUpdater {
 	public void DownloadWeather() {
 		_logger.Debug("DownloadWeather");
 
-		if (Tools.IsMuteTime()) {
+		if (TimeHelper.IsMuteTime()) {
 			_logger.Warn("Mute time!");
 			return;
 		}

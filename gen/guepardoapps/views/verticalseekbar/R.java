@@ -69,25 +69,25 @@ public final class R {
 		public static final int weather_snow = 0x7f0200a6;
 	}
 	public static final class id {
-		public static final int custom_alert_dialog_background = 0x7f0f002d;
-		public static final int custom_alert_dialog_btn_cancel = 0x7f0f0031;
-		public static final int custom_alert_dialog_btn_neutral = 0x7f0f0032;
-		public static final int custom_alert_dialog_btn_ok = 0x7f0f0030;
-		public static final int custom_alert_dialog_prompt = 0x7f0f002f;
-		public static final int custom_alert_dialog_title = 0x7f0f002e;
-		public static final int floating_message_background = 0x7f0f008a;
-		public static final int floating_message_text = 0x7f0f008c;
-		public static final int floating_message_title = 0x7f0f008b;
-		public static final int toast_icon = 0x7f0f013c;
-		public static final int toast_root = 0x7f0f013b;
-		public static final int toast_text = 0x7f0f013d;
+		public static final int custom_alert_dialog_background = 0x7f0f0031;
+		public static final int custom_alert_dialog_btn_cancel = 0x7f0f0035;
+		public static final int custom_alert_dialog_btn_neutral = 0x7f0f0036;
+		public static final int custom_alert_dialog_btn_ok = 0x7f0f0034;
+		public static final int custom_alert_dialog_prompt = 0x7f0f0033;
+		public static final int custom_alert_dialog_title = 0x7f0f0032;
+		public static final int floating_message_background = 0x7f0f008e;
+		public static final int floating_message_text = 0x7f0f0090;
+		public static final int floating_message_title = 0x7f0f008f;
+		public static final int toast_icon = 0x7f0f0149;
+		public static final int toast_root = 0x7f0f0148;
+		public static final int toast_text = 0x7f0f014a;
 	}
 	public static final class layout {
-		public static final int custom_dialog_1 = 0x7f030002;
-		public static final int custom_dialog_2 = 0x7f030003;
-		public static final int custom_dialog_3 = 0x7f030004;
-		public static final int floating_message = 0x7f030014;
-		public static final int toast_layout = 0x7f03002f;
+		public static final int custom_dialog_1 = 0x7f030003;
+		public static final int custom_dialog_2 = 0x7f030004;
+		public static final int custom_dialog_3 = 0x7f030005;
+		public static final int floating_message = 0x7f030015;
+		public static final int toast_layout = 0x7f030030;
 	}
 	public static final class string {
 		public static final int about = 0x7f0d002b;

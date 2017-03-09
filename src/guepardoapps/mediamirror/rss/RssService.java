@@ -12,8 +12,10 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.RSSFeed;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.enums.RSSFeed;
 
 public class RssService extends IntentService {
 

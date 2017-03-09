@@ -3,10 +3,13 @@ package guepardoapps.mediamirror.test;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.YoutubeId;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.enums.YoutubeId;
 import guepardoapps.mediamirror.model.*;
+
 import guepardoapps.toolset.controller.BroadcastController;
 
 public class CenterViewControllerTest {

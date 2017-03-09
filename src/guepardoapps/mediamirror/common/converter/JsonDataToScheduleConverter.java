@@ -4,8 +4,9 @@ import java.sql.Time;
 import java.util.ArrayList;
 
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.Tools;
 import guepardoapps.mediamirror.model.ScheduleModel;
+
+import guepardoapps.toolset.common.StringHelper;
 import guepardoapps.toolset.common.enums.Weekday;
 
 public final class JsonDataToScheduleConverter {
@@ -16,16 +17,16 @@ public final class JsonDataToScheduleConverter {
 	private static String _searchParameter = "{schedule:";
 
 	public static ArrayList<ScheduleModel> GetList(String[] stringArray) {
-		if (Tools.StringsAreEqual(stringArray)) {
+		if (StringHelper.StringsAreEqual(stringArray)) {
 			return ParseStringToList(stringArray[0]);
 		} else {
-			String usedEntry = Tools.SelectString(stringArray, _searchParameter);
+			String usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
 			return ParseStringToList(usedEntry);
 		}
 	}
 
 	public static ScheduleModel Get(String value) {
-		if (Tools.GetStringCount(value, _searchParameter) == 1) {
+		if (StringHelper.GetStringCount(value, _searchParameter) == 1) {
 			if (value.contains(_searchParameter)) {
 				value = value.replace(_searchParameter, "").replace("};};", "");
 
@@ -46,7 +47,7 @@ public final class JsonDataToScheduleConverter {
 	}
 
 	private static ArrayList<ScheduleModel> ParseStringToList(String value) {
-		if (Tools.GetStringCount(value, _searchParameter) > 0) {
+		if (StringHelper.GetStringCount(value, _searchParameter) > 0) {
 			if (value.contains(_searchParameter)) {
 				ArrayList<ScheduleModel> list = new ArrayList<ScheduleModel>();
 

@@ -15,10 +15,11 @@ import android.widget.Toast;
 
 import es.dmoral.toasty.Toasty;
 
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.RSSFeed;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.enums.RSSFeed;
 import guepardoapps.mediamirror.model.*;
 import guepardoapps.mediamirror.rss.RssItem;
 import guepardoapps.mediamirror.rss.RssService;

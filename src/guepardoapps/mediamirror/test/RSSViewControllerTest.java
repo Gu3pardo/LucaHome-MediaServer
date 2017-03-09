@@ -1,10 +1,13 @@
 package guepardoapps.mediamirror.test;
 
 import android.content.Context;
+
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.RSSFeed;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.enums.RSSFeed;
 import guepardoapps.mediamirror.model.RSSModel;
+
 import guepardoapps.toolset.controller.BroadcastController;
 
 public class RSSViewControllerTest {

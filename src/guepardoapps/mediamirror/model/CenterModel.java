@@ -2,8 +2,9 @@ package guepardoapps.mediamirror.model;
 
 import java.io.Serializable;
 
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.YoutubeId;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.enums.YoutubeId;
 
 public class CenterModel implements Serializable {
 

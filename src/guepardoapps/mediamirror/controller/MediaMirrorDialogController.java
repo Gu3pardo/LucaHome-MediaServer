@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import guepardoapps.lucahomelibrary.common.classes.SerializableList;
 import guepardoapps.lucahomelibrary.common.controller.LucaDialogController;
 import guepardoapps.lucahomelibrary.common.dto.ShoppingEntryDto;
 import guepardoapps.lucahomelibrary.common.dto.WirelessSocketDto;
@@ -24,6 +23,7 @@ import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
+import guepardoapps.toolset.common.classes.SerializableList;
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
 

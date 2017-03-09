@@ -5,10 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 
+import guepardoapps.lucahomelibrary.mediamirror.common.enums.RSSFeed;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.Tools;
-import guepardoapps.mediamirror.common.enums.RSSFeed;
+import guepardoapps.mediamirror.common.TimeHelper;
 import guepardoapps.mediamirror.model.RSSModel;
 
 import guepardoapps.toolset.controller.BroadcastController;
@@ -101,7 +102,7 @@ public class RSSViewUpdater {
 	public void LoadRss() {
 		_logger.Debug("LoadRss");
 
-		if (Tools.IsMuteTime()) {
+		if (TimeHelper.IsMuteTime()) {
 			_logger.Warn("Mute time!");
 			return;
 		}

@@ -132,23 +132,23 @@ public class CalendarViewController {
 					_isToday[index] = false;
 				}
 
-				for (int index = 0; index < _calendarEntries.getSize(); index++) {
-					if (index >= 3) {
-						_logger.Debug("Enough entries...");
-						return;
-					}
-
-					CalendarEntry entry = _calendarEntries.getValue(index);
-					if (entry.IsToday()) {
-						_logger.Debug(entry.toString() + " is today!");
-						_isToday[index] = true;
-						_calendarAlarmViewArray[index].setVisibility(View.VISIBLE);
+				for (int index = 0; index < 3; index++) {
+					if (index < _calendarEntries.getSize()) {
+						CalendarEntry entry = _calendarEntries.getValue(index);
+						if (entry.IsToday()) {
+							_logger.Debug(entry.toString() + " is today!");
+							_isToday[index] = true;
+							_calendarAlarmViewArray[index].setVisibility(View.VISIBLE);
+						} else {
+							_logger.Debug(entry.toString() + " is not today!");
+							_isToday[index] = false;
+							_calendarAlarmViewArray[index].setVisibility(View.INVISIBLE);
+						}
+						_calendarTextViewArray[index].setText(entry.GetMirrorText());
 					} else {
-						_logger.Debug(entry.toString() + " is not today!");
-						_isToday[index] = false;
+						_calendarTextViewArray[index].setVisibility(View.INVISIBLE);
 						_calendarAlarmViewArray[index].setVisibility(View.INVISIBLE);
 					}
-					_calendarTextViewArray[index].setText(entry.GetMirrorText());
 				}
 
 				_updateAlarmHandler.removeCallbacks(_updateAlarmViewRunnable);

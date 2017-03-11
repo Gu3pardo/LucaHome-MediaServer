@@ -283,6 +283,14 @@ public class DataHandler {
 
 					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_BIRTHDAY_UPDATE);
 					break;
+				case UPDATE_CALENDAR_ALARM:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
+					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_CALENDAR_UPDATE);
+					break;
 				case INCREASE_VOLUME:
 					_mediaVolumeController.IncreaseVolume();
 					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();

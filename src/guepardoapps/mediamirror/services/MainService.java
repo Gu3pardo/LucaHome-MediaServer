@@ -177,9 +177,9 @@ public class MainService extends Service {
 			}
 
 			if (_scheduleService == null) {
-				_scheduleService = new ScheduleService();
+				_scheduleService = ScheduleService.getInstance();
 				_scheduleService.AddSchedule("ChangeBirthdayCalendarView", _switchBirthdayCalendarViewRunnable,
-						Constants.SWITCH_BIRTHDAY_CALENDAR_TIMEOUT);
+						Constants.SWITCH_BIRTHDAY_CALENDAR_TIMEOUT, true);
 			}
 
 			CenterModel centerModel = new CenterModel(false, "", true, YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId(),

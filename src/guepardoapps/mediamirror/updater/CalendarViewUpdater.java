@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.text.format.DateUtils;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
@@ -31,7 +33,8 @@ public class CalendarViewUpdater {
 		public void run() {
 			_logger.Debug("_updateRunnable run");
 
-			SerializableList<CalendarEntry> calendarList = _calendarController.ReadCalendar();
+			SerializableList<CalendarEntry> calendarList = _calendarController
+					.ReadCalendar(DateUtils.YEAR_IN_MILLIS * 10000);
 			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CALENDAR_MODEL,
 					Constants.BUNDLE_CALENDAR_MODEL, calendarList);
 
@@ -44,7 +47,8 @@ public class CalendarViewUpdater {
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_performUpdateReceiver onReceive");
 
-			SerializableList<CalendarEntry> calendarList = _calendarController.ReadCalendar();
+			SerializableList<CalendarEntry> calendarList = _calendarController
+					.ReadCalendar(DateUtils.YEAR_IN_MILLIS * 10000);
 			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CALENDAR_MODEL,
 					Constants.BUNDLE_CALENDAR_MODEL, calendarList);
 		}

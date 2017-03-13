@@ -9,7 +9,7 @@
     <string name="weatherTimeUpdateText">12:30:00</string>
     <string name="temperatureRangeText">15.9°C-17.4°C</string>
     <string name="weekdayText">Mo</string>
-    <string name="dateText">01.01.2016</string>
+    <string name="dateText">01.01.2017</string>
     <string name="timeText">12:30:00</string>
     <string name="birthdayText">Marion Meier has her 28th birthday</string>
     <string name="calendarText">This is a calendar entry</string>
@@ -23,5 +23,5 @@
     <string name="mode_lose_suffix">\nKlicke auf den Bildschirm</string>
     <string name="snake_layout_text_text"/>
     <string name="example">Example</string>
-    <string name="serverVersion">0.12.1.170311</string>
+    <string name="serverVersion">0.12.2.170313</string>
 </resources>

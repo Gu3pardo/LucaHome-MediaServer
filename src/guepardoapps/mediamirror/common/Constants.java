@@ -75,11 +75,6 @@ public class Constants {
 	public static final String BROADCAST_DOWNLOAD_SOCKET_FINISHED = "guepardoapps.mediamirror.broadcast.DOWNLOAD_SOCKET_FINISHED";
 	public static final String BROADCAST_PERFORM_SOCKET_UPDATE = "guepardoapps.mediamirror.broadcast.PERFORM_SOCKET_UPDATE";
 	public static final String BROADCAST_SOCKET_LIST = "guepardoapps.mediamirror.broadcast.SOCKET_LIST";
-	public static final String SOCKET_NAME = "MediaMirror1";
-	// TODO find a better solution to activate the corresponding socket of a
-	// mediaserver!
-	// public static final String SOCKET_NAME = "MediaMirror2";
-	// public static final String SOCKET_NAME = "MediaMirror3";
 	public static final String SOCKET_STATE_ON = "&state=1";
 	public static final String SOCKET_STATE_OFF = "&state=0";
 	// SHOPPING LIST DATA

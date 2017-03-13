@@ -7,29 +7,39 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Bundle;
 
+import es.dmoral.toasty.Toasty;
+
+import guepardoapps.lucahomelibrary.common.constants.MediaMirrorIds;
+
 import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.services.RESTService;
+
+import guepardoapps.toolset.controller.NetworkController;
 
 public class BatterySocketController {
 
 	private static final String TAG = BatterySocketController.class.getName();
 	private SmartMirrorLogger _logger;
 
+	private static final int LOWER_BATTERY_LIMIT = 10;
+	private static final int UPPER_BATTERY_LIMIT = 90;
+
 	private boolean _isInitialized;
 	private boolean _activatedSocket;
 	private boolean _deactivatedSocket;
 
 	private Context _context;
+	private NetworkController _networkController;
 
 	private BroadcastReceiver _batteryInfoReveicer = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-			if (level > 95) {
+			if (level > UPPER_BATTERY_LIMIT) {
 				disableBatterySocket();
-			} else if (level < 10) {
+			} else if (level < LOWER_BATTERY_LIMIT) {
 				enableBatterySocket();
 			}
 		}
@@ -39,6 +49,7 @@ public class BatterySocketController {
 		_logger = new SmartMirrorLogger(TAG);
 		_logger.Info("ScreenController created");
 		_context = context;
+		_networkController = new NetworkController(_context, null);
 	}
 
 	public void Start() {
@@ -85,18 +96,32 @@ public class BatterySocketController {
 	}
 
 	private void setBatterySocket(boolean enable) {
-		_logger.Debug("setBatterySocket " + Constants.SOCKET_NAME + " to "
-				+ ((enable) ? Constants.SOCKET_STATE_ON : Constants.SOCKET_STATE_OFF));
+		String localIp = _networkController.GetIpAddress();
+		if (localIp != null) {
+			try {
+				String localSocket = MediaMirrorIds.IPs.get(localIp);
+				if (localSocket != null) {
+					_logger.Debug("setBatterySocket " + localSocket + " to "
+							+ ((enable) ? Constants.SOCKET_STATE_ON : Constants.SOCKET_STATE_OFF));
 
-		Intent serviceIntent = new Intent(_context, RESTService.class);
-		Bundle serviceData = new Bundle();
+					Intent serviceIntent = new Intent(_context, RESTService.class);
+					Bundle serviceData = new Bundle();
 
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, Constants.ACTION_SET_SOCKET + Constants.SOCKET_NAME
-				+ ((enable) ? Constants.SOCKET_STATE_ON : Constants.SOCKET_STATE_OFF));
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, "");
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, "");
+					serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, Constants.ACTION_SET_SOCKET + localSocket
+							+ ((enable) ? Constants.SOCKET_STATE_ON : Constants.SOCKET_STATE_OFF));
+					serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, "");
+					serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, "");
 
-		serviceIntent.putExtras(serviceData);
-		_context.startService(serviceIntent);
+					serviceIntent.putExtras(serviceData);
+					_context.startService(serviceIntent);
+				} else {
+					_logger.Error("Did not found socket for " + localIp);
+					Toasty.error(_context, "Did not found socket for " + localIp);
+				}
+			} catch (Exception ex) {
+				_logger.Error(ex.toString());
+				Toasty.error(_context, "Did not found socket for " + localIp);
+			}
+		}
 	}
 }

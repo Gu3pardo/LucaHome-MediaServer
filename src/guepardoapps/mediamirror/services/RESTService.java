@@ -12,13 +12,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-
-import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.RaspPiConstants;
 
 public class RESTService extends Service {
 
-	private static final String TAG = RESTService.class.getName();
+	private static final String TAG = RESTService.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	@Override

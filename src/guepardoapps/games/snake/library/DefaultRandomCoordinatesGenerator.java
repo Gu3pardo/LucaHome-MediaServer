@@ -2,7 +2,7 @@ package guepardoapps.games.snake.library;
 
 import java.util.Random;
 
-import guepardoapps.games.common.basic.Coordinates;
+import guepardoapps.games.common.Coordinates;
 import guepardoapps.games.snake.library.interfaces.RandomCoordinatesGenerator;
 
 public class DefaultRandomCoordinatesGenerator implements RandomCoordinatesGenerator {

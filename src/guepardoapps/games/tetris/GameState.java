@@ -5,16 +5,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import guepardoapps.games.common.basic.Coordinates;
-
-import guepardoapps.mediamirror.common.Enables;
-
-import guepardoapps.toolset.common.Logger;
+import guepardoapps.games.common.Coordinates;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
 public class GameState {
 
-	private static final String TAG = GameState.class.getName();
-	private Logger _logger;
+	private static final String TAG = GameState.class.getSimpleName();
+	private SmartMirrorLogger _logger;
 
 	private GameSurfaceView _gameSurfaceView;
 	private Shape _fallingShape;
@@ -23,7 +20,7 @@ public class GameState {
 	private List<int[]> _deleteMe;
 
 	public GameState(GameSurfaceView gameSurfaceView) {
-		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
+		_logger = new SmartMirrorLogger(TAG);
 		_logger.Debug("Created GameState...");
 
 		Shape tShape = Shape.l(gameSurfaceView);

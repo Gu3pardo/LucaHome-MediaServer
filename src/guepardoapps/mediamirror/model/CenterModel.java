@@ -2,7 +2,7 @@ package guepardoapps.mediamirror.model;
 
 import java.io.Serializable;
 
-import guepardoapps.lucahomelibrary.mediamirror.common.enums.YoutubeId;
+import guepardoapps.library.lucahome.common.enums.YoutubeId;
 
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 

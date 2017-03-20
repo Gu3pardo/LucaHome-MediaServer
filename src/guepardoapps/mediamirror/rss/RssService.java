@@ -13,7 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-import guepardoapps.lucahomelibrary.mediamirror.common.enums.RSSFeed;
+import guepardoapps.library.lucahome.common.enums.RSSFeed;
 
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 

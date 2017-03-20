@@ -5,8 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 
-import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
 
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
@@ -15,7 +16,7 @@ public class MediaVolumeController {
 
 	private static final MediaVolumeController SINGLETON_CONTROLLER = new MediaVolumeController();
 
-	private static final String TAG = MediaVolumeController.class.getName();
+	private static final String TAG = MediaVolumeController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private Context _context;
@@ -44,8 +45,7 @@ public class MediaVolumeController {
 			_context = context;
 			_broadcastController = new BroadcastController(_context);
 			_receiverController = new ReceiverController(_context);
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 
 			_audioManager = (AudioManager) _context.getSystemService(Context.AUDIO_SERVICE);
 			_currentVolume = _audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -131,12 +131,12 @@ public class MediaVolumeController {
 			UnmuteVolume();
 		}
 
-		if (_currentVolume <= 0) {
+		if (volume <= 0) {
 			_logger.Warn("Current volume is already 0!");
 			return false;
 		}
 
-		if (_currentVolume >= _maxVolume) {
+		if (volume >= _maxVolume) {
 			_logger.Warn("Current volume is already _maxVolume: " + String.valueOf(_maxVolume));
 			return false;
 		}
@@ -252,8 +252,7 @@ public class MediaVolumeController {
 		} else {
 			volumeText = String.valueOf(_currentVolume);
 		}
-		_broadcastController.SendStringBroadcast(Constants.BROADCAST_SHOW_VOLUME_MODEL, Constants.BUNDLE_VOLUME_MODEL,
-				volumeText);
+		_broadcastController.SendStringBroadcast(Broadcasts.SHOW_VOLUME_MODEL, Bundles.VOLUME_MODEL, volumeText);
 	}
 
 	private BroadcastReceiver _screenEnableReceiver = new BroadcastReceiver() {

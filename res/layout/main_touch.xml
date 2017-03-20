@@ -633,7 +633,7 @@
         android:text="Vol.: 85"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <guepardoapps.views.verticalseekbar.VerticalSeekbarView
+    <guepardoapps.library.verticalseekbarview.VerticalSeekbarView
         android:id="@+id/volumeSlider"
         android:layout_width="25dp"
         android:layout_height="125dp"

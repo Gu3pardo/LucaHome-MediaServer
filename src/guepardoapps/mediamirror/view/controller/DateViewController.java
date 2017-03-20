@@ -6,18 +6,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.TextView;
 
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.Enables;
-import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.model.*;
-import guepardoapps.mediamirror.test.DateViewControllerTest;
 import guepardoapps.mediamirror.R;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.Enables;
+import guepardoapps.mediamirror.model.*;
+
+import guepardoapps.test.DateViewControllerTest;
 
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class DateViewController {
 
-	private static final String TAG = DateViewController.class.getName();
+	private static final String TAG = DateViewController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
@@ -55,16 +57,14 @@ public class DateViewController {
 	public void onResume() {
 		_logger.Debug("onResume");
 		if (!_isInitialized) {
-			_receiverController.RegisterReceiver(_updateViewReceiver,
-					new String[] { Constants.BROADCAST_SHOW_DATE_MODEL });
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
+			_receiverController.RegisterReceiver(_updateViewReceiver, new String[] { Broadcasts.SHOW_DATE_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Enables.TESTING_ENABLED) {
+			if (Enables.TESTING) {
 				if (_dateViewTest == null) {
 					_dateViewTest = new DateViewControllerTest(_context);
 				}
@@ -93,7 +93,7 @@ public class DateViewController {
 			}
 
 			_logger.Debug("_updateViewReceiver onReceive");
-			DateModel model = (DateModel) intent.getSerializableExtra(Constants.BUNDLE_DATE_MODEL);
+			DateModel model = (DateModel) intent.getSerializableExtra(Bundles.DATE_MODEL);
 			if (model != null) {
 				_logger.Debug(model.toString());
 
@@ -104,7 +104,7 @@ public class DateViewController {
 				_logger.Warn("model is null!");
 			}
 
-			if (Enables.TESTING_ENABLED) {
+			if (Enables.TESTING) {
 				_dateViewTest.ValidateView(_weekdayTextView.getText().toString(), _dateTextView.getText().toString(),
 						_timeTextView.getText().toString());
 			}

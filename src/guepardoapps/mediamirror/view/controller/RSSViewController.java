@@ -13,24 +13,26 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import es.dmoral.toasty.Toasty;
+import guepardoapps.library.lucahome.common.enums.RSSFeed;
 
-import guepardoapps.lucahomelibrary.mediamirror.common.enums.RSSFeed;
+import guepardoapps.library.toastview.ToastView;
 
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.Enables;
+import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.model.*;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.Enables;
+import guepardoapps.mediamirror.model.RSSModel;
 import guepardoapps.mediamirror.rss.RssItem;
 import guepardoapps.mediamirror.rss.RssService;
-import guepardoapps.mediamirror.test.RSSViewControllerTest;
-import guepardoapps.mediamirror.R;
+
+import guepardoapps.test.RSSViewControllerTest;
 
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class RSSViewController {
 
-	private static final String TAG = RSSViewController.class.getName();
+	private static final String TAG = RSSViewController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
@@ -86,16 +88,14 @@ public class RSSViewController {
 	public void onResume() {
 		_logger.Debug("onResume");
 		if (!_isInitialized) {
-			_receiverController.RegisterReceiver(_updateViewReceiver,
-					new String[] { Constants.BROADCAST_SHOW_RSS_DATA_MODEL });
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
+			_receiverController.RegisterReceiver(_updateViewReceiver, new String[] { Broadcasts.SHOW_RSS_DATA_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Enables.TESTING_ENABLED) {
+			if (Enables.TESTING) {
 				if (_rssViewTest == null) {
 					_rssViewTest = new RSSViewControllerTest(_context);
 				}
@@ -124,7 +124,7 @@ public class RSSViewController {
 			}
 
 			_logger.Debug("_updateViewReceiver onReceive");
-			RSSModel model = (RSSModel) intent.getSerializableExtra(Constants.BUNDLE_RSS_DATA_MODEL);
+			RSSModel model = (RSSModel) intent.getSerializableExtra(Bundles.RSS_DATA_MODEL);
 
 			if (model != null) {
 				_logger.Debug(model.toString());
@@ -146,7 +146,7 @@ public class RSSViewController {
 				}
 			}
 
-			if (Enables.TESTING_ENABLED) {
+			if (Enables.TESTING) {
 				_rssViewTest.ValidateView(model.GetRSSFeed(), _rssTextView1.getVisibility() == View.VISIBLE);
 			}
 		}
@@ -200,7 +200,7 @@ public class RSSViewController {
 				_rssTextView3.setVisibility(View.GONE);
 				_rssTextView3Description.setVisibility(View.GONE);
 
-				Toasty.error(_context, "An error occured while downloading the rss feed.", Toast.LENGTH_LONG).show();
+				ToastView.error(_context, "An error occured while downloading the rss feed.", Toast.LENGTH_LONG).show();
 			}
 		};
 	};

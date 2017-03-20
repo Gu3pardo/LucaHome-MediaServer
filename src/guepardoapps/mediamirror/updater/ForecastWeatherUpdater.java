@@ -5,23 +5,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 
-import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.library.openweather.common.OWBroadcasts;
+import guepardoapps.library.openweather.common.OWBundles;
+import guepardoapps.library.openweather.common.enums.ForecastListType;
+import guepardoapps.library.openweather.common.model.ForecastModel;
+import guepardoapps.library.openweather.controller.OpenWeatherController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.TimeHelper;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.Constants;
 import guepardoapps.mediamirror.model.CurrentWeatherModel;
 import guepardoapps.mediamirror.model.ForecastWeatherModel;
-
-import guepardoapps.toolset.openweather.OpenWeatherController;
-import guepardoapps.toolset.openweather.common.OpenWeatherConstants;
-import guepardoapps.toolset.openweather.enums.ForecastListType;
-import guepardoapps.toolset.openweather.model.*;
 
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class ForecastWeatherUpdater {
 
-	private static final String TAG = ForecastWeatherUpdater.class.getName();
+	private static final String TAG = ForecastWeatherUpdater.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private Handler _updater;
@@ -45,8 +48,7 @@ public class ForecastWeatherUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_updateReceiver onReceive");
-			ForecastModel forecastWeather = (ForecastModel) intent
-					.getSerializableExtra(OpenWeatherConstants.BUNDLE_EXTRA_FORECAST_MODEL);
+			ForecastModel forecastWeather = (ForecastModel) intent.getSerializableExtra(OWBundles.EXTRA_FORECAST_MODEL);
 			if (forecastWeather != null) {
 				_logger.Debug("forecastWeather is: " + forecastWeather.toString());
 
@@ -58,7 +60,7 @@ public class ForecastWeatherUpdater {
 				}
 
 				int entryIndex = 0;
-				guepardoapps.toolset.openweather.model.ForecastWeatherModel weather1 = forecastWeather.GetList()
+				guepardoapps.library.openweather.common.model.ForecastWeatherModel weather1 = forecastWeather.GetList()
 						.get(entryIndex);
 				entryIndex++;
 				if (entryIndex > listSize - 1) {
@@ -88,7 +90,7 @@ public class ForecastWeatherUpdater {
 				CurrentWeatherModel forecast1 = new CurrentWeatherModel("", "", "", "", "", weather1.GetIcon(), "",
 						weather1.GetDate(), weather1.GetTime(), weather1.GetTempMin() + " - " + weather1.GetTempMax());
 
-				guepardoapps.toolset.openweather.model.ForecastWeatherModel weather2 = forecastWeather.GetList()
+				guepardoapps.library.openweather.common.model.ForecastWeatherModel weather2 = forecastWeather.GetList()
 						.get(entryIndex);
 				entryIndex++;
 				if (entryIndex > listSize - 1) {
@@ -118,7 +120,7 @@ public class ForecastWeatherUpdater {
 				CurrentWeatherModel forecast2 = new CurrentWeatherModel("", "", "", "", "", weather2.GetIcon(), "",
 						weather2.GetDate(), weather2.GetTime(), weather2.GetTempMin() + " - " + weather2.GetTempMax());
 
-				guepardoapps.toolset.openweather.model.ForecastWeatherModel weather3 = forecastWeather.GetList()
+				guepardoapps.library.openweather.common.model.ForecastWeatherModel weather3 = forecastWeather.GetList()
 						.get(entryIndex);
 				entryIndex++;
 				if (entryIndex > listSize - 1) {
@@ -153,8 +155,8 @@ public class ForecastWeatherUpdater {
 				model.AddForecast(forecast2);
 				model.AddForecast(forecast3);
 
-				_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_FORECAST_WEATHER_MODEL,
-						Constants.BUNDLE_FORECAST_WEATHER_MODEL, model);
+				_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_FORECAST_WEATHER_MODEL,
+						Bundles.FORECAST_WEATHER_MODEL, model);
 			} else {
 				_logger.Warn("Forecast weather is null!");
 			}
@@ -183,9 +185,9 @@ public class ForecastWeatherUpdater {
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
 		_receiverController.RegisterReceiver(_updateReceiver,
-				new String[] { OpenWeatherConstants.BROADCAST_GET_FORECAST_WEATHER_JSON_FINISHED });
+				new String[] { OWBroadcasts.FORECAST_WEATHER_JSON_FINISHED });
 		_receiverController.RegisterReceiver(_performUpdateReceiver,
-				new String[] { Constants.BROADCAST_PERFORM_FORECAST_WEATHER_UPDATE });
+				new String[] { Broadcasts.PERFORM_FORECAST_WEATHER_UPDATE });
 		_updateRunnable.run();
 	}
 

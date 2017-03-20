@@ -13,15 +13,16 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import guepardoapps.lucahomelibrary.common.controller.LucaDialogController;
-import guepardoapps.lucahomelibrary.common.dto.ShoppingEntryDto;
-import guepardoapps.lucahomelibrary.common.dto.WirelessSocketDto;
-import guepardoapps.lucahomelibrary.view.customadapter.ShoppingListAdapter;
-import guepardoapps.lucahomelibrary.view.customadapter.SocketListAdapter;
+import guepardoapps.library.lucahome.common.dto.ShoppingEntryDto;
+import guepardoapps.library.lucahome.common.dto.WirelessSocketDto;
+import guepardoapps.library.lucahome.controller.LucaDialogController;
+import guepardoapps.library.lucahome.customadapter.ShoppingListAdapter;
+import guepardoapps.library.lucahome.customadapter.SocketListAdapter;
 
 import guepardoapps.mediamirror.R;
-import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
 
 import guepardoapps.toolset.common.classes.SerializableList;
 import guepardoapps.toolset.controller.BroadcastController;
@@ -29,7 +30,7 @@ import guepardoapps.toolset.controller.ReceiverController;
 
 public class MediaMirrorDialogController extends LucaDialogController {
 
-	private static final String TAG = MediaMirrorDialogController.class.getName();
+	private static final String TAG = MediaMirrorDialogController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private ReceiverController _receiverController;
@@ -98,7 +99,7 @@ public class MediaMirrorDialogController extends LucaDialogController {
 			public void onReceive(Context context, Intent intent) {
 				@SuppressWarnings("unchecked")
 				SerializableList<ShoppingEntryDto> receivedShoppingList = (SerializableList<ShoppingEntryDto>) intent
-						.getSerializableExtra(Constants.BUNDLE_SHOPPING_LIST);
+						.getSerializableExtra(Bundles.SHOPPING_LIST);
 				if (receivedShoppingList != null) {
 					ShoppingListAdapter listAdapter = new ShoppingListAdapter(_context, receivedShoppingList);
 					listView.setAdapter(listAdapter);
@@ -106,13 +107,13 @@ public class MediaMirrorDialogController extends LucaDialogController {
 			}
 		};
 
-		_receiverController.RegisterReceiver(shoppingListReceiver, new String[] { Constants.BROADCAST_SHOPPING_LIST });
+		_receiverController.RegisterReceiver(shoppingListReceiver, new String[] { Broadcasts.SHOPPING_LIST });
 
 		Button btnAdd = (Button) _dialog.findViewById(R.id.btnAddListView);
 		btnAdd.setOnClickListener(new OnClickListener() {
 			Runnable getShoppingListDataRunnable = new Runnable() {
 				public void run() {
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_SHOPPING_LIST_UPDATE);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_SHOPPING_LIST_UPDATE);
 				}
 			};
 

@@ -7,14 +7,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 
-import es.dmoral.toasty.Toasty;
+import guepardoapps.library.lucahome.common.dto.ShoppingEntryDto;
+import guepardoapps.library.lucahome.converter.json.JsonDataToShoppingListConverter;
 
-import guepardoapps.lucahomelibrary.common.converter.json.JsonDataToShoppingListConverter;
-import guepardoapps.lucahomelibrary.common.dto.ShoppingEntryDto;
+import guepardoapps.library.toastview.ToastView;
 
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.RaspPiConstants;
 import guepardoapps.mediamirror.services.RESTService;
 
 import guepardoapps.toolset.common.classes.SerializableList;
@@ -23,7 +24,7 @@ import guepardoapps.toolset.controller.ReceiverController;
 
 public class ShoppingListUpdater {
 
-	private static final String TAG = ShoppingListUpdater.class.getName();
+	private static final String TAG = ShoppingListUpdater.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private Handler _updater;
@@ -46,15 +47,15 @@ public class ShoppingListUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_updateReceiver onReceive");
-			String[] shoppingListStringArray = intent.getStringArrayExtra(Constants.BUNDLE_SHOPPING_LIST);
+			String[] shoppingListStringArray = intent.getStringArrayExtra(Bundles.SHOPPING_LIST);
 			if (shoppingListStringArray != null) {
 				SerializableList<ShoppingEntryDto> shoppingList = JsonDataToShoppingListConverter
 						.GetList(shoppingListStringArray);
 				if (shoppingList != null) {
-					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOPPING_LIST,
-							Constants.BUNDLE_SHOPPING_LIST, shoppingList);
+					_broadcastController.SendSerializableBroadcast(Broadcasts.SHOPPING_LIST, Bundles.SHOPPING_LIST,
+							shoppingList);
 				} else {
-					Toasty.error(_context, "Failed to convert shopping list from string array!", Toast.LENGTH_LONG)
+					ToastView.error(_context, "Failed to convert shopping list from string array!", Toast.LENGTH_LONG)
 							.show();
 				}
 			}
@@ -90,11 +91,11 @@ public class ShoppingListUpdater {
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
 		_receiverController.RegisterReceiver(_updateReceiver,
-				new String[] { Constants.BROADCAST_DOWNLOAD_SHOPPING_LIST_FINISHED });
+				new String[] { Broadcasts.DOWNLOAD_SHOPPING_LIST_FINISHED });
 		_receiverController.RegisterReceiver(_performUpdateReceiver,
-				new String[] { Constants.BROADCAST_PERFORM_SHOPPING_LIST_UPDATE });
+				new String[] { Broadcasts.PERFORM_SHOPPING_LIST_UPDATE });
 		_receiverController.RegisterReceiver(_reloadReceiver,
-				new String[] { guepardoapps.lucahomelibrary.common.constants.Broadcasts.RELOAD_SHOPPING_LIST });
+				new String[] { guepardoapps.library.lucahome.common.constants.Broadcasts.RELOAD_SHOPPING_LIST });
 		_updateRunnable.run();
 	}
 
@@ -112,10 +113,9 @@ public class ShoppingListUpdater {
 		Intent serviceIntent = new Intent(_context, RESTService.class);
 		Bundle serviceData = new Bundle();
 
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, Constants.ACTION_GET_SHOPPING_LIST);
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Constants.BUNDLE_SHOPPING_LIST);
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST,
-				Constants.BROADCAST_DOWNLOAD_SHOPPING_LIST_FINISHED);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, RaspPiConstants.GET_SHOPPING_LIST);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Bundles.SHOPPING_LIST);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, Broadcasts.DOWNLOAD_SHOPPING_LIST_FINISHED);
 
 		serviceIntent.putExtras(serviceData);
 		_context.startService(serviceIntent);

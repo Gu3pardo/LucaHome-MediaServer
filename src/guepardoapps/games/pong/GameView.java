@@ -10,16 +10,16 @@ import android.view.SurfaceView;
 
 import guepardoapps.games.common.GameConstants;
 
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.Enables;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
 
-import guepardoapps.toolset.common.Logger;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-	private static final String TAG = GameView.class.getName();
-	private Logger _logger;
+	private static final String TAG = GameView.class.getSimpleName();
+	private SmartMirrorLogger _logger;
 
 	private GameThread _thread;
 
@@ -30,7 +30,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_commandReceiver onReceive");
-			String command = intent.getStringExtra(Constants.BUNDLE_GAME_COMMAND);
+			String command = intent.getStringExtra(Bundles.GAME_COMMAND);
 
 			if (command != null) {
 				_logger.Debug("Command is: " + command);
@@ -94,7 +94,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	public GameView(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
 
-		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
+		_logger = new SmartMirrorLogger(TAG);
 		_logger.Debug("GameView created...");
 
 		_context = context;
@@ -114,7 +114,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		_logger.Debug("surfaceCreated");
-		_receiverController.RegisterReceiver(_commandReceiver, new String[] { Constants.BROADCAST_GAME_COMMAND });
+		_receiverController.RegisterReceiver(_commandReceiver, new String[] { Broadcasts.GAME_COMMAND });
 		_thread.start();
 	}
 

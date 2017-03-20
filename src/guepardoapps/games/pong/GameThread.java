@@ -6,14 +6,12 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 
-import guepardoapps.mediamirror.common.Enables;
-
-import guepardoapps.toolset.common.Logger;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
 public class GameThread extends Thread {
 
-	private static final String TAG = GameThread.class.getName();
-	private Logger _logger;
+	private static final String TAG = GameThread.class.getSimpleName();
+	private SmartMirrorLogger _logger;
 
 	private SurfaceHolder _surfaceHolder;
 	private Paint _paint;
@@ -22,7 +20,7 @@ public class GameThread extends Thread {
 	private boolean _gameIsRunning = true;
 
 	public GameThread(SurfaceHolder surfaceHolder, Context context, Handler handler) {
-		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
+		_logger = new SmartMirrorLogger(TAG);
 		_logger.Debug("GameThread created...");
 
 		_surfaceHolder = surfaceHolder;

@@ -6,11 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.converter.DateConverter;
-import guepardoapps.mediamirror.common.converter.TimeConverter;
-import guepardoapps.mediamirror.common.converter.WeekdayConverter;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.converter.DateConverter;
+import guepardoapps.mediamirror.converter.TimeConverter;
+import guepardoapps.mediamirror.converter.WeekdayConverter;
 import guepardoapps.mediamirror.model.DateModel;
 
 import guepardoapps.toolset.controller.BroadcastController;
@@ -18,7 +19,7 @@ import guepardoapps.toolset.controller.ReceiverController;
 
 public class DateViewUpdater {
 
-	private static final String TAG = DateViewUpdater.class.getName();
+	private static final String TAG = DateViewUpdater.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private Context _context;
@@ -62,7 +63,6 @@ public class DateViewUpdater {
 		String time = TimeConverter.GetTime(calendar);
 
 		DateModel model = new DateModel(weekday, date, time);
-		_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_DATE_MODEL, Constants.BUNDLE_DATE_MODEL,
-				model);
+		_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_DATE_MODEL, Bundles.DATE_MODEL, model);
 	}
 }

@@ -1,6 +1,6 @@
 package guepardoapps.games.snake.library;
 
-import guepardoapps.games.common.basic.Coordinates;
+import guepardoapps.games.common.Coordinates;
 import guepardoapps.games.snake.library.exceptions.SnakeHitYardWallException;
 import guepardoapps.games.snake.library.interfaces.SnakeMotionObserver;
 import guepardoapps.games.snake.library.interfaces.SnakeRenderer;

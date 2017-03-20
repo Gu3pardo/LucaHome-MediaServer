@@ -6,20 +6,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.TextView;
 
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.controller.MediaVolumeController;
+import guepardoapps.library.verticalseekbarview.VerticalSeekbarView;
+import guepardoapps.library.verticalseekbarview.enums.VerticalSeekbarStyle;
+import guepardoapps.library.verticalseekbarview.interfaces.OnVerticalSeebarMoveListener;
+
 import guepardoapps.mediamirror.R;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.controller.MediaVolumeController;
 
 import guepardoapps.toolset.controller.ReceiverController;
 
-import guepardoapps.views.verticalseekbar.OnVerticalSeebarMoveListener;
-import guepardoapps.views.verticalseekbar.VerticalSeekbarStyle;
-import guepardoapps.views.verticalseekbar.VerticalSeekbarView;
-
 public class VolumeViewController {
 
-	private static final String TAG = VolumeViewController.class.getName();
+	private static final String TAG = VolumeViewController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
@@ -45,7 +46,7 @@ public class VolumeViewController {
 			}
 
 			_logger.Debug("_volumeInfoReveicer onReceive");
-			String newVolumeText = intent.getStringExtra(Constants.BUNDLE_VOLUME_MODEL);
+			String newVolumeText = intent.getStringExtra(Bundles.VOLUME_MODEL);
 			if (newVolumeText != null) {
 				_logger.Debug("newVolumeText: " + newVolumeText);
 				_volumeValueTextView.setText("Vol.: " + newVolumeText);
@@ -134,12 +135,10 @@ public class VolumeViewController {
 		_logger.Debug("onResume");
 		if (!_isInitialized) {
 			_logger.Debug("Initializing!");
-			_receiverController.RegisterReceiver(_volumeInfoReveicer,
-					new String[] { Constants.BROADCAST_SHOW_VOLUME_MODEL });
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
+			_receiverController.RegisterReceiver(_volumeInfoReveicer, new String[] { Broadcasts.SHOW_VOLUME_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
 			_isInitialized = true;
 		} else {
 			_logger.Warn("Is ALREADY initialized!");

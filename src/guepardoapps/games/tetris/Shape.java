@@ -3,16 +3,14 @@ package guepardoapps.games.tetris;
 import java.util.ArrayList;
 import java.util.List;
 
-import guepardoapps.games.common.basic.Coordinates;
-
-import guepardoapps.mediamirror.common.Enables;
-
-import guepardoapps.toolset.common.Logger;
+import guepardoapps.games.common.Coordinates;
+import guepardoapps.games.tetris.enums.Piece;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
 public class Shape {
 
-	private static final String TAG = Shape.class.getName();
-	private Logger _logger;
+	private static final String TAG = Shape.class.getSimpleName();
+	private SmartMirrorLogger _logger;
 
 	private static final int SQUARE_SIZE = 55;
 
@@ -65,7 +63,7 @@ public class Shape {
 
 		_gameSurfaceView = gameSurfaceView;
 
-		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
+		_logger = new SmartMirrorLogger(TAG);
 		_logger.Debug("Created Shape...");
 	}
 

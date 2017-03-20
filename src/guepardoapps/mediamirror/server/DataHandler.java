@@ -3,34 +3,43 @@ package guepardoapps.mediamirror.server;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.BatteryManager;
 import android.os.Handler;
 import android.widget.Toast;
 
-import es.dmoral.toasty.Toasty;
+import guepardoapps.library.lucahome.common.constants.MediaMirrorIds;
+import guepardoapps.library.lucahome.common.dto.WirelessSocketDto;
+import guepardoapps.library.lucahome.common.enums.RSSFeed;
+import guepardoapps.library.lucahome.common.enums.ServerAction;
+import guepardoapps.library.lucahome.common.enums.YoutubeId;
+
+import guepardoapps.library.toastview.ToastView;
 
 import guepardoapps.games.common.GameConstants;
 
-import guepardoapps.lucahomelibrary.mediamirror.common.enums.RSSFeed;
-import guepardoapps.lucahomelibrary.mediamirror.common.enums.ServerAction;
-import guepardoapps.lucahomelibrary.mediamirror.common.enums.YoutubeId;
-
-import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.controller.DatabaseController;
 import guepardoapps.mediamirror.controller.MediaVolumeController;
 import guepardoapps.mediamirror.controller.ScreenController;
-import guepardoapps.mediamirror.database.DBController;
 import guepardoapps.mediamirror.model.CenterModel;
 import guepardoapps.mediamirror.model.RSSModel;
 import guepardoapps.mediamirror.model.YoutubeDatabaseModel;
 
+import guepardoapps.toolset.common.classes.SerializableList;
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.CommandController;
+import guepardoapps.toolset.controller.ReceiverController;
+import guepardoapps.toolset.controller.UserInformationController;
 
 public class DataHandler {
 
-	private static final String TAG = DataHandler.class.getName();
+	private static final String TAG = DataHandler.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private static final int TIMEOUT_SHUTDOWN = 5 * 1000;
@@ -40,11 +49,15 @@ public class DataHandler {
 
 	private BroadcastController _broadcastController;
 	private CommandController _commandController;
-	private DBController _dbController;
+	private DatabaseController _dbController;
 	private MediaVolumeController _mediaVolumeController;
+	private ReceiverController _receiverController;
 	private ScreenController _screenController;
+	private UserInformationController _userInformationController;
 
 	private static final int SEA_SOUND_STOP_TIMEOUT = 30 * 60 * 1000;
+	private boolean _seaSoundIsRunning;
+	private long _seaSoundStartTime;
 	private Handler _seaSoundHandler = new Handler();
 	private Runnable _seaSoundRunnable = new Runnable() {
 		@Override
@@ -52,11 +65,36 @@ public class DataHandler {
 			_logger.Debug("_seaSoundRunnable run");
 			CenterModel goodNightModel = new CenterModel(true, "Sleep well!", false, "", false, "");
 			_logger.Info("Created center model: " + goodNightModel.toString());
-			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
-					Constants.BUNDLE_CENTER_MODEL, goodNightModel);
-			_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_OFF);
+			_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CENTER_MODEL, Bundles.CENTER_MODEL,
+					goodNightModel);
+			_broadcastController.SendSimpleBroadcast(Broadcasts.SCREEN_OFF);
+			_seaSoundIsRunning = false;
+			_seaSoundStartTime = -1;
 		}
 	};
+
+	private int _batteryLevel = -1;
+	private BroadcastReceiver _batteryInfoReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context ctxt, Intent intent) {
+			_batteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+		}
+	};
+
+	private SerializableList<WirelessSocketDto> _socketList;
+	private BroadcastReceiver _socketListReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			@SuppressWarnings("unchecked")
+			SerializableList<WirelessSocketDto> socketList = (SerializableList<WirelessSocketDto>) intent
+					.getSerializableExtra(Bundles.SOCKET_LIST);
+			if (socketList != null) {
+				_socketList = socketList;
+			}
+		}
+	};
+
+	private String _lastYoutubeId = "";
 
 	public DataHandler(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
@@ -65,9 +103,14 @@ public class DataHandler {
 
 		_broadcastController = new BroadcastController(_context);
 		_commandController = new CommandController(_context);
-		_dbController = new DBController(_context);
+		_dbController = new DatabaseController(_context);
 		_mediaVolumeController = MediaVolumeController.getInstance();
+		_receiverController = new ReceiverController(_context);
 		_screenController = new ScreenController(_context);
+		_userInformationController = new UserInformationController(_context);
+
+		_receiverController.RegisterReceiver(_batteryInfoReceiver, new String[] { Intent.ACTION_BATTERY_CHANGED });
+		_receiverController.RegisterReceiver(_socketListReceiver, new String[] { Broadcasts.SOCKET_LIST });
 	}
 
 	public String PerformAction(String command) {
@@ -88,6 +131,7 @@ public class DataHandler {
 				switch (action) {
 				case PING:
 					return "Mediamirror available!";
+
 				case SHOW_YOUTUBE_VIDEO:
 					if (!_screenController.IsScreenOn()) {
 						_logger.Error("Screen is not enabled!");
@@ -111,14 +155,16 @@ public class DataHandler {
 							CenterModel youtubeModel = new CenterModel(false, "", true, youtubeId.GetYoutubeId(), false,
 									"");
 							_logger.Info("Created center model: " + youtubeModel.toString());
-							_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
-									Constants.BUNDLE_CENTER_MODEL, youtubeModel);
+							_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CENTER_MODEL,
+									Bundles.CENTER_MODEL, youtubeModel);
+							_lastYoutubeId = youtubeId.GetYoutubeId();
 						}
 					} else if (data.length() == 11) {
 						CenterModel youtubeModel = new CenterModel(false, "", true, data, false, "");
 						_logger.Info("Created center model: " + youtubeModel.toString());
-						_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
-								Constants.BUNDLE_CENTER_MODEL, youtubeModel);
+						_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CENTER_MODEL,
+								Bundles.CENTER_MODEL, youtubeModel);
+						_lastYoutubeId = data;
 					} else {
 						_logger.Warn("Wrong size for data of youtube id!");
 					}
@@ -129,7 +175,15 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_context.sendBroadcast(new Intent(Constants.BROADCAST_PLAY_VIDEO));
+					_context.sendBroadcast(new Intent(Broadcasts.PLAY_VIDEO));
+					break;
+				case PAUSE_YOUTUBE_VIDEO:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
+					_context.sendBroadcast(new Intent(Broadcasts.PAUSE_VIDEO));
 					break;
 				case STOP_YOUTUBE_VIDEO:
 					if (!_screenController.IsScreenOn()) {
@@ -137,7 +191,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_context.sendBroadcast(new Intent(Constants.BROADCAST_STOP_VIDEO));
+					_context.sendBroadcast(new Intent(Broadcasts.STOP_VIDEO));
 					break;
 				case GET_SAVED_YOUTUBE_IDS:
 					ArrayList<YoutubeDatabaseModel> loadedList = _dbController.GetYoutubeIds();
@@ -153,6 +207,7 @@ public class DataHandler {
 						answer += entry.GetCommunicationString();
 					}
 					return action.toString() + ":" + answer;
+
 				case PLAY_SEA_SOUND:
 					if (!_screenController.IsScreenOn()) {
 						_logger.Error("Screen is not enabled!");
@@ -166,15 +221,17 @@ public class DataHandler {
 						_logger.Debug(String.format("timeOut for PLAY_SEA_SOUND is %s", timeOut));
 					} catch (Exception ex) {
 						_logger.Error(ex.toString());
-						Toasty.error(_context, ex.toString(), Toast.LENGTH_LONG).show();
+						ToastView.error(_context, ex.toString(), Toast.LENGTH_LONG).show();
 						timeOut = SEA_SOUND_STOP_TIMEOUT;
 					}
 					CenterModel playSeaSoundModel = new CenterModel(false, "", true, YoutubeId.SEA_SOUND.GetYoutubeId(),
 							false, "");
 					_logger.Info("Created center model: " + playSeaSoundModel.toString());
-					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
-							Constants.BUNDLE_CENTER_MODEL, playSeaSoundModel);
+					_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CENTER_MODEL, Bundles.CENTER_MODEL,
+							playSeaSoundModel);
 					_seaSoundHandler.postDelayed(_seaSoundRunnable, timeOut);
+					_seaSoundIsRunning = true;
+					_seaSoundStartTime = System.currentTimeMillis();
 					break;
 				case STOP_SEA_SOUND:
 					if (!_screenController.IsScreenOn()) {
@@ -184,10 +241,31 @@ public class DataHandler {
 
 					CenterModel stopSeaSoundModel = new CenterModel(true, "", false, "", false, "");
 					_logger.Info("Created center model: " + stopSeaSoundModel.toString());
-					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
-							Constants.BUNDLE_CENTER_MODEL, stopSeaSoundModel);
+					_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CENTER_MODEL, Bundles.CENTER_MODEL,
+							stopSeaSoundModel);
 					_seaSoundHandler.removeCallbacks(_seaSoundRunnable);
+					_seaSoundIsRunning = false;
+					_seaSoundStartTime = -1;
 					break;
+				case IS_SEA_SOUND_PLAYING:
+					String seaSSoundIsPlaying = "";
+					if (_seaSoundIsRunning) {
+						seaSSoundIsPlaying = "1";
+					} else {
+						seaSSoundIsPlaying = "0";
+					}
+					return action.toString() + ":" + seaSSoundIsPlaying;
+				case GET_SEA_SOUND_COUNTDOWN:
+					if (_seaSoundStartTime == -1) {
+						return action.toString() + ":-1";
+					}
+					long currentTime = System.currentTimeMillis();
+					long differenceTimeSec = (currentTime - _seaSoundStartTime) / 1000;
+					while (differenceTimeSec < 0) {
+						differenceTimeSec += 24 * 60 * 60;
+					}
+					return action.toString() + ":" + differenceTimeSec;
+
 				case SHOW_WEBVIEW:
 					if (!_screenController.IsScreenOn()) {
 						_logger.Error("Screen is not enabled!");
@@ -196,9 +274,10 @@ public class DataHandler {
 
 					CenterModel webviewModel = new CenterModel(false, "", false, null, true, data);
 					_logger.Info("Created center model: " + webviewModel.toString());
-					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
-							Constants.BUNDLE_CENTER_MODEL, webviewModel);
+					_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CENTER_MODEL, Bundles.CENTER_MODEL,
+							webviewModel);
 					break;
+
 				case SHOW_CENTER_TEXT:
 					if (!_screenController.IsScreenOn()) {
 						_logger.Error("Screen is not enabled!");
@@ -207,9 +286,10 @@ public class DataHandler {
 
 					CenterModel centerTextModel = new CenterModel(true, data, false, null, false, "");
 					_logger.Info("Created center model: " + centerTextModel.toString());
-					_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CENTER_MODEL,
-							Constants.BUNDLE_CENTER_MODEL, centerTextModel);
+					_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CENTER_MODEL, Bundles.CENTER_MODEL,
+							centerTextModel);
 					break;
+
 				case SET_RSS_FEED:
 					if (!_screenController.IsScreenOn()) {
 						_logger.Error("Screen is not enabled!");
@@ -231,8 +311,8 @@ public class DataHandler {
 						}
 						RSSModel rSSFeedModel = new RSSModel(rssFeed, true);
 						_logger.Info("Created rssfeed model: " + rSSFeedModel.toString());
-						_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_UPDATE_RSS_FEED,
-								Constants.BUNDLE_RSS_MODEL, rSSFeedModel);
+						_broadcastController.SendSerializableBroadcast(Broadcasts.PERFORM_RSS_UPDATE, Bundles.RSS_MODEL,
+								rSSFeedModel);
 					}
 					break;
 				case RESET_RSS_FEED:
@@ -241,15 +321,16 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_RESET_RSS_FEED);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.RESET_RSS_FEED);
 					break;
+
 				case UPDATE_CURRENT_WEATHER:
 					if (!_screenController.IsScreenOn()) {
 						_logger.Error("Screen is not enabled!");
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_CURRENT_WEATHER_UPDATE);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_CURRENT_WEATHER_UPDATE);
 					break;
 				case UPDATE_FORECAST_WEATHER:
 					if (!_screenController.IsScreenOn()) {
@@ -257,7 +338,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_FORECAST_WEATHER_UPDATE);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_FORECAST_WEATHER_UPDATE);
 					break;
 				case UPDATE_RASPBERRY_TEMPERATURE:
 					if (!_screenController.IsScreenOn()) {
@@ -265,7 +346,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_TEMPERATURE_UPDATE);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_TEMPERATURE_UPDATE);
 					break;
 				case UPDATE_IP_ADDRESS:
 					if (!_screenController.IsScreenOn()) {
@@ -273,7 +354,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_IP_ADDRESS_UPDATE);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_IP_ADDRESS_UPDATE);
 					break;
 				case UPDATE_BIRTHDAY_ALARM:
 					if (!_screenController.IsScreenOn()) {
@@ -281,7 +362,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_BIRTHDAY_UPDATE);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_BIRTHDAY_UPDATE);
 					break;
 				case UPDATE_CALENDAR_ALARM:
 					if (!_screenController.IsScreenOn()) {
@@ -289,8 +370,9 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_CALENDAR_UPDATE);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_CALENDAR_UPDATE);
 					break;
+
 				case INCREASE_VOLUME:
 					_mediaVolumeController.IncreaseVolume();
 					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
@@ -305,38 +387,21 @@ public class DataHandler {
 					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
 				case GET_CURRENT_VOLUME:
 					return action.toString() + ":" + _mediaVolumeController.GetCurrentVolume();
-				case INCREASE_SCREEN_BRIGHTNESS:
-					if (!_screenController.IsScreenOn()) {
-						_logger.Error("Screen is not enabled!");
-						return "Error:Screen is not enabled!";
-					}
 
-					_broadcastController.SendIntBroadcast(Constants.BROADCAST_ACTION_SCREEN_BRIGHTNESS,
-							Constants.BUNDLE_SCREEN_BRIGHTNESS, ScreenController.INCREASE);
-					break;
-				case DECREASE_SCREEN_BRIGHTNESS:
-					if (!_screenController.IsScreenOn()) {
-						_logger.Error("Screen is not enabled!");
-						return "Error:Screen is not enabled!";
-					}
-
-					_broadcastController.SendIntBroadcast(Constants.BROADCAST_ACTION_SCREEN_BRIGHTNESS,
-							Constants.BUNDLE_SCREEN_BRIGHTNESS, ScreenController.DECREASE);
-					break;
 				case PLAY_ALARM:
 					// TODO implement
 					break;
 				case STOP_ALARM:
 					// TODO implement
 					break;
+
 				case GAME_COMMAND:
 					if (!_screenController.IsScreenOn()) {
 						_logger.Error("Screen is not enabled!");
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendStringBroadcast(Constants.BROADCAST_GAME_COMMAND,
-							Constants.BUNDLE_GAME_COMMAND, data);
+					_broadcastController.SendStringBroadcast(Broadcasts.GAME_COMMAND, Bundles.GAME_COMMAND, data);
 					break;
 				case GAME_PONG_START:
 					if (!_screenController.IsScreenOn()) {
@@ -344,7 +409,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_START_PONG);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.START_PONG);
 					break;
 				case GAME_PONG_STOP:
 					if (!_screenController.IsScreenOn()) {
@@ -352,7 +417,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_STOP_PONG);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.STOP_PONG);
 					break;
 				case GAME_PONG_PAUSE:
 					if (!_screenController.IsScreenOn()) {
@@ -360,8 +425,8 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendStringBroadcast(Constants.BROADCAST_GAME_COMMAND,
-							Constants.BUNDLE_GAME_COMMAND, GameConstants.GAME + ":" + GameConstants.PAUSE);
+					_broadcastController.SendStringBroadcast(Broadcasts.GAME_COMMAND, Bundles.GAME_COMMAND,
+							GameConstants.GAME + ":" + GameConstants.PAUSE);
 					break;
 				case GAME_PONG_RESUME:
 					if (!_screenController.IsScreenOn()) {
@@ -369,8 +434,8 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendStringBroadcast(Constants.BROADCAST_GAME_COMMAND,
-							Constants.BUNDLE_GAME_COMMAND, GameConstants.GAME + ":" + GameConstants.RESUME);
+					_broadcastController.SendStringBroadcast(Broadcasts.GAME_COMMAND, Bundles.GAME_COMMAND,
+							GameConstants.GAME + ":" + GameConstants.RESUME);
 					break;
 				case GAME_PONG_RESTART:
 					if (!_screenController.IsScreenOn()) {
@@ -378,8 +443,8 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendStringBroadcast(Constants.BROADCAST_GAME_COMMAND,
-							Constants.BUNDLE_GAME_COMMAND, GameConstants.GAME + ":" + GameConstants.RESTART);
+					_broadcastController.SendStringBroadcast(Broadcasts.GAME_COMMAND, Bundles.GAME_COMMAND,
+							GameConstants.GAME + ":" + GameConstants.RESTART);
 					break;
 				case GAME_SNAKE_START:
 					if (!_screenController.IsScreenOn()) {
@@ -387,7 +452,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_START_SNAKE);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.START_SNAKE);
 					break;
 				case GAME_SNAKE_STOP:
 					if (!_screenController.IsScreenOn()) {
@@ -395,7 +460,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_STOP_SNAKE);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.STOP_SNAKE);
 					break;
 				case GAME_TETRIS_START:
 					if (!_screenController.IsScreenOn()) {
@@ -403,7 +468,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_START_TETRIS);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.START_TETRIS);
 					break;
 				case GAME_TETRIS_STOP:
 					if (!_screenController.IsScreenOn()) {
@@ -411,13 +476,34 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_STOP_TETRIS);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.STOP_TETRIS);
 					break;
+
+				case INCREASE_SCREEN_BRIGHTNESS:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
+					_broadcastController.SendIntBroadcast(Broadcasts.ACTION_SCREEN_BRIGHTNESS,
+							Bundles.SCREEN_BRIGHTNESS, ScreenController.INCREASE);
+					return action.toString() + ":" + String.valueOf(_screenController.GetCurrentBrightness());
+				case DECREASE_SCREEN_BRIGHTNESS:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
+					_broadcastController.SendIntBroadcast(Broadcasts.ACTION_SCREEN_BRIGHTNESS,
+							Bundles.SCREEN_BRIGHTNESS, ScreenController.DECREASE);
+					return action.toString() + ":" + String.valueOf(_screenController.GetCurrentBrightness());
+				case GET_SCREEN_BRIGHTNESS:
+					return action.toString() + ":" + String.valueOf(_screenController.GetCurrentBrightness());
 				case SCREEN_ON:
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_ON);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.SCREEN_ON);
 					break;
 				case SCREEN_OFF:
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_OFF);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.SCREEN_OFF);
 					break;
 				case SCREEN_SAVER:
 					if (!_screenController.IsScreenOn()) {
@@ -425,7 +511,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_SAVER);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.SCREEN_SAVER);
 					break;
 				case SCREEN_NORMAL:
 					if (!_screenController.IsScreenOn()) {
@@ -433,14 +519,78 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_SCREEN_NORMAL);
+					_broadcastController.SendSimpleBroadcast(Broadcasts.SCREEN_NORMAL);
 					break;
+
 				case SYSTEM_REBOOT:
 					_commandController.RebootDevice(TIMEOUT_REBOOT);
 					break;
 				case SYSTEM_SHUTDOWN:
 					_commandController.ShutDownDevice(TIMEOUT_SHUTDOWN);
 					break;
+
+				case GET_BATTERY_LEVEL:
+					return action.toString() + ":" + String.valueOf(_batteryLevel);
+				case GET_SERVER_VERSION:
+					return action.toString() + ":" + _context.getString(R.string.serverVersion);
+
+				case GET_MEDIAMIRROR_DTO:
+					String serverIp = _userInformationController.GetIp();
+
+					String batteryLevel = String.valueOf(_batteryLevel);
+
+					String socketName = MediaMirrorIds.IPs.get(serverIp);
+					String socketState = "0";
+					if (_socketList != null) {
+						for (int index = 0; index < _socketList.getSize(); index++) {
+							WirelessSocketDto socket = _socketList.getValue(index);
+							if (socket.GetName().contains(socketName)) {
+								socketState = socket.GetIsActivated() ? "1" : "0";
+								break;
+							}
+						}
+					} else {
+						_logger.Warn("Cannot search socket state! _socketList is null!");
+					}
+
+					String volume = String.valueOf(_mediaVolumeController.GetCurrentVolume());
+
+					String youtubeId = _lastYoutubeId;
+					String playedYoutubeIds = "";
+					ArrayList<YoutubeDatabaseModel> loadedListFromDb = _dbController.GetYoutubeIds();
+					// sort the list in descending order
+					loadedListFromDb.sort(new Comparator<YoutubeDatabaseModel>() {
+						@Override
+						public int compare(YoutubeDatabaseModel elementOne, YoutubeDatabaseModel elementTwo) {
+							return Integer.valueOf(elementTwo.GetPlayCount()).compareTo(elementOne.GetPlayCount());
+						}
+					});
+					for (YoutubeDatabaseModel entry : loadedListFromDb) {
+						playedYoutubeIds += entry.GetCommunicationString();
+					}
+
+					String isSeaSSoundPlaying = _seaSoundIsRunning ? "1" : "0";
+					String seaSoundCountdown = "";
+					if (_seaSoundStartTime == -1) {
+						seaSoundCountdown = "-1";
+					} else {
+						long currentTimeMsec = System.currentTimeMillis();
+						long differenceTimeInSec = (currentTimeMsec - _seaSoundStartTime) / 1000;
+						while (differenceTimeInSec < 0) {
+							differenceTimeInSec += 24 * 60 * 60;
+						}
+						seaSoundCountdown = String.valueOf(differenceTimeInSec);
+					}
+
+					String serverVersion = _context.getString(R.string.serverVersion);
+
+					String screenBrightness = String.valueOf(_screenController.GetCurrentBrightness());
+
+					String mediaMirrorDto = String.format("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s", serverIp, batteryLevel,
+							socketName, socketState, volume, youtubeId, playedYoutubeIds, isSeaSSoundPlaying,
+							seaSoundCountdown, serverVersion, screenBrightness);
+					return action.toString() + ":" + mediaMirrorDto;
+
 				default:
 					_logger.Warn("Action not handled!\n" + action.toString());
 					return "Action not handled!\n" + action.toString();
@@ -458,6 +608,8 @@ public class DataHandler {
 
 	public void Dispose() {
 		_mediaVolumeController.Dispose();
+		_receiverController.UnregisterReceiver(_batteryInfoReceiver);
+		_receiverController.UnregisterReceiver(_socketListReceiver);
 	}
 
 	private ServerAction convertCommandToAction(String command) {
@@ -475,7 +627,7 @@ public class DataHandler {
 		}
 
 		_logger.Warn("Wrong size of entries: " + String.valueOf(entries.length));
-		return null;
+		return ServerAction.NULL;
 	}
 
 	private String convertCommandToData(String command) {

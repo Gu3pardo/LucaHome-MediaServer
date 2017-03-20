@@ -8,26 +8,28 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import es.dmoral.toasty.Toasty;
+import guepardoapps.library.lucahome.common.dto.ShoppingEntryDto;
+import guepardoapps.library.lucahome.common.dto.WirelessSocketDto;
+
+import guepardoapps.library.toastview.ToastView;
 
 import guepardoapps.mediamirror.R;
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.Enables;
 import guepardoapps.mediamirror.controller.MediaMirrorDialogController;
-import guepardoapps.mediamirror.model.*;
+import guepardoapps.mediamirror.model.RaspberryModel;
 import guepardoapps.mediamirror.model.helper.RaspberryTemperatureHelper;
-import guepardoapps.mediamirror.test.RaspberryViewControllerTest;
 
-import guepardoapps.lucahomelibrary.common.dto.ShoppingEntryDto;
-import guepardoapps.lucahomelibrary.common.dto.WirelessSocketDto;
+import guepardoapps.test.RaspberryViewControllerTest;
 
 import guepardoapps.toolset.common.classes.SerializableList;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class RaspberryViewController {
 
-	private static final String TAG = RaspberryViewController.class.getName();
+	private static final String TAG = RaspberryViewController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
@@ -57,7 +59,7 @@ public class RaspberryViewController {
 			}
 
 			_logger.Debug("_updateViewReceiver onReceive");
-			RaspberryModel model = (RaspberryModel) intent.getSerializableExtra(Constants.BUNDLE_RASPBERRY_DATA_MODEL);
+			RaspberryModel model = (RaspberryModel) intent.getSerializableExtra(Bundles.RASPBERRY_DATA_MODEL);
 			if (model != null) {
 				_logger.Debug(model.toString());
 				_raspberryModel = model;
@@ -70,7 +72,7 @@ public class RaspberryViewController {
 				_logger.Warn("model is null!");
 			}
 
-			if (Enables.TESTING_ENABLED) {
+			if (Enables.TESTING) {
 				_raspberryViewTest.ValidateView(_raspberryName1TextView.getText().toString(),
 						_raspberryTemperature1TextView.getText().toString());
 			}
@@ -101,7 +103,7 @@ public class RaspberryViewController {
 		public void onReceive(Context context, Intent intent) {
 			@SuppressWarnings("unchecked")
 			SerializableList<ShoppingEntryDto> shoppingList = (SerializableList<ShoppingEntryDto>) intent
-					.getSerializableExtra(Constants.BUNDLE_SHOPPING_LIST);
+					.getSerializableExtra(Bundles.SHOPPING_LIST);
 			if (shoppingList != null) {
 				_shoppingList = shoppingList;
 			}
@@ -113,7 +115,7 @@ public class RaspberryViewController {
 		public void onReceive(Context context, Intent intent) {
 			@SuppressWarnings("unchecked")
 			SerializableList<WirelessSocketDto> socketList = (SerializableList<WirelessSocketDto>) intent
-					.getSerializableExtra(Constants.BUNDLE_SOCKET_LIST);
+					.getSerializableExtra(Bundles.SOCKET_LIST);
 			if (socketList != null) {
 				_socketList = socketList;
 			}
@@ -146,19 +148,17 @@ public class RaspberryViewController {
 		_logger.Debug("onResume");
 		if (!_isInitialized) {
 			_receiverController.RegisterReceiver(_updateViewReceiver,
-					new String[] { Constants.BROADCAST_SHOW_RASPBERRY_DATA_MODEL });
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
+					new String[] { Broadcasts.SHOW_RASPBERRY_DATA_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
-			_receiverController.RegisterReceiver(_shoppingListReceiver,
-					new String[] { Constants.BROADCAST_SHOPPING_LIST });
-			_receiverController.RegisterReceiver(_socketListReceiver, new String[] { Constants.BROADCAST_SOCKET_LIST });
+					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
+			_receiverController.RegisterReceiver(_shoppingListReceiver, new String[] { Broadcasts.SHOPPING_LIST });
+			_receiverController.RegisterReceiver(_socketListReceiver, new String[] { Broadcasts.SOCKET_LIST });
 
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Enables.TESTING_ENABLED) {
+			if (Enables.TESTING) {
 				if (_raspberryViewTest == null) {
 					_raspberryViewTest = new RaspberryViewControllerTest(_context);
 				}
@@ -187,7 +187,7 @@ public class RaspberryViewController {
 			_dialogController.ShowTemperatureGraphDialog(_raspberryModel.GetRaspberry1TemperatureGraphUrl());
 		} else {
 			_logger.Warn("invalid URL!");
-			Toasty.warning(_context, "Invalid URL!", Toast.LENGTH_LONG).show();
+			ToastView.warning(_context, "Invalid URL!", Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -197,7 +197,7 @@ public class RaspberryViewController {
 			_dialogController.ShowSocketListDialog(_socketList);
 		} else {
 			_logger.Error("_socketList is null!");
-			Toasty.warning(_context, "SocketList is null!!", Toast.LENGTH_LONG).show();
+			ToastView.warning(_context, "SocketList is null!!", Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -207,7 +207,7 @@ public class RaspberryViewController {
 			_dialogController.ShowShoppingListDialog(_shoppingList);
 		} else {
 			_logger.Error("_shoppingList is null!");
-			Toasty.warning(_context, "ShoppingList is null!!", Toast.LENGTH_LONG).show();
+			ToastView.warning(_context, "ShoppingList is null!!", Toast.LENGTH_LONG).show();
 		}
 	}
 }

@@ -7,14 +7,12 @@ import android.graphics.Rect;
 
 import guepardoapps.games.common.GameConstants;
 
-import guepardoapps.mediamirror.common.Enables;
-
-import guepardoapps.toolset.common.Logger;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
 public class GameState {
 
-	private static final String TAG = GameState.class.getName();
-	private Logger _logger;
+	private static final String TAG = GameState.class.getSimpleName();
+	private SmartMirrorLogger _logger;
 
 	private static final int MAX_POINT = 5;
 
@@ -45,7 +43,7 @@ public class GameState {
 	private boolean _gameIsPaused;
 
 	public GameState() {
-		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
+		_logger = new SmartMirrorLogger(TAG);
 		_logger.Debug("GameState created...");
 	}
 

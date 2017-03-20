@@ -14,14 +14,13 @@ import guepardoapps.games.snake.SnakeView;
 import guepardoapps.games.tetris.GameSurfaceView;
 
 import guepardoapps.mediamirror.R;
-import guepardoapps.mediamirror.common.Enables;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
-import guepardoapps.toolset.common.Logger;
 import guepardoapps.toolset.controller.DialogController;
 
 public class GameDialogController extends DialogController {
 
-	private static final String TAG = GameDialogController.class.getName();
+	private static final String TAG = GameDialogController.class.getSimpleName();
 
 	private boolean _isPongGame;
 
@@ -42,7 +41,7 @@ public class GameDialogController extends DialogController {
 	public GameDialogController(Context context) {
 		super(context, ContextCompat.getColor(context, R.color.TextIcon),
 				ContextCompat.getColor(context, R.color.Primary));
-		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
+		_logger = new SmartMirrorLogger(TAG);
 		_logger.Debug("GameDialogController created...");
 
 		_context = context;

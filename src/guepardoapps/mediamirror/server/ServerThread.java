@@ -16,7 +16,7 @@ import guepardoapps.toolset.controller.NetworkController;
 
 public class ServerThread {
 
-	private static final String TAG = ServerThread.class.getName();
+	private static final String TAG = ServerThread.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private int _socketServerPort;

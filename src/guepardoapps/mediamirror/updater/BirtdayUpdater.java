@@ -9,11 +9,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.TimeHelper;
-import guepardoapps.mediamirror.common.converter.JsonDataToBirthdayConverter;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.RaspPiConstants;
+import guepardoapps.mediamirror.converter.json.JsonDataToBirthdayConverter;
 import guepardoapps.mediamirror.model.helper.BirthdayHelper;
 import guepardoapps.mediamirror.services.RESTService;
 
@@ -22,7 +23,7 @@ import guepardoapps.toolset.controller.ReceiverController;
 
 public class BirtdayUpdater {
 
-	private static final String TAG = BirtdayUpdater.class.getName();
+	private static final String TAG = BirtdayUpdater.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private Handler _updater;
@@ -45,7 +46,7 @@ public class BirtdayUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_updateReceiver onReceive");
-			String[] birthdayStringArray = intent.getStringArrayExtra(Constants.BUNDLE_BIRTHDAY_MODEL);
+			String[] birthdayStringArray = intent.getStringArrayExtra(Bundles.BIRTHDAY_MODEL);
 			if (birthdayStringArray != null) {
 				ArrayList<BirthdayHelper> loadedBirthdayList = JsonDataToBirthdayConverter.GetList(birthdayStringArray);
 
@@ -132,8 +133,8 @@ public class BirtdayUpdater {
 					}
 				}
 
-				_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_BIRTHDAY_MODEL,
-						Constants.BUNDLE_BIRTHDAY_MODEL, _nextBirthdaysList);
+				_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_BIRTHDAY_MODEL, Bundles.BIRTHDAY_MODEL,
+						_nextBirthdaysList);
 			}
 		}
 	};
@@ -158,10 +159,9 @@ public class BirtdayUpdater {
 		_logger.Debug("Initialize");
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
-		_receiverController.RegisterReceiver(_updateReceiver,
-				new String[] { Constants.BROADCAST_DOWNLOAD_BIRTHDAY_FINISHED });
+		_receiverController.RegisterReceiver(_updateReceiver, new String[] { Broadcasts.DOWNLOAD_BIRTHDAY_FINISHED });
 		_receiverController.RegisterReceiver(_performUpdateReceiver,
-				new String[] { Constants.BROADCAST_PERFORM_BIRTHDAY_UPDATE });
+				new String[] { Broadcasts.PERFORM_BIRTHDAY_UPDATE });
 		_updateRunnable.run();
 	}
 
@@ -183,9 +183,9 @@ public class BirtdayUpdater {
 		Intent serviceIntent = new Intent(_context, RESTService.class);
 		Bundle serviceData = new Bundle();
 
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, Constants.ACTION_GET_BIRTHDAYS);
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Constants.BUNDLE_BIRTHDAY_MODEL);
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, Constants.BROADCAST_DOWNLOAD_BIRTHDAY_FINISHED);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, RaspPiConstants.GET_BIRTHDAYS);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Bundles.BIRTHDAY_MODEL);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, Broadcasts.DOWNLOAD_BIRTHDAY_FINISHED);
 
 		serviceIntent.putExtras(serviceData);
 		_context.startService(serviceIntent);

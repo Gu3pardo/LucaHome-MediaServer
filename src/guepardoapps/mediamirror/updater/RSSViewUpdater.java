@@ -5,11 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 
-import guepardoapps.lucahomelibrary.mediamirror.common.enums.RSSFeed;
+import guepardoapps.library.lucahome.common.enums.RSSFeed;
 
-import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.TimeHelper;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.model.RSSModel;
 
 import guepardoapps.toolset.controller.BroadcastController;
@@ -17,7 +18,7 @@ import guepardoapps.toolset.controller.ReceiverController;
 
 public class RSSViewUpdater {
 
-	private static final String TAG = RSSViewUpdater.class.getName();
+	private static final String TAG = RSSViewUpdater.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private int _updateTime;
@@ -53,7 +54,7 @@ public class RSSViewUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_updateRSSFeedReceiver onReceive");
-			RSSModel newRSSModel = (RSSModel) intent.getSerializableExtra(Constants.BUNDLE_RSS_MODEL);
+			RSSModel newRSSModel = (RSSModel) intent.getSerializableExtra(Bundles.RSS_MODEL);
 			if (newRSSModel != null) {
 				_rssFeed = newRSSModel.GetRSSFeed();
 				_logger.Debug("New RssFeed is: " + _rssFeed.toString());
@@ -84,10 +85,8 @@ public class RSSViewUpdater {
 
 		_updateRunnable.run();
 
-		_receiverController.RegisterReceiver(_resetRSSFeedReceiver,
-				new String[] { Constants.BROADCAST_RESET_RSS_FEED });
-		_receiverController.RegisterReceiver(_updateRSSFeedReceiver,
-				new String[] { Constants.BROADCAST_UPDATE_RSS_FEED });
+		_receiverController.RegisterReceiver(_resetRSSFeedReceiver, new String[] { Broadcasts.RESET_RSS_FEED });
+		_receiverController.RegisterReceiver(_updateRSSFeedReceiver, new String[] { Broadcasts.PERFORM_RSS_UPDATE });
 	}
 
 	public void Dispose() {
@@ -108,7 +107,6 @@ public class RSSViewUpdater {
 		}
 
 		RSSModel model = new RSSModel(_rssFeed, true);
-		_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_RSS_DATA_MODEL,
-				Constants.BUNDLE_RSS_DATA_MODEL, model);
+		_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_RSS_DATA_MODEL, Bundles.RSS_DATA_MODEL, model);
 	}
 }

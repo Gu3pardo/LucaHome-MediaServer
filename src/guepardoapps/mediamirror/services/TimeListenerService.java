@@ -10,15 +10,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.Timeouts;
 import guepardoapps.mediamirror.controller.*;
 
 import guepardoapps.toolset.controller.BroadcastController;
 
 public class TimeListenerService extends Service {
 
-	private static final String TAG = TimeListenerService.class.getName();
+	private static final String TAG = TimeListenerService.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private Context _context;
@@ -37,7 +39,7 @@ public class TimeListenerService extends Service {
 			if (action.equals(Intent.ACTION_TIME_CHANGED)) {
 				checkCurrentTime();
 			} else if (action.equals(Intent.ACTION_DATE_CHANGED)) {
-				_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_BIRTHDAY_UPDATE);
+				_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_BIRTHDAY_UPDATE);
 			}
 		}
 	};
@@ -67,7 +69,7 @@ public class TimeListenerService extends Service {
 			}
 			if (_scheduleController == null) {
 				_scheduleController = new ScheduleController(_context);
-				_scheduleController.Start(Constants.SCHEDULE_UPDATE_TIMEOUT);
+				_scheduleController.Start(Timeouts.SCHEDULE_UPDATE);
 			}
 
 			_isInitialized = true;
@@ -122,29 +124,29 @@ public class TimeListenerService extends Service {
 					// working days
 					else {
 						_mediaVolumeController.SetVolume((int) (_mediaVolumeController.GetMaxVolume() * (30 / 100)));
-						_broadcastController.SendIntBroadcast(Constants.BROADCAST_VALUE_SCREEN_BRIGHTNESS,
-								Constants.BUNDLE_SCREEN_BRIGHTNESS, (20 * 255 / 100));
+						_broadcastController.SendIntBroadcast(Broadcasts.VALUE_SCREEN_BRIGHTNESS,
+								Bundles.SCREEN_BRIGHTNESS, (20 * 255 / 100));
 					}
 					break;
 				case 8:
 					// weekend days
 					if (weekday == Calendar.SUNDAY || weekday == Calendar.SATURDAY) {
 						_mediaVolumeController.SetVolume((int) (_mediaVolumeController.GetMaxVolume() * (30 / 100)));
-						_broadcastController.SendIntBroadcast(Constants.BROADCAST_VALUE_SCREEN_BRIGHTNESS,
-								Constants.BUNDLE_SCREEN_BRIGHTNESS, (40 * 255 / 100));
+						_broadcastController.SendIntBroadcast(Broadcasts.VALUE_SCREEN_BRIGHTNESS,
+								Bundles.SCREEN_BRIGHTNESS, (40 * 255 / 100));
 					}
 					// working days
 					else {
 						_mediaVolumeController.SetVolume((int) (_mediaVolumeController.GetMaxVolume() * (10 / 100)));
-						_broadcastController.SendIntBroadcast(Constants.BROADCAST_VALUE_SCREEN_BRIGHTNESS,
-								Constants.BUNDLE_SCREEN_BRIGHTNESS, (10 * 255 / 100));
+						_broadcastController.SendIntBroadcast(Broadcasts.VALUE_SCREEN_BRIGHTNESS,
+								Bundles.SCREEN_BRIGHTNESS, (10 * 255 / 100));
 					}
 					break;
 				case 12:
 					// weekend days
 					if (weekday == Calendar.SUNDAY || weekday == Calendar.SATURDAY) {
-						_broadcastController.SendIntBroadcast(Constants.BROADCAST_VALUE_SCREEN_BRIGHTNESS,
-								Constants.BUNDLE_SCREEN_BRIGHTNESS, (70 * 255 / 100));
+						_broadcastController.SendIntBroadcast(Broadcasts.VALUE_SCREEN_BRIGHTNESS,
+								Bundles.SCREEN_BRIGHTNESS, (70 * 255 / 100));
 					}
 					// working days
 					else {
@@ -155,35 +157,35 @@ public class TimeListenerService extends Service {
 					// weekend days
 					if (weekday == Calendar.SUNDAY || weekday == Calendar.SATURDAY) {
 						_mediaVolumeController.SetVolume((int) (_mediaVolumeController.GetMaxVolume() * (75 / 100)));
-						_broadcastController.SendIntBroadcast(Constants.BROADCAST_VALUE_SCREEN_BRIGHTNESS,
-								Constants.BUNDLE_SCREEN_BRIGHTNESS, (40 * 255 / 100));
+						_broadcastController.SendIntBroadcast(Broadcasts.VALUE_SCREEN_BRIGHTNESS,
+								Bundles.SCREEN_BRIGHTNESS, (40 * 255 / 100));
 					}
 					// working days
 					else {
-						_broadcastController.SendIntBroadcast(Constants.BROADCAST_VALUE_SCREEN_BRIGHTNESS,
-								Constants.BUNDLE_SCREEN_BRIGHTNESS, (40 * 255 / 100));
+						_broadcastController.SendIntBroadcast(Broadcasts.VALUE_SCREEN_BRIGHTNESS,
+								Bundles.SCREEN_BRIGHTNESS, (40 * 255 / 100));
 					}
 					break;
 				case 22:
 					// weekend days
 					if (weekday == Calendar.SUNDAY || weekday == Calendar.SATURDAY) {
 						_mediaVolumeController.SetVolume((int) (_mediaVolumeController.GetMaxVolume() * (50 / 100)));
-						_broadcastController.SendIntBroadcast(Constants.BROADCAST_VALUE_SCREEN_BRIGHTNESS,
-								Constants.BUNDLE_SCREEN_BRIGHTNESS, (30 * 255 / 100));
+						_broadcastController.SendIntBroadcast(Broadcasts.VALUE_SCREEN_BRIGHTNESS,
+								Bundles.SCREEN_BRIGHTNESS, (30 * 255 / 100));
 					}
 					// working days
 					else {
 						_mediaVolumeController.SetVolume((int) (_mediaVolumeController.GetMaxVolume() * (30 / 100)));
-						_broadcastController.SendIntBroadcast(Constants.BROADCAST_VALUE_SCREEN_BRIGHTNESS,
-								Constants.BUNDLE_SCREEN_BRIGHTNESS, (10 * 255 / 100));
+						_broadcastController.SendIntBroadcast(Broadcasts.VALUE_SCREEN_BRIGHTNESS,
+								Bundles.SCREEN_BRIGHTNESS, (10 * 255 / 100));
 					}
 					break;
 				case 23:
 					// weekend days
 					if (weekday == Calendar.SUNDAY || weekday == Calendar.SATURDAY) {
 						_mediaVolumeController.SetVolume((int) (_mediaVolumeController.GetMaxVolume() * (10 / 100)));
-						_broadcastController.SendIntBroadcast(Constants.BROADCAST_VALUE_SCREEN_BRIGHTNESS,
-								Constants.BUNDLE_SCREEN_BRIGHTNESS, (10 * 255 / 100));
+						_broadcastController.SendIntBroadcast(Broadcasts.VALUE_SCREEN_BRIGHTNESS,
+								Bundles.SCREEN_BRIGHTNESS, (10 * 255 / 100));
 					}
 					// working days
 					else {

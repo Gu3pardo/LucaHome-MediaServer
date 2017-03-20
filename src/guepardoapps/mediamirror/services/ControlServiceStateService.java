@@ -13,7 +13,7 @@ import guepardoapps.toolset.controller.AndroidSystemController;
 
 public class ControlServiceStateService extends Service {
 
-	private static final String TAG = ControlServiceStateService.class.getName();
+	private static final String TAG = ControlServiceStateService.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;

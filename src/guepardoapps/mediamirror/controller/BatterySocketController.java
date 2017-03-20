@@ -6,21 +6,20 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
-import es.dmoral.toasty.Toasty;
+import guepardoapps.library.lucahome.common.constants.MediaMirrorIds;
 
-import guepardoapps.lucahomelibrary.common.constants.MediaMirrorIds;
-
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.RaspPiConstants;
+import guepardoapps.library.toastview.ToastView;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.RaspPiConstants;
 import guepardoapps.mediamirror.services.RESTService;
 
 import guepardoapps.toolset.controller.NetworkController;
 
 public class BatterySocketController {
 
-	private static final String TAG = BatterySocketController.class.getName();
+	private static final String TAG = BatterySocketController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private static final int LOWER_BATTERY_LIMIT = 10;
@@ -102,13 +101,13 @@ public class BatterySocketController {
 				String localSocket = MediaMirrorIds.IPs.get(localIp);
 				if (localSocket != null) {
 					_logger.Debug("setBatterySocket " + localSocket + " to "
-							+ ((enable) ? Constants.SOCKET_STATE_ON : Constants.SOCKET_STATE_OFF));
+							+ ((enable) ? RaspPiConstants.SOCKET_STATE_ON : RaspPiConstants.SOCKET_STATE_OFF));
 
 					Intent serviceIntent = new Intent(_context, RESTService.class);
 					Bundle serviceData = new Bundle();
 
-					serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, Constants.ACTION_SET_SOCKET + localSocket
-							+ ((enable) ? Constants.SOCKET_STATE_ON : Constants.SOCKET_STATE_OFF));
+					serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, RaspPiConstants.SET_SOCKET + localSocket
+							+ ((enable) ? RaspPiConstants.SOCKET_STATE_ON : RaspPiConstants.SOCKET_STATE_OFF));
 					serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, "");
 					serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, "");
 
@@ -116,11 +115,11 @@ public class BatterySocketController {
 					_context.startService(serviceIntent);
 				} else {
 					_logger.Error("Did not found socket for " + localIp);
-					Toasty.error(_context, "Did not found socket for " + localIp);
+					ToastView.error(_context, "Did not found socket for " + localIp, Toast.LENGTH_LONG).show();
 				}
 			} catch (Exception ex) {
 				_logger.Error(ex.toString());
-				Toasty.error(_context, "Did not found socket for " + localIp);
+				ToastView.error(_context, "Did not found socket for " + localIp, Toast.LENGTH_LONG).show();
 			}
 		}
 	}

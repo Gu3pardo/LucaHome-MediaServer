@@ -7,16 +7,15 @@ import android.content.Intent;
 import android.os.BatteryManager;
 import android.view.View;
 import android.widget.TextView;
-
-import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.R;
 
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class BatteryViewController {
 
-	private static final String TAG = BatteryViewController.class.getName();
+	private static final String TAG = BatteryViewController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private static final int BAT_LVL_LOW = 15;
@@ -55,10 +54,9 @@ public class BatteryViewController {
 		if (!_isInitialized) {
 			_logger.Debug("Initializing!");
 			_receiverController.RegisterReceiver(_batteryInfoReveicer, new String[] { Intent.ACTION_BATTERY_CHANGED });
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
 			_isInitialized = true;
 		} else {
 			_logger.Warn("Is ALREADY initialized!");

@@ -9,10 +9,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.RaspPiConstants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.converter.JsonDataToScheduleConverter;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.RaspPiConstants;
+import guepardoapps.mediamirror.converter.json.JsonDataToScheduleConverter;
 import guepardoapps.mediamirror.model.ScheduleModel;
 import guepardoapps.mediamirror.services.RESTService;
 
@@ -21,7 +22,7 @@ import guepardoapps.toolset.controller.ReceiverController;
 
 public class ScheduleController {
 
-	private static final String TAG = ScheduleController.class.getName();
+	private static final String TAG = ScheduleController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private Handler _updater;
@@ -39,10 +40,9 @@ public class ScheduleController {
 			Intent serviceIntent = new Intent(_context, RESTService.class);
 			Bundle serviceData = new Bundle();
 
-			serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, Constants.ACTION_GET_SCHEDULES);
-			serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Constants.BUNDLE_SCHEDULE_MODEL);
-			serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST,
-					Constants.BROADCAST_DOWNLOAD_SCHEDULE_FINISHED);
+			serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, RaspPiConstants.GET_SCHEDULES);
+			serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Bundles.SCHEDULE_MODEL);
+			serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, Broadcasts.DOWNLOAD_SCHEDULE_FINISHED);
 
 			serviceIntent.putExtras(serviceData);
 			_context.startService(serviceIntent);
@@ -55,7 +55,7 @@ public class ScheduleController {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_updateReceiver onReceive");
-			String[] scheduleStringArray = intent.getStringArrayExtra(Constants.BUNDLE_SCHEDULE_MODEL);
+			String[] scheduleStringArray = intent.getStringArrayExtra(Bundles.SCHEDULE_MODEL);
 			if (scheduleStringArray != null) {
 				ArrayList<ScheduleModel> scheduleList = JsonDataToScheduleConverter.GetList(scheduleStringArray);
 				if (scheduleList != null) {
@@ -79,8 +79,7 @@ public class ScheduleController {
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
 		_scheduleList = new ArrayList<ScheduleModel>();
 
-		_receiverController.RegisterReceiver(_updateReceiver,
-				new String[] { Constants.BROADCAST_DOWNLOAD_SCHEDULE_FINISHED });
+		_receiverController.RegisterReceiver(_updateReceiver, new String[] { Broadcasts.DOWNLOAD_SCHEDULE_FINISHED });
 		_updateRunnable.run();
 	}
 

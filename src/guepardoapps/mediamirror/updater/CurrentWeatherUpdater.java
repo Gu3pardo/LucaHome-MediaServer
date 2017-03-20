@@ -5,23 +5,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 
-import guepardoapps.mediamirror.common.Constants;
+import guepardoapps.library.openweather.common.OWBroadcasts;
+import guepardoapps.library.openweather.common.OWBundles;
+import guepardoapps.library.openweather.common.enums.WeatherCondition;
+import guepardoapps.library.openweather.common.model.WeatherModel;
+import guepardoapps.library.openweather.controller.OpenWeatherController;
+import guepardoapps.library.openweather.converter.WeatherConverter;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.TimeHelper;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.Constants;
 import guepardoapps.mediamirror.model.CurrentWeatherModel;
 
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
 
-import guepardoapps.toolset.openweather.OpenWeatherController;
-import guepardoapps.toolset.openweather.common.OpenWeatherConstants;
-import guepardoapps.toolset.openweather.converter.*;
-import guepardoapps.toolset.openweather.enums.*;
-import guepardoapps.toolset.openweather.model.*;
-
 public class CurrentWeatherUpdater {
 
-	private static final String TAG = CurrentWeatherUpdater.class.getName();
+	private static final String TAG = CurrentWeatherUpdater.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private Handler _updater;
@@ -45,8 +48,7 @@ public class CurrentWeatherUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_updateReceiver onReceive");
-			WeatherModel currentWeather = (WeatherModel) intent
-					.getSerializableExtra(OpenWeatherConstants.BUNDLE_EXTRA_WEATHER_MODEL);
+			WeatherModel currentWeather = (WeatherModel) intent.getSerializableExtra(OWBundles.EXTRA_WEATHER_MODEL);
 			if (currentWeather != null) {
 				_logger.Debug("currentWeather is: " + currentWeather.toString());
 
@@ -65,8 +67,8 @@ public class CurrentWeatherUpdater {
 						"");
 				_logger.Debug("CurrentWeatherModel: " + model.toString());
 
-				_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CURRENT_WEATHER_MODEL,
-						Constants.BUNDLE_CURRENT_WEATHER_MODEL, model);
+				_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CURRENT_WEATHER_MODEL,
+						Bundles.CURRENT_WEATHER_MODEL, model);
 			} else {
 				_logger.Warn("Current weather is null!");
 			}
@@ -95,9 +97,9 @@ public class CurrentWeatherUpdater {
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
 		_receiverController.RegisterReceiver(_updateReceiver,
-				new String[] { OpenWeatherConstants.BROADCAST_GET_CURRENT_WEATHER_JSON_FINISHED });
+				new String[] { OWBroadcasts.CURRENT_WEATHER_JSON_FINISHED });
 		_receiverController.RegisterReceiver(_performUpdateReceiver,
-				new String[] { Constants.BROADCAST_PERFORM_CURRENT_WEATHER_UPDATE });
+				new String[] { Broadcasts.PERFORM_CURRENT_WEATHER_UPDATE });
 		_updateRunnable.run();
 	}
 

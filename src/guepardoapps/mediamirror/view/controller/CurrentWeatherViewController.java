@@ -7,18 +7,20 @@ import android.content.Intent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.Enables;
-import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.model.*;
-import guepardoapps.mediamirror.test.CurrentWeatherViewControllerTest;
 import guepardoapps.mediamirror.R;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.Enables;
+import guepardoapps.mediamirror.model.*;
+
+import guepardoapps.test.CurrentWeatherViewControllerTest;
 
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class CurrentWeatherViewController {
 
-	private static final String TAG = CurrentWeatherViewController.class.getName();
+	private static final String TAG = CurrentWeatherViewController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
@@ -63,15 +65,14 @@ public class CurrentWeatherViewController {
 		_logger.Debug("onResume");
 		if (!_isInitialized) {
 			_receiverController.RegisterReceiver(_updateViewReceiver,
-					new String[] { Constants.BROADCAST_SHOW_CURRENT_WEATHER_MODEL });
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
+					new String[] { Broadcasts.SHOW_CURRENT_WEATHER_MODEL });
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Enables.TESTING_ENABLED) {
+			if (Enables.TESTING) {
 				if (_currentWeatherViewTest == null) {
 					_currentWeatherViewTest = new CurrentWeatherViewControllerTest(_context);
 				}
@@ -101,7 +102,7 @@ public class CurrentWeatherViewController {
 
 			_logger.Debug("_updateViewReceiver onReceive");
 			CurrentWeatherModel model = (CurrentWeatherModel) intent
-					.getSerializableExtra(Constants.BUNDLE_CURRENT_WEATHER_MODEL);
+					.getSerializableExtra(Bundles.CURRENT_WEATHER_MODEL);
 			if (model != null) {
 				_logger.Debug(model.toString());
 				_conditionTextView.setText(model.GetCondition());
@@ -114,7 +115,7 @@ public class CurrentWeatherViewController {
 				_logger.Warn("model is null!");
 			}
 
-			if (Enables.TESTING_ENABLED) {
+			if (Enables.TESTING) {
 				_currentWeatherViewTest.ValidateView(_conditionTextView.getText().toString(),
 						_temperatureTextView.getText().toString(), _humidityTextView.getText().toString(),
 						_pressureTextView.getText().toString(), _updatedTimeTextView.getText().toString(), -1);

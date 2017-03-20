@@ -4,15 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
 
 import guepardoapps.toolset.controller.DisplayController;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class ScreenController extends DisplayController {
 
-	private static final String TAG = ScreenController.class.getName();
+	private static final String TAG = ScreenController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private static final int BRIGHTNESS_CHANGE_STEP = 25;
@@ -29,7 +30,7 @@ public class ScreenController extends DisplayController {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_actionReceiver onReceive");
-			int action = intent.getIntExtra(Constants.BUNDLE_SCREEN_BRIGHTNESS, 0);
+			int action = intent.getIntExtra(Bundles.SCREEN_BRIGHTNESS, 0);
 			if (action == INCREASE) {
 				increaseBrightness();
 			} else if (action == DECREASE) {
@@ -44,7 +45,7 @@ public class ScreenController extends DisplayController {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_valueReceiver onReceive");
-			int value = intent.getIntExtra(Constants.BUNDLE_SCREEN_BRIGHTNESS, -1);
+			int value = intent.getIntExtra(Bundles.SCREEN_BRIGHTNESS, -1);
 			if (value != -1) {
 				SetBrightness(value);
 			}
@@ -71,10 +72,8 @@ public class ScreenController extends DisplayController {
 		_logger.Debug("onResume");
 		if (!_isInitialized) {
 			_logger.Debug("Initializing!");
-			_receiverController.RegisterReceiver(_actionReceiver,
-					new String[] { Constants.BROADCAST_ACTION_SCREEN_BRIGHTNESS });
-			_receiverController.RegisterReceiver(_valueReceiver,
-					new String[] { Constants.BROADCAST_VALUE_SCREEN_BRIGHTNESS });
+			_receiverController.RegisterReceiver(_actionReceiver, new String[] { Broadcasts.ACTION_SCREEN_BRIGHTNESS });
+			_receiverController.RegisterReceiver(_valueReceiver, new String[] { Broadcasts.VALUE_SCREEN_BRIGHTNESS });
 			_isInitialized = true;
 		} else {
 			_logger.Warn("Is ALREADY initialized!");

@@ -5,14 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 
 import guepardoapps.games.controller.GameDialogController;
-
-import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-
+import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class GameViewController {
-	private static final String TAG = GameViewController.class.getName();
+	private static final String TAG = GameViewController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
@@ -135,17 +133,15 @@ public class GameViewController {
 		_logger.Debug("onResume");
 		if (!_isInitialized) {
 			_logger.Debug("Initializing!");
-			_receiverController.RegisterReceiver(_pongStartReveicer, new String[] { Constants.BROADCAST_START_PONG });
-			_receiverController.RegisterReceiver(_pongStopReveicer, new String[] { Constants.BROADCAST_STOP_PONG });
-			_receiverController.RegisterReceiver(_snakeStartReveicer, new String[] { Constants.BROADCAST_START_SNAKE });
-			_receiverController.RegisterReceiver(_snakeStopReveicer, new String[] { Constants.BROADCAST_STOP_SNAKE });
-			_receiverController.RegisterReceiver(_tetrisStartReveicer,
-					new String[] { Constants.BROADCAST_START_TETRIS });
-			_receiverController.RegisterReceiver(_tetrisStopReveicer, new String[] { Constants.BROADCAST_STOP_TETRIS });
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
+			_receiverController.RegisterReceiver(_pongStartReveicer, new String[] { Broadcasts.START_PONG });
+			_receiverController.RegisterReceiver(_pongStopReveicer, new String[] { Broadcasts.STOP_PONG });
+			_receiverController.RegisterReceiver(_snakeStartReveicer, new String[] { Broadcasts.START_SNAKE });
+			_receiverController.RegisterReceiver(_snakeStopReveicer, new String[] { Broadcasts.STOP_SNAKE });
+			_receiverController.RegisterReceiver(_tetrisStartReveicer, new String[] { Broadcasts.START_TETRIS });
+			_receiverController.RegisterReceiver(_tetrisStopReveicer, new String[] { Broadcasts.STOP_TETRIS });
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
 			_isInitialized = true;
 		} else {
 			_logger.Warn("Is ALREADY initialized!");

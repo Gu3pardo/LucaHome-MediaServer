@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="guepardoapps.mediamirror"
-    android:versionCode="1202"
+    android:versionCode="1402"
     android:versionName="@string/serverVersion" >
 
     <uses-sdk
@@ -45,7 +45,7 @@
         </receiver>
 
         <service
-            android:name="guepardoapps.lucahomelibrary.services.RESTService"
+            android:name="guepardoapps.library.lucahome.services.RESTService"
             android:enabled="true" />
         <service
             android:name="guepardoapps.mediamirror.services.ControlServiceStateService"

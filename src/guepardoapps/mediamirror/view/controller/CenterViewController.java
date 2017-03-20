@@ -22,28 +22,29 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import es.dmoral.toasty.Toasty;
+import guepardoapps.library.lucahome.common.constants.Keys;
+import guepardoapps.library.lucahome.common.enums.YoutubeId;
+import guepardoapps.library.lucahome.tasks.DownloadYoutubeVideoTask;
 
-import guepardoapps.lucahomelibrary.common.constants.Broadcasts;
-import guepardoapps.lucahomelibrary.common.constants.Bundles;
-import guepardoapps.lucahomelibrary.common.constants.Keys;
-import guepardoapps.lucahomelibrary.common.tasks.DownloadYoutubeVideoTask;
-import guepardoapps.lucahomelibrary.mediamirror.common.enums.YoutubeId;
+import guepardoapps.library.toastview.ToastView;
 
 import guepardoapps.mediamirror.R;
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.Enables;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.database.DBController;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.Enables;
+import guepardoapps.mediamirror.controller.DatabaseController;
+import guepardoapps.mediamirror.controller.MediaVolumeController;
 import guepardoapps.mediamirror.model.*;
-import guepardoapps.mediamirror.test.CenterViewControllerTest;
+
+import guepardoapps.test.CenterViewControllerTest;
 
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class CenterViewController implements YouTubePlayer.OnInitializedListener {
 
-	private static final String TAG = CenterViewController.class.getName();
+	private static final String TAG = CenterViewController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
@@ -51,7 +52,8 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 	private Context _context;
 	private BroadcastController _broadcastController;
-	private DBController _dbController;
+	private DatabaseController _dbController;
+	private MediaVolumeController _mediaVolumeController;
 	private ReceiverController _receiverController;
 
 	private TextView _centerTextView;
@@ -71,122 +73,6 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 	private CenterViewControllerTest _centerViewTest;
 
-	public CenterViewController(Context context) {
-		_logger = new SmartMirrorLogger(TAG);
-		_context = context;
-		_broadcastController = new BroadcastController(_context);
-		_dbController = new DBController(_context);
-		_receiverController = new ReceiverController(_context);
-	}
-
-	@Override
-	public void onInitializationFailure(Provider provider, YouTubeInitializationResult result) {
-		videoError("Failured to initialize YoutubePlayer!" + result);
-	}
-
-	@Override
-	public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean wasRestored) {
-		if (!_screenEnabled) {
-			_logger.Debug("Screen is not enabled!");
-			return;
-		}
-
-		if (!_youtTubePlayerIsInitialized) {
-			_youtubePlayer = player;
-
-			/** add listeners to YouTubePlayer instance **/
-			_youtubePlayer.setPlayerStateChangeListener(_playerStateChangeListener);
-			_youtubePlayer.setPlaybackEventListener(_playbackEventListener);
-
-			_youtTubePlayerIsInitialized = true;
-		}
-
-		/** Start buffering **/
-		if (!wasRestored) {
-			startVideo(_youtubeId);
-		}
-	}
-
-	@SuppressLint("SetJavaScriptEnabled")
-	public void onCreate() {
-		_logger.Debug("onCreate");
-
-		_screenEnabled = true;
-
-		_centerTextView = (TextView) ((Activity) _context).findViewById(R.id.centerTextView);
-
-		_centerWebView = (WebView) ((Activity) _context).findViewById(R.id.centerWebView);
-		_centerWebView.getSettings().setBuiltInZoomControls(true);
-		_centerWebView.getSettings().setSupportZoom(true);
-		_centerWebView.getSettings().setJavaScriptEnabled(true);
-		_centerWebView.getSettings().setLoadWithOverviewMode(true);
-		_centerWebView.setWebViewClient(new WebViewClient());
-		_centerWebView.setWebChromeClient(new WebChromeClient());
-		_centerWebView.setInitialScale(100);
-		CookieManager cookieManager = CookieManager.getInstance();
-		cookieManager.setAcceptCookie(false);
-		_centerWebView.setWebViewClient(new WebViewClient() {
-			public void onPageFinished(WebView view, String url) {
-				_progressDialog.dismiss();
-				_loadingUrl = false;
-			}
-		});
-
-		_youTubePlayerView = (YouTubePlayerView) ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
-		if (Keys.YOUTUBE_API_KEY_1 != null) {
-			_youTubePlayerView.initialize(Keys.YOUTUBE_API_KEY_1, this);
-		} else {
-			_logger.Warn("Please enter your youtube api key!");
-			Toasty.error(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
-		}
-	}
-
-	public void onPause() {
-		_logger.Debug("onPause");
-	}
-
-	public void onResume() {
-		_logger.Debug("onResume");
-		if (!_isInitialized) {
-			_receiverController.RegisterReceiver(_updateViewReceiver,
-					new String[] { Constants.BROADCAST_SHOW_CENTER_MODEL });
-			_receiverController.RegisterReceiver(_playVideoReceiver, new String[] { Constants.BROADCAST_PLAY_VIDEO });
-			_receiverController.RegisterReceiver(_stopVideoReceiver, new String[] { Constants.BROADCAST_STOP_VIDEO });
-			_receiverController.RegisterReceiver(_playBirthdaySongReceiver,
-					new String[] { Constants.BROADCAST_PLAY_BIRTHDAY_SONG });
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
-			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
-			_receiverController.RegisterReceiver(_youtubeIdReceiver, new String[] { Broadcasts.YOUTUBE_ID });
-
-			_isInitialized = true;
-			_logger.Debug("Initializing!");
-
-			if (Enables.TESTING_ENABLED) {
-				if (_centerViewTest == null) {
-					_centerViewTest = new CenterViewControllerTest(_context);
-				}
-			}
-		} else {
-			_logger.Warn("Is ALREADY initialized!");
-		}
-	}
-
-	public void onDestroy() {
-		_logger.Debug("onDestroy");
-
-		_receiverController.UnregisterReceiver(_updateViewReceiver);
-		_receiverController.UnregisterReceiver(_playVideoReceiver);
-		_receiverController.UnregisterReceiver(_stopVideoReceiver);
-		_receiverController.UnregisterReceiver(_playBirthdaySongReceiver);
-		_receiverController.UnregisterReceiver(_screenEnableReceiver);
-		_receiverController.UnregisterReceiver(_screenDisableReceiver);
-		_receiverController.UnregisterReceiver(_youtubeIdReceiver);
-
-		_isInitialized = false;
-	}
-
 	private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -196,7 +82,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			}
 
 			_logger.Debug("_updateViewReceiver onReceive");
-			CenterModel model = (CenterModel) intent.getSerializableExtra(Constants.BUNDLE_CENTER_MODEL);
+			CenterModel model = (CenterModel) intent.getSerializableExtra(Bundles.CENTER_MODEL);
 			if (model != null) {
 				_logger.Debug(model.toString());
 
@@ -258,7 +144,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 				_logger.Warn("model is null!");
 			}
 
-			if (Enables.TESTING_ENABLED) {
+			if (Enables.TESTING) {
 				_centerViewTest.ValidateView((_centerTextView.getVisibility() == View.VISIBLE),
 						_centerTextView.getText().toString(), (_youTubePlayerView.getVisibility() == View.VISIBLE),
 						model.GetYoutubeId(), (_centerWebView.getVisibility() == View.VISIBLE), "-1");
@@ -276,11 +162,20 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 			_logger.Debug("_playVideoReceiver onReceive");
 
-			_youTubePlayerView.setVisibility(View.VISIBLE);
-			_centerWebView.setVisibility(View.INVISIBLE);
-			_centerTextView.setVisibility(View.INVISIBLE);
-
 			startVideo(_youtubeId);
+		}
+	};
+
+	private BroadcastReceiver _pauseVideoReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
+			_logger.Debug("_pauseVideoReceiver onReceive");
+			pauseVideo();
 		}
 	};
 
@@ -340,7 +235,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 				_youTubePlayerView.initialize(Keys.YOUTUBE_API_KEY_1, CenterViewController.this);
 			} else {
 				_logger.Warn("Please enter your youtube api key!");
-				Toasty.error(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
+				ToastView.error(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
 			}
 		}
 	};
@@ -358,7 +253,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_youtubeIdReceiver onReceive");
-			String youtubeId = intent.getStringExtra(Bundles.YOUTUBE_ID);
+			String youtubeId = intent.getStringExtra(guepardoapps.library.lucahome.common.constants.Bundles.YOUTUBE_ID);
 			if (youtubeId != null) {
 				_logger.Debug("received youtubeId: " + youtubeId);
 				_youtubeId = youtubeId;
@@ -367,7 +262,127 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		}
 	};
 
+	public CenterViewController(Context context) {
+		_logger = new SmartMirrorLogger(TAG);
+		_context = context;
+		_broadcastController = new BroadcastController(_context);
+		_dbController = new DatabaseController(_context);
+		_mediaVolumeController = MediaVolumeController.getInstance();
+		_receiverController = new ReceiverController(_context);
+	}
+
+	@Override
+	public void onInitializationFailure(Provider provider, YouTubeInitializationResult result) {
+		videoError("Failured to initialize YoutubePlayer!" + result);
+	}
+
+	@Override
+	public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean wasRestored) {
+		if (!_screenEnabled) {
+			_logger.Debug("Screen is not enabled!");
+			return;
+		}
+
+		if (!_youtTubePlayerIsInitialized) {
+			_youtubePlayer = player;
+
+			/** add listeners to YouTubePlayer instance **/
+			_youtubePlayer.setPlayerStateChangeListener(_playerStateChangeListener);
+			_youtubePlayer.setPlaybackEventListener(_playbackEventListener);
+
+			_youtTubePlayerIsInitialized = true;
+		}
+
+		/** Start buffering **/
+		if (!wasRestored) {
+			startVideo(_youtubeId);
+		}
+	}
+
+	@SuppressLint("SetJavaScriptEnabled")
+	public void onCreate() {
+		_logger.Debug("onCreate");
+
+		_screenEnabled = true;
+
+		_centerTextView = (TextView) ((Activity) _context).findViewById(R.id.centerTextView);
+
+		_centerWebView = (WebView) ((Activity) _context).findViewById(R.id.centerWebView);
+		_centerWebView.getSettings().setBuiltInZoomControls(true);
+		_centerWebView.getSettings().setSupportZoom(true);
+		_centerWebView.getSettings().setJavaScriptEnabled(true);
+		_centerWebView.getSettings().setLoadWithOverviewMode(true);
+		_centerWebView.setWebViewClient(new WebViewClient());
+		_centerWebView.setWebChromeClient(new WebChromeClient());
+		_centerWebView.setInitialScale(100);
+		CookieManager cookieManager = CookieManager.getInstance();
+		cookieManager.setAcceptCookie(false);
+		_centerWebView.setWebViewClient(new WebViewClient() {
+			public void onPageFinished(WebView view, String url) {
+				_progressDialog.dismiss();
+				_loadingUrl = false;
+			}
+		});
+
+		_youTubePlayerView = (YouTubePlayerView) ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
+		if (Keys.YOUTUBE_API_KEY_1 != null) {
+			_youTubePlayerView.initialize(Keys.YOUTUBE_API_KEY_1, this);
+		} else {
+			_logger.Warn("Please enter your youtube api key!");
+			ToastView.error(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	public void onPause() {
+		_logger.Debug("onPause");
+	}
+
+	public void onResume() {
+		_logger.Debug("onResume");
+		if (!_isInitialized) {
+			_receiverController.RegisterReceiver(_updateViewReceiver, new String[] { Broadcasts.SHOW_CENTER_MODEL });
+			_receiverController.RegisterReceiver(_playVideoReceiver, new String[] { Broadcasts.PLAY_VIDEO });
+			_receiverController.RegisterReceiver(_pauseVideoReceiver, new String[] { Broadcasts.PAUSE_VIDEO });
+			_receiverController.RegisterReceiver(_stopVideoReceiver, new String[] { Broadcasts.STOP_VIDEO });
+			_receiverController.RegisterReceiver(_playBirthdaySongReceiver,
+					new String[] { Broadcasts.PLAY_BIRTHDAY_SONG });
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
+			_receiverController.RegisterReceiver(_screenDisableReceiver,
+					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
+			_receiverController.RegisterReceiver(_youtubeIdReceiver,
+					new String[] { guepardoapps.library.lucahome.common.constants.Broadcasts.YOUTUBE_ID });
+
+			_isInitialized = true;
+			_logger.Debug("Initializing!");
+
+			if (Enables.TESTING) {
+				if (_centerViewTest == null) {
+					_centerViewTest = new CenterViewControllerTest(_context);
+				}
+			}
+		} else {
+			_logger.Warn("Is ALREADY initialized!");
+		}
+	}
+
+	public void onDestroy() {
+		_logger.Debug("onDestroy");
+
+		_receiverController.UnregisterReceiver(_updateViewReceiver);
+		_receiverController.UnregisterReceiver(_playVideoReceiver);
+		_receiverController.UnregisterReceiver(_pauseVideoReceiver);
+		_receiverController.UnregisterReceiver(_stopVideoReceiver);
+		_receiverController.UnregisterReceiver(_playBirthdaySongReceiver);
+		_receiverController.UnregisterReceiver(_screenEnableReceiver);
+		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+		_receiverController.UnregisterReceiver(_youtubeIdReceiver);
+
+		_isInitialized = false;
+	}
+
 	private void startVideo(String youtubeId) {
+		_logger.Debug(String.format("trying to start video %s", youtubeId));
+
 		if (!_screenEnabled) {
 			_logger.Debug("Screen is not enabled!");
 			return;
@@ -383,8 +398,12 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			return;
 		}
 
+		_youTubePlayerView.setVisibility(View.VISIBLE);
+		_centerWebView.setVisibility(View.INVISIBLE);
+		_centerTextView.setVisibility(View.INVISIBLE);
+
 		if (_playingVideo) {
-			Toasty.info(_context, "Stopping current played video!", Toast.LENGTH_SHORT).show();
+			ToastView.info(_context, "Stopping current played video!", Toast.LENGTH_SHORT).show();
 			_logger.Warn("Stopping current played video!");
 			stopVideo();
 		}
@@ -400,13 +419,13 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		}
 	}
 
-	private void stopVideo() {
+	private void pauseVideo() {
+		_logger.Debug("pauseVideo");
+
 		if (!_screenEnabled) {
 			_logger.Debug("Screen is not enabled!");
 			return;
 		}
-
-		_logger.Debug("_stopVideoReceiver onReceive");
 
 		if (!_youtTubePlayerIsInitialized) {
 			_logger.Error("YouTubePlayer is not initialized!");
@@ -419,6 +438,30 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		}
 
 		_youtubePlayer.pause();
+	}
+
+	private void stopVideo() {
+		_logger.Debug("stopVideo");
+
+		if (!_screenEnabled) {
+			_logger.Debug("Screen is not enabled!");
+			return;
+		}
+
+		if (!_youtTubePlayerIsInitialized) {
+			_logger.Error("YouTubePlayer is not initialized!");
+			return;
+		}
+
+		if (!_playingVideo) {
+			_logger.Warn("Not playing a video!");
+			return;
+		}
+
+		_youtubePlayer.pause();
+		_youtubePlayer.seekToMillis(0);
+
+		_youTubePlayerView.setVisibility(View.INVISIBLE);
 	}
 
 	private void videoError(String error) {
@@ -467,6 +510,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 		@Override
 		public void onAdStarted() {
+			_mediaVolumeController.MuteVolume();
 		}
 
 		@Override
@@ -505,12 +549,13 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 				_youTubePlayerView.setVisibility(View.INVISIBLE);
 				_centerWebView.setVisibility(View.INVISIBLE);
 				_centerTextView.setVisibility(View.VISIBLE);
-				_centerTextView.setText("MediaMirror by JSc");
+				_centerTextView.setText("MediaMirror by GuepardoApps");
 			}
 		}
 
 		@Override
 		public void onVideoStarted() {
+			_mediaVolumeController.UnmuteVolume();
 		}
 	};
 }

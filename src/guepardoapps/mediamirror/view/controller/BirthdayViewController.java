@@ -11,19 +11,21 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.Enables;
-import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.model.helper.BirthdayHelper;
-import guepardoapps.mediamirror.test.BirthdayViewControllerTest;
 import guepardoapps.mediamirror.R;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.Enables;
+import guepardoapps.mediamirror.model.helper.BirthdayHelper;
+
+import guepardoapps.test.BirthdayViewControllerTest;
 
 import guepardoapps.toolset.controller.BroadcastController;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class BirthdayViewController {
 
-	private static final String TAG = BirthdayViewController.class.getName();
+	private static final String TAG = BirthdayViewController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private boolean _isInitialized;
@@ -51,7 +53,7 @@ public class BirthdayViewController {
 			final String action = intent.getAction();
 			if (action.equals(Intent.ACTION_DATE_CHANGED)) {
 				_logger.Debug("ACTION_DATE_CHANGED");
-				_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_BIRTHDAY_UPDATE);
+				_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_BIRTHDAY_UPDATE);
 			}
 		}
 	};
@@ -106,7 +108,7 @@ public class BirthdayViewController {
 
 			_logger.Debug("_updateViewReceiver onReceive");
 			ArrayList<BirthdayHelper> birthdayList = (ArrayList<BirthdayHelper>) intent
-					.getSerializableExtra(Constants.BUNDLE_BIRTHDAY_MODEL);
+					.getSerializableExtra(Bundles.BIRTHDAY_MODEL);
 			if (birthdayList != null) {
 				_logger.Debug(birthdayList.toString());
 				for (int index = 0; index < birthdayList.size(); index++) {
@@ -146,7 +148,7 @@ public class BirthdayViewController {
 
 		private void checkPlayBirthdaySong(BirthdayHelper entry) {
 			if (entry.GetName().contains("Sandra Huber") || entry.GetName().contains("Jonas Schubert")) {
-				_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PLAY_BIRTHDAY_SONG);
+				_broadcastController.SendSimpleBroadcast(Broadcasts.PLAY_BIRTHDAY_SONG);
 			}
 		}
 	};
@@ -205,19 +207,17 @@ public class BirthdayViewController {
 		_logger.Debug("onResume");
 		if (!_isInitialized) {
 			_receiverController.RegisterReceiver(_dateChangedReceiver, new String[] { Intent.ACTION_DATE_CHANGED });
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
 			_receiverController.RegisterReceiver(_switchViewReceiver,
-					new String[] { Constants.BROADCAST_SWITCH_BIRTHDAY_CALENDAR });
-			_receiverController.RegisterReceiver(_updateViewReceiver,
-					new String[] { Constants.BROADCAST_SHOW_BIRTHDAY_MODEL });
+					new String[] { Broadcasts.SWITCH_BIRTHDAY_CALENDAR });
+			_receiverController.RegisterReceiver(_updateViewReceiver, new String[] { Broadcasts.SHOW_BIRTHDAY_MODEL });
 
 			_isInitialized = true;
 			_logger.Debug("Initializing!");
 
-			if (Enables.TESTING_ENABLED) {
+			if (Enables.TESTING) {
 				if (_birthdayViewTest == null) {
 					_birthdayViewTest = new BirthdayViewControllerTest(_context);
 				}

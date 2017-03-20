@@ -6,8 +6,9 @@ import android.content.Intent;
 import android.os.Handler;
 import android.text.format.DateUtils;
 
-import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
 
 import guepardoapps.toolset.common.classes.SerializableList;
 import guepardoapps.toolset.common.dto.CalendarEntry;
@@ -17,7 +18,7 @@ import guepardoapps.toolset.controller.ReceiverController;
 
 public class CalendarViewUpdater {
 
-	private static final String TAG = CalendarViewUpdater.class.getName();
+	private static final String TAG = CalendarViewUpdater.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private Handler _updater;
@@ -35,8 +36,8 @@ public class CalendarViewUpdater {
 
 			SerializableList<CalendarEntry> calendarList = _calendarController
 					.ReadCalendar(DateUtils.YEAR_IN_MILLIS * 10000);
-			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CALENDAR_MODEL,
-					Constants.BUNDLE_CALENDAR_MODEL, calendarList);
+			_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CALENDAR_MODEL, Bundles.CALENDAR_MODEL,
+					calendarList);
 
 			_updater.postDelayed(_updateRunnable, _updateTime);
 		}
@@ -49,8 +50,8 @@ public class CalendarViewUpdater {
 
 			SerializableList<CalendarEntry> calendarList = _calendarController
 					.ReadCalendar(DateUtils.YEAR_IN_MILLIS * 10000);
-			_broadcastController.SendSerializableBroadcast(Constants.BROADCAST_SHOW_CALENDAR_MODEL,
-					Constants.BUNDLE_CALENDAR_MODEL, calendarList);
+			_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CALENDAR_MODEL, Bundles.CALENDAR_MODEL,
+					calendarList);
 		}
 	};
 
@@ -68,7 +69,7 @@ public class CalendarViewUpdater {
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
 		_receiverController.RegisterReceiver(_performUpdateReceiver,
-				new String[] { Constants.BROADCAST_PERFORM_CALENDAR_UPDATE });
+				new String[] { Broadcasts.PERFORM_CALENDAR_UPDATE });
 		_updateRunnable.run();
 	}
 

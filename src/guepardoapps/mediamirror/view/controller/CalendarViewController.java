@@ -11,12 +11,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import guepardoapps.lucahomelibrary.common.constants.Broadcasts;
-import guepardoapps.lucahomelibrary.common.constants.Bundles;
-
 import guepardoapps.mediamirror.R;
-import guepardoapps.mediamirror.common.Constants;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
 
 import guepardoapps.toolset.common.classes.SerializableList;
 import guepardoapps.toolset.common.dto.CalendarEntry;
@@ -26,7 +24,7 @@ import guepardoapps.toolset.controller.ReceiverController;
 
 public class CalendarViewController {
 
-	private static final String TAG = CalendarViewController.class.getName();
+	private static final String TAG = CalendarViewController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private static final int PERMISSION_READ_CALENDAR_ID = 69;
@@ -58,7 +56,7 @@ public class CalendarViewController {
 			final String action = intent.getAction();
 			if (action.equals(Intent.ACTION_DATE_CHANGED)) {
 				_logger.Debug("ACTION_DATE_CHANGED");
-				_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_CALENDAR_UPDATE);
+				_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_CALENDAR_UPDATE);
 			}
 		}
 	};
@@ -67,12 +65,13 @@ public class CalendarViewController {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_permissionReceiver onReceive");
-			int permissionGrantedResult = intent.getIntExtra(Bundles.PERMISSION_READ_CALENDAR, -1);
+			int permissionGrantedResult = intent
+					.getIntExtra(guepardoapps.library.lucahome.common.constants.Bundles.PERMISSION_READ_CALENDAR, -1);
 			_permissionGranted = permissionGrantedResult == PackageManager.PERMISSION_GRANTED;
 			_logger.Info(String.format("Permission READ_CALENDAR result %s is granted %s!", permissionGrantedResult,
 					_permissionGranted));
 			if (_permissionGranted) {
-				_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_CALENDAR_UPDATE);
+				_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_CALENDAR_UPDATE);
 			}
 		}
 	};
@@ -82,7 +81,7 @@ public class CalendarViewController {
 		public void onReceive(Context context, Intent intent) {
 			_screenEnabled = true;
 			if (_permissionGranted) {
-				_broadcastController.SendSimpleBroadcast(Constants.BROADCAST_PERFORM_CALENDAR_UPDATE);
+				_broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_CALENDAR_UPDATE);
 			}
 			_updateAlarmHandler.postDelayed(_updateAlarmViewRunnable, _invertTime);
 		}
@@ -116,7 +115,7 @@ public class CalendarViewController {
 		public void onReceive(Context context, Intent intent) {
 			@SuppressWarnings("unchecked")
 			SerializableList<CalendarEntry> calendarEntries = (SerializableList<CalendarEntry>) intent
-					.getSerializableExtra(Constants.BUNDLE_CALENDAR_MODEL);
+					.getSerializableExtra(Bundles.CALENDAR_MODEL);
 			if (calendarEntries != null) {
 				_calendarEntries.clear();
 
@@ -214,16 +213,14 @@ public class CalendarViewController {
 			_logger.Debug("Initializing!");
 
 			_receiverController.RegisterReceiver(_dateChangedReceiver, new String[] { Intent.ACTION_DATE_CHANGED });
-			_receiverController.RegisterReceiver(_permissionReceiver,
-					new String[] { Broadcasts.PERMISSION_READ_CALENDAR });
-			_receiverController.RegisterReceiver(_screenEnableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_ENABLED });
+			_receiverController.RegisterReceiver(_permissionReceiver, new String[] {
+					guepardoapps.library.lucahome.common.constants.Broadcasts.PERMISSION_READ_CALENDAR });
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
-					new String[] { Constants.BROADCAST_SCREEN_OFF, Constants.BROADCAST_SCREEN_SAVER });
+					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
 			_receiverController.RegisterReceiver(_switchViewReceiver,
-					new String[] { Constants.BROADCAST_SWITCH_BIRTHDAY_CALENDAR });
-			_receiverController.RegisterReceiver(_updateViewReceiver,
-					new String[] { Constants.BROADCAST_SHOW_CALENDAR_MODEL });
+					new String[] { Broadcasts.SWITCH_BIRTHDAY_CALENDAR });
+			_receiverController.RegisterReceiver(_updateViewReceiver, new String[] { Broadcasts.SHOW_CALENDAR_MODEL });
 
 			_isInitialized = true;
 

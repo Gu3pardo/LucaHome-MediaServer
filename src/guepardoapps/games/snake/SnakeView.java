@@ -15,10 +15,8 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-
+import guepardoapps.games.common.Coordinates;
 import guepardoapps.games.common.GameConstants;
-import guepardoapps.games.common.basic.Coordinates;
-
 import guepardoapps.games.snake.library.Game;
 import guepardoapps.games.snake.library.GameFactory;
 import guepardoapps.games.snake.library.Snake;
@@ -27,16 +25,16 @@ import guepardoapps.games.snake.library.interfaces.SnakeRenderer;
 import guepardoapps.games.snake.library.Yard;
 
 import guepardoapps.mediamirror.R;
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.Enables;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
 
-import guepardoapps.toolset.common.Logger;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class SnakeView extends TileView {
 
-	private static final String TAG = SnakeView.class.getName();
-	private Logger _logger;
+	private static final String TAG = SnakeView.class.getSimpleName();
+	private SmartMirrorLogger _logger;
 
 	public static final int PAUSE = 0;
 	public static final int READY = 1;
@@ -99,7 +97,7 @@ public class SnakeView extends TileView {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_commandReceiver onReceive");
-			String command = intent.getStringExtra(Constants.BUNDLE_GAME_COMMAND);
+			String command = intent.getStringExtra(Bundles.GAME_COMMAND);
 			if (command != null) {
 				_logger.Warn("Command is: " + command);
 
@@ -145,7 +143,7 @@ public class SnakeView extends TileView {
 		_logger.Debug("onCreate");
 		_context = context;
 		_receiverController = new ReceiverController(_context);
-		_receiverController.RegisterReceiver(_commandReceiver, new String[] { Constants.BROADCAST_GAME_COMMAND });
+		_receiverController.RegisterReceiver(_commandReceiver, new String[] { Broadcasts.GAME_COMMAND });
 	}
 
 	public void onDestroy() {
@@ -274,7 +272,7 @@ public class SnakeView extends TileView {
 
 	@SuppressWarnings("deprecation")
 	private void initSnakeView() {
-		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
+		_logger = new SmartMirrorLogger(TAG);
 		_logger.Debug("SnakeView created...");
 
 		setFocusable(true);

@@ -13,20 +13,20 @@ import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
+import guepardoapps.games.common.Coordinates;
 import guepardoapps.games.common.GameConstants;
-import guepardoapps.games.common.basic.Coordinates;
+import guepardoapps.games.tetris.enums.Piece;
 
-import guepardoapps.mediamirror.common.Constants;
-import guepardoapps.mediamirror.common.Enables;
+import guepardoapps.mediamirror.common.SmartMirrorLogger;
+import guepardoapps.mediamirror.common.constants.Broadcasts;
+import guepardoapps.mediamirror.common.constants.Bundles;
 
-import guepardoapps.toolset.common.Logger;
 import guepardoapps.toolset.controller.ReceiverController;
 
 public class GameSurfaceView extends SurfaceView implements Runnable {
 
-	private static final String TAG = GameSurfaceView.class.getName();
-	private Logger _logger;
+	private static final String TAG = GameSurfaceView.class.getSimpleName();
+	private SmartMirrorLogger _logger;
 
 	private Context _context;
 	private ReceiverController _receiverController;
@@ -46,7 +46,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_commandReceiver onReceive");
-			String command = intent.getStringExtra(Constants.BUNDLE_GAME_COMMAND);
+			String command = intent.getStringExtra(Bundles.GAME_COMMAND);
 			if (command != null) {
 				_logger.Warn("Command is: " + command);
 
@@ -73,7 +73,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 	public GameSurfaceView(Context context) {
 		super(context);
-		_logger = new Logger(TAG, Enables.DEBUGGING_ENABLED);
+		_logger = new SmartMirrorLogger(TAG);
 		_logger.Debug("GameSurfaceView created...");
 
 		_context = context;
@@ -89,7 +89,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 	public void OnResumeGameSurfaceView() {
 		running = true;
-		_receiverController.RegisterReceiver(_commandReceiver, new String[] { Constants.BROADCAST_GAME_COMMAND });
+		_receiverController.RegisterReceiver(_commandReceiver, new String[] { Broadcasts.GAME_COMMAND });
 		_thread = new Thread(this);
 		_thread.start();
 	}

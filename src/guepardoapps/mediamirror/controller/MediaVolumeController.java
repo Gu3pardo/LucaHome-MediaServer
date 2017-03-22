@@ -131,16 +131,6 @@ public class MediaVolumeController {
 			UnmuteVolume();
 		}
 
-		if (volume <= 0) {
-			_logger.Warn("Current volume is already 0!");
-			return false;
-		}
-
-		if (volume >= _maxVolume) {
-			_logger.Warn("Current volume is already _maxVolume: " + String.valueOf(_maxVolume));
-			return false;
-		}
-
 		if (volume < 0) {
 			volume = 0;
 		}

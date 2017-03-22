@@ -32,4 +32,6 @@ public class Bundles {
 	public static final String SHOPPING_LIST = "SHOPPING_LIST";
 	// GAME DATA
 	public static final String GAME_COMMAND = "GAME_COMMAND";
+	// YOUTUBE DATA
+	public static final String YOUTUBE_ID = "YOUTUBE_ID";
 }

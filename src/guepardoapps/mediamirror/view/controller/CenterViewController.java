@@ -155,12 +155,19 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	private BroadcastReceiver _playVideoReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			_logger.Debug("_playVideoReceiver onReceive");
+
 			if (!_screenEnabled) {
 				_logger.Debug("Screen is not enabled!");
 				return;
 			}
 
-			_logger.Debug("_playVideoReceiver onReceive");
+			String youtubeId = intent.getStringExtra(Bundles.YOUTUBE_ID);
+			if (youtubeId != null) {
+				if (youtubeId.length() > 0) {
+					_youtubeId = youtubeId;
+				}
+			}
 
 			startVideo(_youtubeId);
 		}
@@ -398,10 +405,6 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			return;
 		}
 
-		_youTubePlayerView.setVisibility(View.VISIBLE);
-		_centerWebView.setVisibility(View.INVISIBLE);
-		_centerTextView.setVisibility(View.INVISIBLE);
-
 		if (_playingVideo) {
 			ToastView.info(_context, "Stopping current played video!", Toast.LENGTH_SHORT).show();
 			_logger.Warn("Stopping current played video!");
@@ -417,6 +420,10 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			_dbController.SaveYoutubeId(new YoutubeDatabaseModel(_dbController.GetHighesId() + 1, youtubeId, 0));
 			_youtubePlayer.cueVideo(youtubeId);
 		}
+
+		_youTubePlayerView.setVisibility(View.VISIBLE);
+		_centerWebView.setVisibility(View.INVISIBLE);
+		_centerTextView.setVisibility(View.INVISIBLE);
 	}
 
 	private void pauseVideo() {
@@ -524,7 +531,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 					String url = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=The+Good+Life+24+7&key="
 							+ Keys.YOUTUBE_API_KEY_2;
 
-					DownloadYoutubeVideoTask task = new DownloadYoutubeVideoTask(_context, _broadcastController);
+					DownloadYoutubeVideoTask task = new DownloadYoutubeVideoTask(_context, _broadcastController, "");
 					task.SetSendFirstEntry(true);
 					task.execute(new String[] { url });
 				}

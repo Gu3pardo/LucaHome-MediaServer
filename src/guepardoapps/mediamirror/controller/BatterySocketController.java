@@ -8,7 +8,7 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import guepardoapps.library.lucahome.common.constants.MediaMirrorIds;
+import guepardoapps.library.lucahome.common.enums.MediaMirrorSelection;
 
 import guepardoapps.library.toastview.ToastView;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
@@ -98,7 +98,7 @@ public class BatterySocketController {
 		String localIp = _networkController.GetIpAddress();
 		if (localIp != null) {
 			try {
-				String localSocket = MediaMirrorIds.IPs.get(localIp);
+				String localSocket = MediaMirrorSelection.GetByIp(localIp).GetSocket();
 				if (localSocket != null) {
 					_logger.Debug("setBatterySocket " + localSocket + " to "
 							+ ((enable) ? RaspPiConstants.SOCKET_STATE_ON : RaspPiConstants.SOCKET_STATE_OFF));

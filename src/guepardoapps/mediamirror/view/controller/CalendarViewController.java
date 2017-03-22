@@ -165,7 +165,6 @@ public class CalendarViewController {
 				return;
 			}
 
-			_logger.Debug("Inverting calendar alarm view!");
 			for (int index = 0; index < 3; index++) {
 				if (_isToday[index]) {
 					if (_invert) {

@@ -10,8 +10,8 @@ import android.os.BatteryManager;
 import android.os.Handler;
 import android.widget.Toast;
 
-import guepardoapps.library.lucahome.common.constants.MediaMirrorIds;
 import guepardoapps.library.lucahome.common.dto.WirelessSocketDto;
+import guepardoapps.library.lucahome.common.enums.MediaMirrorSelection;
 import guepardoapps.library.lucahome.common.enums.RSSFeed;
 import guepardoapps.library.lucahome.common.enums.ServerAction;
 import guepardoapps.library.lucahome.common.enums.YoutubeId;
@@ -24,6 +24,7 @@ import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
+import guepardoapps.mediamirror.common.constants.Timeouts;
 import guepardoapps.mediamirror.controller.DatabaseController;
 import guepardoapps.mediamirror.controller.MediaVolumeController;
 import guepardoapps.mediamirror.controller.ScreenController;
@@ -42,9 +43,6 @@ public class DataHandler {
 	private static final String TAG = DataHandler.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
-	private static final int TIMEOUT_SHUTDOWN = 5 * 1000;
-	private static final int TIMEOUT_REBOOT = 3 * 1000;
-
 	private Context _context;
 
 	private BroadcastController _broadcastController;
@@ -55,9 +53,8 @@ public class DataHandler {
 	private ScreenController _screenController;
 	private UserInformationController _userInformationController;
 
-	private static final int SEA_SOUND_STOP_TIMEOUT = 30 * 60 * 1000;
 	private boolean _seaSoundIsRunning;
-	private long _seaSoundStartTime;
+	private long _seaSoundStartTime = -1;
 	private Handler _seaSoundHandler = new Handler();
 	private Runnable _seaSoundRunnable = new Runnable() {
 		@Override
@@ -94,7 +91,7 @@ public class DataHandler {
 		}
 	};
 
-	private String _lastYoutubeId = "";
+	private String _lastYoutubeId = YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId();
 
 	public DataHandler(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
@@ -175,7 +172,16 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_context.sendBroadcast(new Intent(Broadcasts.PLAY_VIDEO));
+					if (data != null) {
+						if (data.length() > 0) {
+							_lastYoutubeId = data;
+							_broadcastController.SendStringBroadcast(Broadcasts.PLAY_VIDEO, Bundles.YOUTUBE_ID, data);
+						} else {
+							_broadcastController.SendSimpleBroadcast(Broadcasts.PLAY_VIDEO);
+						}
+					} else {
+						_broadcastController.SendSimpleBroadcast(Broadcasts.PLAY_VIDEO);
+					}
 					break;
 				case PAUSE_YOUTUBE_VIDEO:
 					if (!_screenController.IsScreenOn()) {
@@ -183,7 +189,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_context.sendBroadcast(new Intent(Broadcasts.PAUSE_VIDEO));
+					_broadcastController.SendSimpleBroadcast(Broadcasts.PAUSE_VIDEO);
 					break;
 				case STOP_YOUTUBE_VIDEO:
 					if (!_screenController.IsScreenOn()) {
@@ -191,7 +197,7 @@ public class DataHandler {
 						return "Error:Screen is not enabled!";
 					}
 
-					_context.sendBroadcast(new Intent(Broadcasts.STOP_VIDEO));
+					_broadcastController.SendSimpleBroadcast(Broadcasts.STOP_VIDEO);
 					break;
 				case GET_SAVED_YOUTUBE_IDS:
 					ArrayList<YoutubeDatabaseModel> loadedList = _dbController.GetYoutubeIds();
@@ -222,7 +228,7 @@ public class DataHandler {
 					} catch (Exception ex) {
 						_logger.Error(ex.toString());
 						ToastView.error(_context, ex.toString(), Toast.LENGTH_LONG).show();
-						timeOut = SEA_SOUND_STOP_TIMEOUT;
+						timeOut = Timeouts.SEA_SOUND_STOP;
 					}
 					CenterModel playSeaSoundModel = new CenterModel(false, "", true, YoutubeId.SEA_SOUND.GetYoutubeId(),
 							false, "");
@@ -523,10 +529,10 @@ public class DataHandler {
 					break;
 
 				case SYSTEM_REBOOT:
-					_commandController.RebootDevice(TIMEOUT_REBOOT);
+					_commandController.RebootDevice(Timeouts.REBOOT);
 					break;
 				case SYSTEM_SHUTDOWN:
-					_commandController.ShutDownDevice(TIMEOUT_SHUTDOWN);
+					_commandController.ShutDownDevice(Timeouts.SHUTDOWN);
 					break;
 
 				case GET_BATTERY_LEVEL:
@@ -539,7 +545,7 @@ public class DataHandler {
 
 					String batteryLevel = String.valueOf(_batteryLevel);
 
-					String socketName = MediaMirrorIds.IPs.get(serverIp);
+					String socketName = MediaMirrorSelection.GetByIp(serverIp).GetSocket();
 					String socketState = "0";
 					if (_socketList != null) {
 						for (int index = 0; index < _socketList.getSize(); index++) {
@@ -571,15 +577,19 @@ public class DataHandler {
 
 					String isSeaSSoundPlaying = _seaSoundIsRunning ? "1" : "0";
 					String seaSoundCountdown = "";
-					if (_seaSoundStartTime == -1) {
+					if (!_seaSoundIsRunning) {
 						seaSoundCountdown = "-1";
 					} else {
-						long currentTimeMsec = System.currentTimeMillis();
-						long differenceTimeInSec = (currentTimeMsec - _seaSoundStartTime) / 1000;
-						while (differenceTimeInSec < 0) {
-							differenceTimeInSec += 24 * 60 * 60;
+						if (_seaSoundStartTime == -1) {
+							seaSoundCountdown = "-1";
+						} else {
+							long currentTimeMsec = System.currentTimeMillis();
+							long differenceTimeInSec = (currentTimeMsec - _seaSoundStartTime) / 1000;
+							while (differenceTimeInSec < 0) {
+								differenceTimeInSec += 24 * 60 * 60;
+							}
+							seaSoundCountdown = String.valueOf(differenceTimeInSec);
 						}
-						seaSoundCountdown = String.valueOf(differenceTimeInSec);
 					}
 
 					String serverVersion = _context.getString(R.string.serverVersion);

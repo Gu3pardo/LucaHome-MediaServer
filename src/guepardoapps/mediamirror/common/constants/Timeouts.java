@@ -23,5 +23,9 @@ public class Timeouts {
 	public static final int SHOPPING_LIST_UPDATE = 5 * 60 * 1000;
 	// BIRTHDAY vs CALENDAR view
 	public static final int SWITCH_BIRTHDAY_CALENDAR = 30 * 1000;
-
+	// ADVANCED
+	public static final int SHUTDOWN = 5 * 1000;
+	public static final int REBOOT = 3 * 1000;
+	// SEA_SOUND
+	public static final int SEA_SOUND_STOP = 30 * 60 * 1000;
 }

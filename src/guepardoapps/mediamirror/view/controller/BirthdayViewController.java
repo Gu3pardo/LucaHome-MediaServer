@@ -162,7 +162,6 @@ public class BirthdayViewController {
 				return;
 			}
 
-			_logger.Debug("Inverting birthday alarm view!");
 			for (int index = 0; index < 3; index++) {
 				if (_hasBirthday[index]) {
 					if (_invert) {

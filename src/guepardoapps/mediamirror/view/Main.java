@@ -14,6 +14,11 @@ import guepardoapps.library.lucahome.common.constants.Broadcasts;
 import guepardoapps.library.lucahome.common.constants.Bundles;
 import guepardoapps.library.lucahome.common.constants.SharedPrefConstants;
 
+import guepardoapps.library.toolset.controller.BroadcastController;
+import guepardoapps.library.toolset.controller.PermissionController;
+import guepardoapps.library.toolset.controller.SharedPrefController;
+import guepardoapps.library.toolset.controller.TTSController;
+
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Enables;
@@ -21,11 +26,6 @@ import guepardoapps.mediamirror.common.constants.RaspPiConstants;
 import guepardoapps.mediamirror.controller.ScreenController;
 import guepardoapps.mediamirror.services.*;
 import guepardoapps.mediamirror.view.controller.*;
-
-import guepardoapps.toolset.controller.BroadcastController;
-import guepardoapps.toolset.controller.PermissionController;
-import guepardoapps.toolset.controller.SharedPrefController;
-import guepardoapps.toolset.controller.TTSController;
 
 public class Main extends YouTubeBaseActivity {
 
@@ -92,7 +92,7 @@ public class Main extends YouTubeBaseActivity {
 		_batteryViewController.onCreate();
 		_birthdayViewController.onCreate();
 		_calendarViewController.onCreate();
-		_centerViewController.onCreate();
+		_centerViewController.onCreate(_context);
 		_currentWeatherViewController.onCreate();
 		_dateViewController.onCreate();
 		_forecastWeatherViewController.onCreate();
@@ -214,23 +214,27 @@ public class Main extends YouTubeBaseActivity {
 		}
 	}
 
-	public void showTemperatureGraph(View view) {
-		_raspberryViewController.showTemperatureGraph(view);
-	}
-
-	public void showSocketsDialog(View view) {
-		_raspberryViewController.showSocketsDialog(view);
+	public void showMenuListDialog(View view) {
+		_raspberryViewController.showMenuListDialog(view);
 	}
 
 	public void showShoppingListDialog(View view) {
 		_raspberryViewController.showShoppingListDialog(view);
 	}
 
+	public void showSocketsDialog(View view) {
+		_raspberryViewController.showSocketsDialog(view);
+	}
+
+	public void showTemperatureGraph(View view) {
+		_raspberryViewController.showTemperatureGraph(view);
+	}
+
 	private void initializeController() {
 		_batteryViewController = new BatteryViewController(_context);
 		_birthdayViewController = new BirthdayViewController(_context);
 		_calendarViewController = new CalendarViewController(_context);
-		_centerViewController = new CenterViewController(_context);
+		_centerViewController = CenterViewController.getInstance();
 		_currentWeatherViewController = new CurrentWeatherViewController(_context);
 		_dateViewController = new DateViewController(_context);
 		_forecastWeatherViewController = new ForecastWeatherViewController(_context);

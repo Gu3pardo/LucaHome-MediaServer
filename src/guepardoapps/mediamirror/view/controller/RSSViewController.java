@@ -17,6 +17,8 @@ import guepardoapps.library.lucahome.common.enums.RSSFeed;
 
 import guepardoapps.library.toastview.ToastView;
 
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
@@ -27,8 +29,6 @@ import guepardoapps.mediamirror.rss.RssItem;
 import guepardoapps.mediamirror.rss.RssService;
 
 import guepardoapps.test.RSSViewControllerTest;
-
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class RSSViewController {
 

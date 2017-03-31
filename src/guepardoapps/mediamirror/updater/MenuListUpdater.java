@@ -22,9 +22,9 @@ import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.RaspPiConstants;
 import guepardoapps.mediamirror.services.RESTService;
 
-public class SocketListUpdater {
+public class MenuListUpdater {
 
-	private static final String TAG = SocketListUpdater.class.getSimpleName();
+	private static final String TAG = MenuListUpdater.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private Handler _updater;
@@ -38,7 +38,7 @@ public class SocketListUpdater {
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
 			_logger.Debug("_updateRunnable run");
-			DownloadSocketList();
+			DownloadMenuList();
 			_updater.postDelayed(_updateRunnable, _updateTime);
 		}
 	};
@@ -65,11 +65,11 @@ public class SocketListUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_performUpdateReceiver onReceive");
-			DownloadSocketList();
+			DownloadMenuList();
 		}
 	};
 
-	public SocketListUpdater(Context context) {
+	public MenuListUpdater(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
 		_updater = new Handler();
 		_context = context;
@@ -81,8 +81,8 @@ public class SocketListUpdater {
 		_logger.Debug("Initialize");
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
-		_receiverController.RegisterReceiver(_updateReceiver, new String[] { Broadcasts.DOWNLOAD_SOCKET_FINISHED });
-		_receiverController.RegisterReceiver(_performUpdateReceiver, new String[] { Broadcasts.PERFORM_SOCKET_UPDATE });
+		_receiverController.RegisterReceiver(_updateReceiver, new String[] { Broadcasts.DOWNLOAD_MENU_FINISHED });
+		_receiverController.RegisterReceiver(_performUpdateReceiver, new String[] { Broadcasts.PERFORM_MENU_UPDATE });
 		_updateRunnable.run();
 	}
 
@@ -93,15 +93,15 @@ public class SocketListUpdater {
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
 	}
 
-	public void DownloadSocketList() {
-		_logger.Debug("startDownloadSocketList");
+	public void DownloadMenuList() {
+		_logger.Debug("startDownloadMenuList");
 
 		Intent serviceIntent = new Intent(_context, RESTService.class);
 		Bundle serviceData = new Bundle();
 
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, RaspPiConstants.GET_SOCKETS);
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Bundles.SOCKET_LIST);
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, Broadcasts.DOWNLOAD_SOCKET_FINISHED);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, RaspPiConstants.GET_MENU);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Bundles.MENU);
+		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, Broadcasts.DOWNLOAD_MENU_FINISHED);
 
 		serviceIntent.putExtras(serviceData);
 		_context.startService(serviceIntent);

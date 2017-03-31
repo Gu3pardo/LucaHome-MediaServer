@@ -30,6 +30,7 @@ public class Broadcasts {
 	public static final String PAUSE_VIDEO = "guepardoapps.mediamirror.video.pause";
 	public static final String STOP_VIDEO = "guepardoapps.mediamirror.video.stop";
 	public static final String SET_VIDEOVIEW_VISIBILITY = "guepardoapps.mediamirror.videoview.set.visibility";
+	public static final String SET_VIDEO_POSITION = "guepardoapps.mediamirror.videoview.set.position";
 	// RSS VIEW
 	public static final String SHOW_RSS_DATA_MODEL = "guepardoapps.mediamirror.show.rss_data_model";
 	public static final String DOWNLOAD_RSS_FINISHED = "guepardoapps.mediamirror.broadcast.download.finished.rss";
@@ -55,6 +56,10 @@ public class Broadcasts {
 	public static final String SWITCH_BIRTHDAY_CALENDAR = "guepardoapps.mediamirror.switch.birthday_calendar";
 	// GAME DATA
 	public static final String GAME_COMMAND = "guepardoapps.mediamirror.game.command";
+	// MENU DATA
+	public static final String MENU = "guepardoapps.mediamirror.broadcasts.menu";
+	public static final String DOWNLOAD_MENU_FINISHED = "guepardoapps.mediamirror.broadcast.download.finished.menu";
+	public static final String PERFORM_MENU_UPDATE = "guepardoapps.mediamirror.broadcast.perform.update.menu";
 	// PONG DATA
 	public static final String START_PONG = "guepardoapps.mediamirror.game.pong.start";
 	public static final String STOP_PONG = "guepardoapps.mediamirror.game.pong.stop";

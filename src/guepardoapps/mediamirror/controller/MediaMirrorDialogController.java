@@ -13,20 +13,22 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import guepardoapps.library.lucahome.common.dto.MenuDto;
 import guepardoapps.library.lucahome.common.dto.ShoppingEntryDto;
 import guepardoapps.library.lucahome.common.dto.WirelessSocketDto;
 import guepardoapps.library.lucahome.controller.LucaDialogController;
+import guepardoapps.library.lucahome.customadapter.MenuListAdapter;
 import guepardoapps.library.lucahome.customadapter.ShoppingListAdapter;
 import guepardoapps.library.lucahome.customadapter.SocketListAdapter;
+
+import guepardoapps.library.toolset.common.classes.SerializableList;
+import guepardoapps.library.toolset.controller.BroadcastController;
+import guepardoapps.library.toolset.controller.ReceiverController;
 
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
-
-import guepardoapps.toolset.common.classes.SerializableList;
-import guepardoapps.toolset.controller.BroadcastController;
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class MediaMirrorDialogController extends LucaDialogController {
 
@@ -129,6 +131,34 @@ public class MediaMirrorDialogController extends LucaDialogController {
 				ShowAddShoppingEntryDialog(getShoppingListDataRunnable, null, true, false, size);
 			}
 		});
+
+		showDialog(false);
+	}
+
+	public void ShowMenuListDialog(SerializableList<MenuDto> menu) {
+		checkOpenDialog();
+
+		createDialog("ShowShoppingListDialog", R.layout.dialog_skeleton_list);
+
+		TextView titleTextView = (TextView) _dialog.findViewById(R.id.dialog_list_title);
+		titleTextView.setText("Menu");
+		final ListView listView = (ListView) _dialog.findViewById(R.id.dialog_list_view);
+
+		if (menu != null) {
+			MenuListAdapter listAdapter = new MenuListAdapter(_context, menu, true, false);
+			listView.setAdapter(listAdapter);
+		}
+
+		Button btnClose = (Button) _dialog.findViewById(R.id.btnDialogClose);
+		btnClose.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				CloseDialogCallback.run();
+			}
+		});
+
+		Button btnAdd = (Button) _dialog.findViewById(R.id.btnAddListView);
+		btnAdd.setVisibility(View.GONE);
 
 		showDialog(false);
 	}

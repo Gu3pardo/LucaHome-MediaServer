@@ -10,7 +10,7 @@ public class CenterModel implements Serializable {
 
 	private static final long serialVersionUID = -4643092994785889917L;
 
-	private static final String TAG = CenterModel.class.getName();
+	private static final String TAG = CenterModel.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private static String DEFAULT_CENTER_TEXT = "Hello, this is your media mirror!";

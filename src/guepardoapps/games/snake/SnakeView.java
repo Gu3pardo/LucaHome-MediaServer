@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+
 import guepardoapps.games.common.Coordinates;
 import guepardoapps.games.common.GameConstants;
 import guepardoapps.games.snake.library.Game;
@@ -24,12 +25,12 @@ import guepardoapps.games.snake.library.exceptions.SnakeHitYardWallException;
 import guepardoapps.games.snake.library.interfaces.SnakeRenderer;
 import guepardoapps.games.snake.library.Yard;
 
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
-
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class SnakeView extends TileView {
 

@@ -5,15 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 
+import guepardoapps.library.toolset.controller.BroadcastController;
+import guepardoapps.library.toolset.controller.ReceiverController;
+import guepardoapps.library.toolset.controller.UserInformationController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.TimeHelper;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.model.IpAdressModel;
-
-import guepardoapps.toolset.controller.BroadcastController;
-import guepardoapps.toolset.controller.ReceiverController;
-import guepardoapps.toolset.controller.UserInformationController;
 
 public class IpAddressViewUpdater {
 

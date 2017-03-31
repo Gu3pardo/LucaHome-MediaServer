@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 
 import guepardoapps.games.controller.GameDialogController;
+
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class GameViewController {
 	private static final String TAG = GameViewController.class.getSimpleName();

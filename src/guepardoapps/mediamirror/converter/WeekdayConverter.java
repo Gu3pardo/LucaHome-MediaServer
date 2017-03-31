@@ -4,7 +4,7 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
 public class WeekdayConverter {
 
-	private static final String TAG = WeekdayConverter.class.getName();
+	private static final String TAG = WeekdayConverter.class.getSimpleName();
 	private static SmartMirrorLogger _logger;
 
 	public static String GetWeekday(int weekday) {

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.TextView;
 
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
@@ -14,8 +16,6 @@ import guepardoapps.mediamirror.common.constants.Enables;
 import guepardoapps.mediamirror.model.*;
 
 import guepardoapps.test.DateViewControllerTest;
-
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class DateViewController {
 

@@ -2,8 +2,9 @@ package guepardoapps.mediamirror.common;
 
 import java.io.Serializable;
 
+import guepardoapps.library.toolset.common.Logger;
+
 import guepardoapps.mediamirror.common.constants.Enables;
-import guepardoapps.toolset.common.Logger;
 
 public class SmartMirrorLogger extends Logger implements Serializable {
 

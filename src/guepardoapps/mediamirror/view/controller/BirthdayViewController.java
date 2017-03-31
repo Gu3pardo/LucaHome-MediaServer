@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import guepardoapps.library.toolset.controller.BroadcastController;
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
@@ -19,9 +22,6 @@ import guepardoapps.mediamirror.common.constants.Enables;
 import guepardoapps.mediamirror.model.helper.BirthdayHelper;
 
 import guepardoapps.test.BirthdayViewControllerTest;
-
-import guepardoapps.toolset.controller.BroadcastController;
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class BirthdayViewController {
 

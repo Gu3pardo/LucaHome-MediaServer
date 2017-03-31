@@ -6,7 +6,7 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
 public class TimeConverter {
 
-	private static final String TAG = TimeConverter.class.getName();
+	private static final String TAG = TimeConverter.class.getSimpleName();
 	private static SmartMirrorLogger _logger;
 
 	public static String GetTime(Calendar date) {

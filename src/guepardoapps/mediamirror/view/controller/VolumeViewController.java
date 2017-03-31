@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.TextView;
 
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.library.verticalseekbarview.VerticalSeekbarView;
 import guepardoapps.library.verticalseekbarview.enums.VerticalSeekbarStyle;
 import guepardoapps.library.verticalseekbarview.interfaces.OnVerticalSeebarMoveListener;
@@ -15,8 +17,6 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.controller.MediaVolumeController;
-
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class VolumeViewController {
 
@@ -35,6 +35,7 @@ public class VolumeViewController {
 	private ReceiverController _receiverController;
 
 	private TextView _volumeValueTextView;
+	private boolean _volumeEnabled = true;
 	private VerticalSeekbarView _volumeControl;
 
 	private BroadcastReceiver _volumeInfoReveicer = new BroadcastReceiver() {
@@ -55,6 +56,13 @@ public class VolumeViewController {
 					int currentVolume = -1;
 					try {
 						currentVolume = Integer.parseInt(newVolumeText);
+						_logger.Debug("currentVolume: " + String.valueOf(currentVolume));
+						_maxVolume = _mediaVolumeController.GetMaxVolume();
+						_logger.Debug("_maxVolume is: " + String.valueOf(_maxVolume));
+						int percentageY = (currentVolume * 100) / _maxVolume;
+						_volumeEnabled = false;
+						_volumeControl.SetPositionY(percentageY);
+						_volumeEnabled = true;
 					} catch (Exception ex) {
 						_logger.Error(ex.toString());
 					} finally {
@@ -83,6 +91,12 @@ public class VolumeViewController {
 					if (volumePercentage < 0) {
 						volumePercentage *= -1;
 					}
+
+					if (!_volumeEnabled) {
+						_logger.Warn("VolumeControl is disabled!");
+						return;
+					}
+
 					_mediaVolumeController.SetVolume((int) (_maxVolume * volumePercentage / 100));
 				}
 			}, LOOP_INTERVAL);
@@ -100,7 +114,6 @@ public class VolumeViewController {
 		_logger = new SmartMirrorLogger(TAG);
 		_context = context;
 		_mediaVolumeController = MediaVolumeController.getInstance();
-		_mediaVolumeController.initialize(_context);
 		_receiverController = new ReceiverController(_context);
 	}
 
@@ -139,6 +152,7 @@ public class VolumeViewController {
 			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
 					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
+			_mediaVolumeController.initialize(_context);
 			_isInitialized = true;
 		} else {
 			_logger.Warn("Is ALREADY initialized!");

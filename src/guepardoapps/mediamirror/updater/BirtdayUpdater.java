@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import guepardoapps.library.toolset.controller.BroadcastController;
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.TimeHelper;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
@@ -17,9 +20,6 @@ import guepardoapps.mediamirror.common.constants.RaspPiConstants;
 import guepardoapps.mediamirror.converter.json.JsonDataToBirthdayConverter;
 import guepardoapps.mediamirror.model.helper.BirthdayHelper;
 import guepardoapps.mediamirror.services.RESTService;
-
-import guepardoapps.toolset.controller.BroadcastController;
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class BirtdayUpdater {
 
@@ -124,8 +124,8 @@ public class BirtdayUpdater {
 						if (entry != null) {
 							if (entry.HasBirthday()) {
 								_broadcastController.SendStringBroadcast(
-										guepardoapps.toolset.common.Constants.BROADCAST_SPEAK_TEXT,
-										guepardoapps.toolset.common.Constants.BUNDLE_SPEAK_TEXT,
+										guepardoapps.library.toolset.common.Broadcasts.SPEAK_TEXT,
+										guepardoapps.library.toolset.common.Bundles.SPEAK_TEXT,
 										entry.GetNotificationString());
 								break;
 							}

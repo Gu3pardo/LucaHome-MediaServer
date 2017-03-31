@@ -13,15 +13,16 @@ import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
 import guepardoapps.games.common.Coordinates;
 import guepardoapps.games.common.GameConstants;
 import guepardoapps.games.tetris.enums.Piece;
 
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
-
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class GameSurfaceView extends SurfaceView implements Runnable {
 

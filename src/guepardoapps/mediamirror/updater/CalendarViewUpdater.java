@@ -6,15 +6,15 @@ import android.content.Intent;
 import android.os.Handler;
 import android.text.format.DateUtils;
 
+import guepardoapps.library.toolset.common.classes.SerializableList;
+import guepardoapps.library.toolset.common.dto.CalendarEntryDto;
+import guepardoapps.library.toolset.controller.BroadcastController;
+import guepardoapps.library.toolset.controller.CalendarController;
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
-
-import guepardoapps.toolset.common.classes.SerializableList;
-import guepardoapps.toolset.common.dto.CalendarEntry;
-import guepardoapps.toolset.controller.BroadcastController;
-import guepardoapps.toolset.controller.CalendarController;
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class CalendarViewUpdater {
 
@@ -34,7 +34,7 @@ public class CalendarViewUpdater {
 		public void run() {
 			_logger.Debug("_updateRunnable run");
 
-			SerializableList<CalendarEntry> calendarList = _calendarController
+			SerializableList<CalendarEntryDto> calendarList = _calendarController
 					.ReadCalendar(DateUtils.YEAR_IN_MILLIS * 10000);
 			_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CALENDAR_MODEL, Bundles.CALENDAR_MODEL,
 					calendarList);
@@ -48,7 +48,7 @@ public class CalendarViewUpdater {
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_performUpdateReceiver onReceive");
 
-			SerializableList<CalendarEntry> calendarList = _calendarController
+			SerializableList<CalendarEntryDto> calendarList = _calendarController
 					.ReadCalendar(DateUtils.YEAR_IN_MILLIS * 10000);
 			_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CALENDAR_MODEL, Bundles.CALENDAR_MODEL,
 					calendarList);

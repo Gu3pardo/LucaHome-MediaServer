@@ -13,10 +13,10 @@ import android.widget.TextView;
 import guepardoapps.games.snake.SnakeView;
 import guepardoapps.games.tetris.GameSurfaceView;
 
+import guepardoapps.library.toolset.controller.DialogController;
+
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-
-import guepardoapps.toolset.controller.DialogController;
 
 public class GameDialogController extends DialogController {
 

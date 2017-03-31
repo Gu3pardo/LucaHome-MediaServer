@@ -19,7 +19,7 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
 public class RssService extends IntentService {
 
-	private static final String TAG = RssService.class.getName();
+	private static final String TAG = RssService.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private static final RSSFeed DEFAULT_FEED = RSSFeed.DEFAULT;

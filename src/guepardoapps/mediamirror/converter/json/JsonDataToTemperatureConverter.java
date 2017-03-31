@@ -9,7 +9,7 @@ import guepardoapps.mediamirror.model.helper.TemperatureHelper;
 
 public final class JsonDataToTemperatureConverter {
 
-	private static final String TAG = JsonDataToTemperatureConverter.class.getName();
+	private static final String TAG = JsonDataToTemperatureConverter.class.getSimpleName();
 	private static SmartMirrorLogger _logger;
 
 	private static String _searchParameter = "{temperature:";

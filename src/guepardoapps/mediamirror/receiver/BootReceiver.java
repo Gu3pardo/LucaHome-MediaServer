@@ -9,7 +9,7 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
 public class BootReceiver extends BroadcastReceiver {
 
-	private static final String TAG = BootReceiver.class.getName();
+	private static final String TAG = BootReceiver.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	private static final int DELAY = 5 * 1000;

@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 
+import guepardoapps.library.toolset.controller.AndroidSystemController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.view.Main;
-
-import guepardoapps.toolset.controller.AndroidSystemController;
 
 public class ControlServiceStateService extends Service {
 

@@ -7,11 +7,12 @@ import android.content.Intent;
 import android.os.BatteryManager;
 import android.view.View;
 import android.widget.TextView;
+
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.R;
-
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class BatteryViewController {
 

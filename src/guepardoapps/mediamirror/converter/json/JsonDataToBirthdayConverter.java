@@ -3,14 +3,14 @@ package guepardoapps.mediamirror.converter.json;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import guepardoapps.library.toolset.common.StringHelper;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.model.helper.BirthdayHelper;
 
-import guepardoapps.toolset.common.StringHelper;
-
 public final class JsonDataToBirthdayConverter {
 
-	private static final String TAG = JsonDataToBirthdayConverter.class.getName();
+	private static final String TAG = JsonDataToBirthdayConverter.class.getSimpleName();
 	private static SmartMirrorLogger _logger;
 
 	private static String _searchParameter = "{birthday:";

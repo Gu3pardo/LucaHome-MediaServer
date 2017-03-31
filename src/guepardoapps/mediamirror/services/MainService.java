@@ -15,6 +15,11 @@ import guepardoapps.library.lucahome.common.enums.YoutubeId;
 
 import guepardoapps.library.toastview.ToastView;
 
+import guepardoapps.library.toolset.controller.BroadcastController;
+import guepardoapps.library.toolset.controller.ReceiverController;
+import guepardoapps.library.toolset.controller.TTSController;
+import guepardoapps.library.toolset.scheduler.ScheduleService;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
@@ -29,11 +34,6 @@ import guepardoapps.mediamirror.updater.*;
 import guepardoapps.mediamirror.view.Main;
 
 import guepardoapps.test.ConverterTest;
-
-import guepardoapps.toolset.controller.BroadcastController;
-import guepardoapps.toolset.controller.ReceiverController;
-import guepardoapps.toolset.controller.TTSController;
-import guepardoapps.toolset.scheduler.ScheduleService;
 
 public class MainService extends Service {
 
@@ -57,6 +57,7 @@ public class MainService extends Service {
 	private DateViewUpdater _dateViewUpdater;
 	private ForecastWeatherUpdater _forecastWeatherUpdater;
 	private IpAddressViewUpdater _ipAddressViewUpdater;
+	private MenuListUpdater _menuListUpdater;
 	private RSSViewUpdater _rssViewUpdater;
 	private ShoppingListUpdater _shoppingListUpdater;
 	private SocketListUpdater _socketListUpdater;
@@ -80,6 +81,7 @@ public class MainService extends Service {
 			_dateViewUpdater.UpdateDate();
 			_forecastWeatherUpdater.DownloadWeather();
 			_ipAddressViewUpdater.GetCurrentLocalIpAddress();
+			_menuListUpdater.DownloadMenuList();
 			_rssViewUpdater.LoadRss();
 			_shoppingListUpdater.DownloadShoppingList();
 			_socketListUpdater.DownloadSocketList();
@@ -112,11 +114,6 @@ public class MainService extends Service {
 				_receiverController = new ReceiverController(_context);
 
 				_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
-			}
-
-			if (_serverThread == null) {
-				_serverThread = new ServerThread(Constants.SERVERPORT, _context);
-				_serverThread.Start();
 			}
 
 			if (_batterySocketController == null) {
@@ -154,6 +151,11 @@ public class MainService extends Service {
 				_ipAddressViewUpdater.Start(Timeouts.IP_ADRESS_UPDATE);
 			}
 
+			if (_menuListUpdater == null) {
+				_menuListUpdater = new MenuListUpdater(_context);
+				_menuListUpdater.Start(Timeouts.MENU_UPDATE);
+			}
+
 			if (_rssViewUpdater == null) {
 				_rssViewUpdater = new RSSViewUpdater(_context);
 				_rssViewUpdater.Start(Timeouts.RSS_UPDATE);
@@ -183,6 +185,11 @@ public class MainService extends Service {
 				_scheduleService = ScheduleService.getInstance();
 				_scheduleService.AddSchedule("ChangeBirthdayCalendarView", _switchBirthdayCalendarViewRunnable,
 						Timeouts.SWITCH_BIRTHDAY_CALENDAR, true);
+			}
+
+			if (_serverThread == null) {
+				_serverThread = new ServerThread(Constants.SERVERPORT, _context);
+				_serverThread.Start();
 			}
 
 			CenterModel centerModel = new CenterModel(false, "", true, YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId(),
@@ -249,6 +256,7 @@ public class MainService extends Service {
 		_dateViewUpdater.Dispose();
 		_forecastWeatherUpdater.Dispose();
 		_ipAddressViewUpdater.Dispose();
+		_menuListUpdater.Dispose();
 		_rssViewUpdater.Dispose();
 		_shoppingListUpdater.Dispose();
 		_socketListUpdater.Dispose();

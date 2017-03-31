@@ -4,7 +4,7 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 
 public class MonthConverter {
 
-	private static final String TAG = MonthConverter.class.getName();
+	private static final String TAG = MonthConverter.class.getSimpleName();
 	private static SmartMirrorLogger _logger;
 
 	public static String GetMonth(int month) {

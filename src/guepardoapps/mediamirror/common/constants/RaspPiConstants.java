@@ -26,4 +26,6 @@ public class RaspPiConstants {
 	public static final String GET_SOCKETS = "getsockets";
 	// SHOPPING LIST DATA
 	public static final String GET_SHOPPING_LIST = "getshoppinglist";
+	// MENU DATA
+	public static final String GET_MENU = "getmenu";
 }

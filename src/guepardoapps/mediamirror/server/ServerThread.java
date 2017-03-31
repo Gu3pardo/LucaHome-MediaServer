@@ -11,8 +11,9 @@ import java.net.Socket;
 
 import android.content.Context;
 
+import guepardoapps.library.toolset.controller.NetworkController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.toolset.controller.NetworkController;
 
 public class ServerThread {
 

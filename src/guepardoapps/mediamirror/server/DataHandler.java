@@ -18,6 +18,12 @@ import guepardoapps.library.lucahome.common.enums.YoutubeId;
 
 import guepardoapps.library.toastview.ToastView;
 
+import guepardoapps.library.toolset.common.classes.SerializableList;
+import guepardoapps.library.toolset.controller.BroadcastController;
+import guepardoapps.library.toolset.controller.CommandController;
+import guepardoapps.library.toolset.controller.ReceiverController;
+import guepardoapps.library.toolset.controller.UserInformationController;
+
 import guepardoapps.games.common.GameConstants;
 
 import guepardoapps.mediamirror.R;
@@ -31,12 +37,7 @@ import guepardoapps.mediamirror.controller.ScreenController;
 import guepardoapps.mediamirror.model.CenterModel;
 import guepardoapps.mediamirror.model.RSSModel;
 import guepardoapps.mediamirror.model.YoutubeDatabaseModel;
-
-import guepardoapps.toolset.common.classes.SerializableList;
-import guepardoapps.toolset.controller.BroadcastController;
-import guepardoapps.toolset.controller.CommandController;
-import guepardoapps.toolset.controller.ReceiverController;
-import guepardoapps.toolset.controller.UserInformationController;
+import guepardoapps.mediamirror.view.controller.CenterViewController;
 
 public class DataHandler {
 
@@ -46,6 +47,7 @@ public class DataHandler {
 	private Context _context;
 
 	private BroadcastController _broadcastController;
+	private CenterViewController _centerViewController;
 	private CommandController _commandController;
 	private DatabaseController _dbController;
 	private MediaVolumeController _mediaVolumeController;
@@ -99,8 +101,9 @@ public class DataHandler {
 		_context = context;
 
 		_broadcastController = new BroadcastController(_context);
+		_centerViewController = CenterViewController.getInstance();
 		_commandController = new CommandController(_context);
-		_dbController = new DatabaseController(_context);
+		_dbController = DatabaseController.getInstance();
 		_mediaVolumeController = MediaVolumeController.getInstance();
 		_receiverController = new ReceiverController(_context);
 		_screenController = new ScreenController(_context);
@@ -213,6 +216,24 @@ public class DataHandler {
 						answer += entry.GetCommunicationString();
 					}
 					return action.toString() + ":" + answer;
+				case SET_YOUTUBE_PLAY_POSITION:
+					if (!_screenController.IsScreenOn()) {
+						_logger.Error("Screen is not enabled!");
+						return "Error:Screen is not enabled!";
+					}
+
+					String positionPercentString = data;
+					int positionPercent = -1;
+					try {
+						positionPercent = Integer.parseInt(positionPercentString);
+					} catch (Exception ex) {
+						_logger.Error(ex.toString());
+					}
+
+					_broadcastController.SendIntBroadcast(Broadcasts.SET_VIDEO_POSITION, Bundles.VIDEO_POSITION_PERCENT,
+							positionPercent);
+
+					break;
 
 				case PLAY_SEA_SOUND:
 					if (!_screenController.IsScreenOn()) {
@@ -562,6 +583,10 @@ public class DataHandler {
 					String volume = String.valueOf(_mediaVolumeController.GetCurrentVolume());
 
 					String youtubeId = _lastYoutubeId;
+					String isYoutubePlaying = _centerViewController.IsYoutubePlaying() ? "1" : "0";
+					String youtubeCurrentPlayPosition = String.valueOf(_centerViewController.GetCurrentPlayPosition());
+					String youtubeCurrentVideoDuration = String.valueOf(_centerViewController.GetYoutubeDuration());
+
 					String playedYoutubeIds = "";
 					ArrayList<YoutubeDatabaseModel> loadedListFromDb = _dbController.GetYoutubeIds();
 					// sort the list in descending order
@@ -596,9 +621,11 @@ public class DataHandler {
 
 					String screenBrightness = String.valueOf(_screenController.GetCurrentBrightness());
 
-					String mediaMirrorDto = String.format("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s", serverIp, batteryLevel,
-							socketName, socketState, volume, youtubeId, playedYoutubeIds, isSeaSSoundPlaying,
-							seaSoundCountdown, serverVersion, screenBrightness);
+					String mediaMirrorDto = String.format("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s", serverIp,
+							batteryLevel, socketName, socketState, volume, youtubeId, isYoutubePlaying,
+							youtubeCurrentPlayPosition, youtubeCurrentVideoDuration, playedYoutubeIds,
+							isSeaSSoundPlaying, seaSoundCountdown, serverVersion, screenBrightness);
+
 					return action.toString() + ":" + mediaMirrorDto;
 
 				default:

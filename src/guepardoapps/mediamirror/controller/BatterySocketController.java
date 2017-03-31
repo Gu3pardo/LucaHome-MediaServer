@@ -11,11 +11,12 @@ import android.widget.Toast;
 import guepardoapps.library.lucahome.common.enums.MediaMirrorSelection;
 
 import guepardoapps.library.toastview.ToastView;
+
+import guepardoapps.library.toolset.controller.NetworkController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.RaspPiConstants;
 import guepardoapps.mediamirror.services.RESTService;
-
-import guepardoapps.toolset.controller.NetworkController;
 
 public class BatterySocketController {
 
@@ -26,8 +27,7 @@ public class BatterySocketController {
 	private static final int UPPER_BATTERY_LIMIT = 90;
 
 	private boolean _isInitialized;
-	private boolean _activatedSocket;
-	private boolean _deactivatedSocket;
+	private boolean _isSocketActive = false;
 
 	private Context _context;
 	private NetworkController _networkController;
@@ -69,26 +69,20 @@ public class BatterySocketController {
 	}
 
 	private void enableBatterySocket() {
-		if (_activatedSocket) {
+		if (_isSocketActive) {
 			_logger.Warn("Already activated socket!");
 			return;
 		}
-
-		_activatedSocket = true;
-		_deactivatedSocket = false;
 
 		_logger.Debug("enableBatterySocket");
 		setBatterySocket(true);
 	}
 
 	private void disableBatterySocket() {
-		if (_deactivatedSocket) {
+		if (!_isSocketActive) {
 			_logger.Warn("Already deactivated socket!");
 			return;
 		}
-
-		_activatedSocket = false;
-		_deactivatedSocket = true;
 
 		_logger.Debug("disableBatterySocket");
 		setBatterySocket(false);
@@ -113,6 +107,8 @@ public class BatterySocketController {
 
 					serviceIntent.putExtras(serviceData);
 					_context.startService(serviceIntent);
+
+					_isSocketActive = enable;
 				} else {
 					_logger.Error("Did not found socket for " + localIp);
 					ToastView.error(_context, "Did not found socket for " + localIp, Toast.LENGTH_LONG).show();

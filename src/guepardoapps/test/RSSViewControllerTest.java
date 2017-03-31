@@ -4,12 +4,12 @@ import android.content.Context;
 
 import guepardoapps.library.lucahome.common.enums.RSSFeed;
 
+import guepardoapps.library.toolset.controller.BroadcastController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.model.RSSModel;
-
-import guepardoapps.toolset.controller.BroadcastController;
 
 public class RSSViewControllerTest {
 

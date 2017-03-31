@@ -8,10 +8,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import guepardoapps.library.lucahome.common.dto.MenuDto;
 import guepardoapps.library.lucahome.common.dto.ShoppingEntryDto;
 import guepardoapps.library.lucahome.common.dto.WirelessSocketDto;
 
 import guepardoapps.library.toastview.ToastView;
+
+import guepardoapps.library.toolset.common.classes.SerializableList;
+import guepardoapps.library.toolset.controller.ReceiverController;
 
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
@@ -24,9 +28,6 @@ import guepardoapps.mediamirror.model.helper.RaspberryTemperatureHelper;
 
 import guepardoapps.test.RaspberryViewControllerTest;
 
-import guepardoapps.toolset.common.classes.SerializableList;
-import guepardoapps.toolset.controller.ReceiverController;
-
 public class RaspberryViewController {
 
 	private static final String TAG = RaspberryViewController.class.getSimpleName();
@@ -36,6 +37,7 @@ public class RaspberryViewController {
 	private boolean _screenEnabled;
 
 	private RaspberryModel _raspberryModel;
+	private SerializableList<MenuDto> _menu;
 	private SerializableList<ShoppingEntryDto> _shoppingList;
 	private SerializableList<WirelessSocketDto> _socketList;
 
@@ -98,6 +100,17 @@ public class RaspberryViewController {
 		}
 	};
 
+	private BroadcastReceiver _menuListReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			@SuppressWarnings("unchecked")
+			SerializableList<MenuDto> menu = (SerializableList<MenuDto>) intent.getSerializableExtra(Bundles.MENU);
+			if (menu != null) {
+				_menu = menu;
+			}
+		}
+	};
+
 	private BroadcastReceiver _shoppingListReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -152,6 +165,7 @@ public class RaspberryViewController {
 			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 			_receiverController.RegisterReceiver(_screenDisableReceiver,
 					new String[] { Broadcasts.SCREEN_OFF, Broadcasts.SCREEN_SAVER });
+			_receiverController.RegisterReceiver(_menuListReceiver, new String[] { Broadcasts.MENU });
 			_receiverController.RegisterReceiver(_shoppingListReceiver, new String[] { Broadcasts.SHOPPING_LIST });
 			_receiverController.RegisterReceiver(_socketListReceiver, new String[] { Broadcasts.SOCKET_LIST });
 
@@ -174,20 +188,30 @@ public class RaspberryViewController {
 		_receiverController.UnregisterReceiver(_updateViewReceiver);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
+		_receiverController.UnregisterReceiver(_menuListReceiver);
 		_receiverController.UnregisterReceiver(_shoppingListReceiver);
 		_receiverController.UnregisterReceiver(_socketListReceiver);
 
 		_isInitialized = false;
 	}
 
-	public void showTemperatureGraph(View view) {
-		_logger.Debug("showTemperatureGraph");
-		String url = _raspberryModel.GetRaspberry1TemperatureGraphUrl();
-		if (url.length() > 0) {
-			_dialogController.ShowTemperatureGraphDialog(_raspberryModel.GetRaspberry1TemperatureGraphUrl());
+	public void showMenuListDialog(View view) {
+		_logger.Debug("showMenuListDialog");
+		if (_shoppingList != null) {
+			_dialogController.ShowMenuListDialog(_menu);
 		} else {
-			_logger.Warn("invalid URL!");
-			ToastView.warning(_context, "Invalid URL!", Toast.LENGTH_LONG).show();
+			_logger.Error("_menu is null!");
+			ToastView.warning(_context, "Menu is null!!", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	public void showShoppingListDialog(View view) {
+		_logger.Debug("showShoppingListDialog");
+		if (_shoppingList != null) {
+			_dialogController.ShowShoppingListDialog(_shoppingList);
+		} else {
+			_logger.Error("_shoppingList is null!");
+			ToastView.warning(_context, "ShoppingList is null!!", Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -201,13 +225,14 @@ public class RaspberryViewController {
 		}
 	}
 
-	public void showShoppingListDialog(View view) {
-		_logger.Debug("showShoppingListDialog");
-		if (_shoppingList != null) {
-			_dialogController.ShowShoppingListDialog(_shoppingList);
+	public void showTemperatureGraph(View view) {
+		_logger.Debug("showTemperatureGraph");
+		String url = _raspberryModel.GetRaspberry1TemperatureGraphUrl();
+		if (url.length() > 0) {
+			_dialogController.ShowTemperatureGraphDialog(_raspberryModel.GetRaspberry1TemperatureGraphUrl());
 		} else {
-			_logger.Error("_shoppingList is null!");
-			ToastView.warning(_context, "ShoppingList is null!!", Toast.LENGTH_LONG).show();
+			_logger.Warn("invalid URL!");
+			ToastView.warning(_context, "Invalid URL!", Toast.LENGTH_LONG).show();
 		}
 	}
 }

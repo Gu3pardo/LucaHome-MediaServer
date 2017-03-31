@@ -13,6 +13,8 @@ public class Timeouts {
 	public static final int FORECAST_WEATHER_UPDATE = 15 * 60 * 1000;
 	// IP ADRESS VIEW
 	public static final int IP_ADRESS_UPDATE = 24 * 60 * 60 * 1000;
+	// MENU VIEW
+	public static final int MENU_UPDATE = 3 * 60 * 60 * 1000;
 	// RSS VIEW
 	public static final int RSS_UPDATE = 5 * 60 * 1000;
 	// SCHEDULE DATA

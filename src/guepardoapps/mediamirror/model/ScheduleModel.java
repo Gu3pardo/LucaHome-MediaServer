@@ -3,14 +3,14 @@ package guepardoapps.mediamirror.model;
 import java.io.Serializable;
 import java.sql.Time;
 
-import guepardoapps.toolset.common.enums.Weekday;
+import guepardoapps.library.toolset.common.enums.Weekday;
 
 public class ScheduleModel implements Serializable {
 
 	private static final long serialVersionUID = 1065694448413782352L;
 
 	@SuppressWarnings("unused")
-	private static final String TAG = ScheduleModel.class.getName();
+	private static final String TAG = ScheduleModel.class.getSimpleName();
 
 	protected String _name;
 	protected String _socket;

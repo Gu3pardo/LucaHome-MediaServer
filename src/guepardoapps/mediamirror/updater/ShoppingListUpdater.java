@@ -12,15 +12,15 @@ import guepardoapps.library.lucahome.converter.json.JsonDataToShoppingListConver
 
 import guepardoapps.library.toastview.ToastView;
 
+import guepardoapps.library.toolset.common.classes.SerializableList;
+import guepardoapps.library.toolset.controller.BroadcastController;
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.RaspPiConstants;
 import guepardoapps.mediamirror.services.RESTService;
-
-import guepardoapps.toolset.common.classes.SerializableList;
-import guepardoapps.toolset.controller.BroadcastController;
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class ShoppingListUpdater {
 

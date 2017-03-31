@@ -28,6 +28,9 @@ import guepardoapps.library.lucahome.tasks.DownloadYoutubeVideoTask;
 
 import guepardoapps.library.toastview.ToastView;
 
+import guepardoapps.library.toolset.controller.BroadcastController;
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
@@ -39,10 +42,9 @@ import guepardoapps.mediamirror.model.*;
 
 import guepardoapps.test.CenterViewControllerTest;
 
-import guepardoapps.toolset.controller.BroadcastController;
-import guepardoapps.toolset.controller.ReceiverController;
-
 public class CenterViewController implements YouTubePlayer.OnInitializedListener {
+
+	private static final CenterViewController SINGLETON_CONTROLLER = new CenterViewController();
 
 	private static final String TAG = CenterViewController.class.getSimpleName();
 	private SmartMirrorLogger _logger;
@@ -66,7 +68,6 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 	private String _centerText;
 	private boolean _loadingVideo;
-	private boolean _playingVideo;
 	private String _youtubeId;
 	private boolean _loadingUrl;
 	private String _webviewUrl;
@@ -199,6 +200,28 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		}
 	};
 
+	private BroadcastReceiver _videoPositionReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (!_screenEnabled) {
+				_logger.Debug("Screen is not enabled!");
+				return;
+			}
+
+			_logger.Debug("_videoPositionReceiver onReceive");
+
+			int positionPercent = intent.getIntExtra(Bundles.VIDEO_POSITION_PERCENT, -1);
+			if (positionPercent != -1) {
+				_logger.Debug("Setting video to position of percentage " + String.valueOf(positionPercent));
+
+				if (_youtubePlayer.isPlaying()) {
+					int duration = _youtubePlayer.getDurationMillis();
+					_youtubePlayer.seekToMillis((duration * positionPercent) / 100);
+				}
+			}
+		}
+	};
+
 	private BroadcastReceiver _playBirthdaySongReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -269,13 +292,13 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		}
 	};
 
-	public CenterViewController(Context context) {
+	private CenterViewController() {
 		_logger = new SmartMirrorLogger(TAG);
-		_context = context;
-		_broadcastController = new BroadcastController(_context);
-		_dbController = new DatabaseController(_context);
-		_mediaVolumeController = MediaVolumeController.getInstance();
-		_receiverController = new ReceiverController(_context);
+		_logger.Debug("Created...");
+	}
+
+	public static CenterViewController getInstance() {
+		return SINGLETON_CONTROLLER;
 	}
 
 	@Override
@@ -307,8 +330,20 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
-	public void onCreate() {
+	public void onCreate(Context context) {
 		_logger.Debug("onCreate");
+
+		if (_context != null) {
+			_logger.Warn("Already created!");
+			return;
+		}
+
+		_context = context;
+		_broadcastController = new BroadcastController(_context);
+		_dbController = DatabaseController.getInstance();
+		_dbController.Initialize(_context);
+		_mediaVolumeController = MediaVolumeController.getInstance();
+		_receiverController = new ReceiverController(_context);
 
 		_screenEnabled = true;
 
@@ -351,6 +386,8 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			_receiverController.RegisterReceiver(_playVideoReceiver, new String[] { Broadcasts.PLAY_VIDEO });
 			_receiverController.RegisterReceiver(_pauseVideoReceiver, new String[] { Broadcasts.PAUSE_VIDEO });
 			_receiverController.RegisterReceiver(_stopVideoReceiver, new String[] { Broadcasts.STOP_VIDEO });
+			_receiverController.RegisterReceiver(_videoPositionReceiver,
+					new String[] { Broadcasts.SET_VIDEO_POSITION });
 			_receiverController.RegisterReceiver(_playBirthdaySongReceiver,
 					new String[] { Broadcasts.PLAY_BIRTHDAY_SONG });
 			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
@@ -379,12 +416,37 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 		_receiverController.UnregisterReceiver(_playVideoReceiver);
 		_receiverController.UnregisterReceiver(_pauseVideoReceiver);
 		_receiverController.UnregisterReceiver(_stopVideoReceiver);
+		_receiverController.UnregisterReceiver(_videoPositionReceiver);
 		_receiverController.UnregisterReceiver(_playBirthdaySongReceiver);
 		_receiverController.UnregisterReceiver(_screenEnableReceiver);
 		_receiverController.UnregisterReceiver(_screenDisableReceiver);
 		_receiverController.UnregisterReceiver(_youtubeIdReceiver);
 
 		_isInitialized = false;
+	}
+
+	public boolean IsYoutubePlaying() {
+		return _youtubePlayer.isPlaying();
+	}
+
+	public int GetCurrentPlayPosition() {
+		if (!_youtubePlayer.isPlaying()) {
+			return -1;
+		}
+
+		int playPositionMillis = _youtubePlayer.getCurrentTimeMillis();
+		int playPositionSec = playPositionMillis / 1000;
+		return playPositionSec;
+	}
+
+	public int GetYoutubeDuration() {
+		if (!_youtubePlayer.isPlaying()) {
+			return -1;
+		}
+
+		int playDurationMillis = _youtubePlayer.getDurationMillis();
+		int playDuratioSec = playDurationMillis / 1000;
+		return playDuratioSec;
 	}
 
 	private void startVideo(String youtubeId) {
@@ -405,7 +467,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			return;
 		}
 
-		if (_playingVideo) {
+		if (_youtubePlayer.isPlaying()) {
 			ToastView.info(_context, "Stopping current played video!", Toast.LENGTH_SHORT).show();
 			_logger.Warn("Stopping current played video!");
 			stopVideo();
@@ -439,7 +501,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			return;
 		}
 
-		if (!_playingVideo) {
+		if (!_youtubePlayer.isPlaying()) {
 			_logger.Warn("Not playing a video!");
 			return;
 		}
@@ -460,7 +522,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 			return;
 		}
 
-		if (!_playingVideo) {
+		if (!_youtubePlayer.isPlaying()) {
 			_logger.Warn("Not playing a video!");
 			return;
 		}
@@ -494,12 +556,10 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 		@Override
 		public void onPaused() {
-			_playingVideo = false;
 		}
 
 		@Override
 		public void onPlaying() {
-			_playingVideo = true;
 		}
 
 		@Override
@@ -508,7 +568,6 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 		@Override
 		public void onStopped() {
-			_playingVideo = false;
 		}
 
 	};

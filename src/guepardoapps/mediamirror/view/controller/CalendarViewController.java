@@ -11,16 +11,16 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import guepardoapps.library.toolset.common.classes.SerializableList;
+import guepardoapps.library.toolset.common.dto.CalendarEntryDto;
+import guepardoapps.library.toolset.controller.BroadcastController;
+import guepardoapps.library.toolset.controller.PermissionController;
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
-
-import guepardoapps.toolset.common.classes.SerializableList;
-import guepardoapps.toolset.common.dto.CalendarEntry;
-import guepardoapps.toolset.controller.BroadcastController;
-import guepardoapps.toolset.controller.PermissionController;
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class CalendarViewController {
 
@@ -34,7 +34,7 @@ public class CalendarViewController {
 	private boolean _permissionGranted;
 	private boolean _isVisible;
 
-	private SerializableList<CalendarEntry> _calendarEntries = new SerializableList<CalendarEntry>();
+	private SerializableList<CalendarEntryDto> _calendarEntries = new SerializableList<CalendarEntryDto>();
 
 	private Context _context;
 	private BroadcastController _broadcastController;
@@ -114,13 +114,13 @@ public class CalendarViewController {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			@SuppressWarnings("unchecked")
-			SerializableList<CalendarEntry> calendarEntries = (SerializableList<CalendarEntry>) intent
+			SerializableList<CalendarEntryDto> calendarEntries = (SerializableList<CalendarEntryDto>) intent
 					.getSerializableExtra(Bundles.CALENDAR_MODEL);
 			if (calendarEntries != null) {
 				_calendarEntries.clear();
 
 				for (int index = 0; index < calendarEntries.getSize(); index++) {
-					CalendarEntry entry = calendarEntries.getValue(index);
+					CalendarEntryDto entry = calendarEntries.getValue(index);
 					if (entry.BeginIsAfterNow()) {
 						_logger.Debug(entry.toString() + ": begin is after now!");
 						_calendarEntries.addValue(entry);
@@ -133,7 +133,7 @@ public class CalendarViewController {
 
 				for (int index = 0; index < 3; index++) {
 					if (index < _calendarEntries.getSize()) {
-						CalendarEntry entry = _calendarEntries.getValue(index);
+						CalendarEntryDto entry = _calendarEntries.getValue(index);
 						if (entry.IsToday()) {
 							_logger.Debug(entry.toString() + " is today!");
 							_isToday[index] = true;

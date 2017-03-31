@@ -3,15 +3,15 @@ package guepardoapps.mediamirror.converter.json;
 import java.sql.Time;
 import java.util.ArrayList;
 
+import guepardoapps.library.toolset.common.StringHelper;
+import guepardoapps.library.toolset.common.enums.Weekday;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.model.ScheduleModel;
 
-import guepardoapps.toolset.common.StringHelper;
-import guepardoapps.toolset.common.enums.Weekday;
-
 public final class JsonDataToScheduleConverter {
 
-	private static final String TAG = JsonDataToScheduleConverter.class.getName();
+	private static final String TAG = JsonDataToScheduleConverter.class.getSimpleName();
 	private static SmartMirrorLogger _logger;
 
 	private static String _searchParameter = "{schedule:";

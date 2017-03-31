@@ -14,7 +14,7 @@ import guepardoapps.mediamirror.model.YoutubeDatabaseModel;
 
 public class DatabaseYoutubeIds {
 
-	private static final String TAG = DatabaseYoutubeIds.class.getName();
+	private static final String TAG = DatabaseYoutubeIds.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	public static final String KEY_ROWID = "_id";
@@ -83,6 +83,8 @@ public class DatabaseYoutubeIds {
 			}
 		}
 
+		cursor.close();
+
 		if (entryExists) {
 			newEntry.IncreasePlayCount();
 			Update(newEntry);
@@ -123,6 +125,8 @@ public class DatabaseYoutubeIds {
 			result.add(new YoutubeDatabaseModel(id, youtubeId, playCount));
 		}
 
+		cursor.close();
+
 		return result;
 	}
 
@@ -149,6 +153,8 @@ public class DatabaseYoutubeIds {
 				result = id;
 			}
 		}
+
+		cursor.close();
 
 		return result;
 	}

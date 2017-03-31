@@ -693,10 +693,25 @@
         android:layout_below="@+id/socketView"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
+        android:background="@drawable/button_blank_white"
         android:clickable="true"
         android:contentDescription="@string/contentDescription"
         android:onClick="showShoppingListDialog"
         android:src="@drawable/shopping" />
+
+    <ImageView
+        android:id="@+id/menuListView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/shoppingListView"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_blank_white"
+        android:clickable="true"
+        android:contentDescription="@string/contentDescription"
+        android:onClick="showMenuListDialog"
+        android:src="@drawable/menu" />
 
     <ImageView
         android:id="@+id/socketView"
@@ -705,6 +720,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/weatherForecast1TemperatureRange"
         android:layout_marginEnd="10dp"
+        android:background="@drawable/button_blank_white"
         android:clickable="true"
         android:contentDescription="@string/contentDescription"
         android:onClick="showSocketsDialog"

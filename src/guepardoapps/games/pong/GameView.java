@@ -10,11 +10,11 @@ import android.view.SurfaceView;
 
 import guepardoapps.games.common.GameConstants;
 
+import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
-
-import guepardoapps.toolset.controller.ReceiverController;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 

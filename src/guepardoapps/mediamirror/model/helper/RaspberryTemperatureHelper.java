@@ -9,7 +9,7 @@ public class RaspberryTemperatureHelper implements Serializable {
 
 	private static final long serialVersionUID = -8359166934848014777L;
 
-	private static final String TAG = RaspberryTemperatureHelper.class.getName();
+	private static final String TAG = RaspberryTemperatureHelper.class.getSimpleName();
 	private SmartMirrorLogger _logger;
 
 	public RaspberryTemperatureHelper() {

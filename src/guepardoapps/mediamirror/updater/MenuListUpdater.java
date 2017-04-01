@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 
-import guepardoapps.library.lucahome.common.dto.WirelessSocketDto;
-import guepardoapps.library.lucahome.converter.json.JsonDataToSocketConverter;
+import guepardoapps.library.lucahome.common.dto.MenuDto;
+import guepardoapps.library.lucahome.converter.json.JsonDataToMenuConverter;
 
 import guepardoapps.library.toastview.ToastView;
 
@@ -47,15 +47,13 @@ public class MenuListUpdater {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			_logger.Debug("_updateReceiver onReceive");
-			String[] socketStringArray = intent.getStringArrayExtra(Bundles.SOCKET_LIST);
-			if (socketStringArray != null) {
-				SerializableList<WirelessSocketDto> socketList = JsonDataToSocketConverter.GetList(socketStringArray);
-				if (socketList != null) {
-					_broadcastController.SendSerializableBroadcast(Broadcasts.SOCKET_LIST, Bundles.SOCKET_LIST,
-							socketList);
+			String[] menuStringArray = intent.getStringArrayExtra(Bundles.MENU);
+			if (menuStringArray != null) {
+				SerializableList<MenuDto> menu = JsonDataToMenuConverter.GetList(menuStringArray);
+				if (menu != null) {
+					_broadcastController.SendSerializableBroadcast(Broadcasts.MENU, Bundles.MENU, menu);
 				} else {
-					ToastView.error(_context, "Failed to convert socket list from string array!", Toast.LENGTH_LONG)
-							.show();
+					ToastView.error(_context, "Failed to convert menu from string array!", Toast.LENGTH_LONG).show();
 				}
 			}
 		}

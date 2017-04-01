@@ -64,7 +64,7 @@ public class RESTService extends Service {
 	}
 
 	private class RestCommunicationTask extends AsyncTask<String, Void, String> {
-		private final String TAG = RestCommunicationTask.class.getName();
+		private final String TAG = RestCommunicationTask.class.getSimpleName();
 		private SmartMirrorLogger _logger;
 
 		private String _data;

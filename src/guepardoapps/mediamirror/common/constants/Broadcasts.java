@@ -23,6 +23,8 @@ public class Broadcasts {
 	// IP ADRESS VIEW
 	public static final String SHOW_IP_ADDRESS_MODEL = "guepardoapps.mediamirror.show.ip_address_model";
 	public static final String PERFORM_IP_ADDRESS_UPDATE = "guepardoapps.mediamirror.broadcast.perform.update.ip_address";
+	// BEACON VIEW
+	public static final String BEACON_COMMAND = "guepardoapps.mediamirror.broadcast.beacon.command";
 	// CENTER VIEW
 	public static final String SHOW_CENTER_MODEL = "guepardoapps.mediamirror.show.center_model";
 	public static final String PLAY_VIDEO = "guepardoapps.mediamirror.video.play";

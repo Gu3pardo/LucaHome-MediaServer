@@ -3,7 +3,6 @@ package guepardoapps.mediamirror.controller;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -13,6 +12,7 @@ import guepardoapps.library.lucahome.common.enums.MediaMirrorSelection;
 import guepardoapps.library.toastview.ToastView;
 
 import guepardoapps.library.toolset.controller.NetworkController;
+import guepardoapps.library.toolset.controller.ReceiverController;
 
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.RaspPiConstants;
@@ -31,6 +31,7 @@ public class BatterySocketController {
 
 	private Context _context;
 	private NetworkController _networkController;
+	private ReceiverController _receiverController;
 
 	private BroadcastReceiver _batteryInfoReveicer = new BroadcastReceiver() {
 		@Override
@@ -46,8 +47,9 @@ public class BatterySocketController {
 
 	public BatterySocketController(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
-		_logger.Info("ScreenController created");
+		_logger.Info(TAG + " created");
 		_context = context;
+		_receiverController = new ReceiverController(_context);
 		_networkController = new NetworkController(_context, null);
 	}
 
@@ -55,7 +57,7 @@ public class BatterySocketController {
 		_logger.Debug("Start");
 		if (!_isInitialized) {
 			_logger.Debug("Initializing!");
-			_context.registerReceiver(_batteryInfoReveicer, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+			_receiverController.RegisterReceiver(_batteryInfoReveicer, new String[] { Intent.ACTION_BATTERY_CHANGED });
 			_isInitialized = true;
 		} else {
 			_logger.Warn("Is ALREADY initialized!");
@@ -64,7 +66,7 @@ public class BatterySocketController {
 
 	public void Dispose() {
 		_logger.Debug("Dispose");
-		_context.unregisterReceiver(_batteryInfoReveicer);
+		_receiverController.UnregisterReceiver(_batteryInfoReveicer);
 		_isInitialized = false;
 	}
 

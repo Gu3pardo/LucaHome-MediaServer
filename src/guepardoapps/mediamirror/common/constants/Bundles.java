@@ -1,6 +1,8 @@
 package guepardoapps.mediamirror.common.constants;
 
 public class Bundles {
+	// BEACON VIEW
+	public static final String BEACON_COMMAND = "BEACON_COMMAND";
 	// DATE VIEW
 	public static final String DATE_MODEL = "DATE_MODEL";
 	// RASPBERRY VIEW

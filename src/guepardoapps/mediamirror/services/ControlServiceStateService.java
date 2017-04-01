@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 
+import guepardoapps.library.toolset.beacon.BeaconService;
 import guepardoapps.library.toolset.controller.AndroidSystemController;
 
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
@@ -37,6 +38,21 @@ public class ControlServiceStateService extends Service {
 					_logger.Info("TODO: send warning mail to me!");
 				} else {
 					Intent serviceIntent = new Intent(_context, MainService.class);
+					startService(serviceIntent);
+				}
+			} else {
+				_errorCount = 0;
+			}
+
+			if (!_systemController.isServiceRunning(BeaconService.class)) {
+				_logger.Warn("BeaconService not running! Restarting!");
+				_errorCount++;
+				_logger.Warn("_errorCount: " + String.valueOf(_errorCount));
+				if (_errorCount >= 5) {
+					// TODO: send warning mail to me!
+					_logger.Info("TODO: send warning mail to me!");
+				} else {
+					Intent serviceIntent = new Intent(_context, BeaconService.class);
 					startService(serviceIntent);
 				}
 			} else {

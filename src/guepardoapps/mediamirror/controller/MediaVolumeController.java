@@ -38,6 +38,7 @@ public class MediaVolumeController {
 
 	private MediaVolumeController() {
 		_logger = new SmartMirrorLogger(TAG);
+		_logger.Debug(TAG + " created...");
 	}
 
 	public void initialize(Context context) {

@@ -26,7 +26,7 @@ public class DatabaseController {
 
 	private DatabaseController() {
 		_logger = new SmartMirrorLogger(TAG);
-		_logger.Debug("DatabaseController created...");
+		_logger.Debug(TAG + " created...");
 	}
 
 	public void Initialize(Context context) {

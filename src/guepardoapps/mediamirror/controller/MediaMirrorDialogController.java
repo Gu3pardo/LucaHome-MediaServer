@@ -41,6 +41,7 @@ public class MediaMirrorDialogController extends LucaDialogController {
 		super(context, ContextCompat.getColor(context, R.color.TextIcon),
 				ContextCompat.getColor(context, R.color.Background));
 		_logger = new SmartMirrorLogger(TAG);
+		_logger.Debug(TAG + " created...");
 
 		_context = context;
 		_broadcastController = new BroadcastController(_context);

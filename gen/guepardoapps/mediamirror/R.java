@@ -1653,6 +1653,7 @@ containing a value of this type.
         public static final int all_sockets_off=0x7f08005f;
         public static final int app_intro=0x7f080030;
         public static final int app_name=0x7f080000;
+        public static final int beaconState=0x7f0800be;
         /** Detail page strings
 Detail page strings
 Detail page strings

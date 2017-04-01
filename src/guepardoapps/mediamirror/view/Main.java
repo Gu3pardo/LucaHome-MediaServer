@@ -14,6 +14,7 @@ import guepardoapps.library.lucahome.common.constants.Broadcasts;
 import guepardoapps.library.lucahome.common.constants.Bundles;
 import guepardoapps.library.lucahome.common.constants.SharedPrefConstants;
 
+import guepardoapps.library.toolset.beacon.BeaconService;
 import guepardoapps.library.toolset.controller.BroadcastController;
 import guepardoapps.library.toolset.controller.PermissionController;
 import guepardoapps.library.toolset.controller.SharedPrefController;
@@ -23,6 +24,7 @@ import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Enables;
 import guepardoapps.mediamirror.common.constants.RaspPiConstants;
+import guepardoapps.mediamirror.controller.NFCController;
 import guepardoapps.mediamirror.controller.ScreenController;
 import guepardoapps.mediamirror.services.*;
 import guepardoapps.mediamirror.view.controller.*;
@@ -48,6 +50,7 @@ public class Main extends YouTubeBaseActivity {
 	private GameViewController _gameViewController;
 	private IpAddressViewController _ipAddressViewController;
 	private LayoutController _layoutController;
+	private NFCController _nfcController;
 	private RaspberryViewController _raspberryViewController;
 	private RSSViewController _rssViewController;
 	private SharedPrefController _sharedPrefController;
@@ -105,6 +108,7 @@ public class Main extends YouTubeBaseActivity {
 
 		_screenController.onCreate();
 
+		_nfcController.Start();
 		_ttsController.Init();
 
 		startServices();
@@ -186,6 +190,7 @@ public class Main extends YouTubeBaseActivity {
 
 		_screenController.onDestroy();
 
+		_nfcController.Dispose();
 		_ttsController.Dispose();
 	}
 
@@ -241,6 +246,7 @@ public class Main extends YouTubeBaseActivity {
 		_gameViewController = new GameViewController(_context);
 		_ipAddressViewController = new IpAddressViewController(_context);
 		_layoutController = new LayoutController(_context);
+		_nfcController = new NFCController(_context);
 		_raspberryViewController = new RaspberryViewController(_context);
 		_rssViewController = new RSSViewController(_context);
 		_volumeViewController = new VolumeViewController(_context);
@@ -251,6 +257,7 @@ public class Main extends YouTubeBaseActivity {
 	}
 
 	private void startServices() {
+		startService(new Intent(_context, BeaconService.class));
 		startService(new Intent(_context, MainService.class));
 		startService(new Intent(_context, TimeListenerService.class));
 		startService(new Intent(_context, ControlServiceStateService.class));

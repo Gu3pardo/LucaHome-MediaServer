@@ -67,6 +67,7 @@ public class ScheduleController {
 
 	public ScheduleController(Context context) {
 		_logger = new SmartMirrorLogger(TAG);
+		_logger.Debug(TAG + " created...");
 		_updater = new Handler();
 		_context = context;
 		_receiverController = new ReceiverController(_context);

@@ -69,12 +69,12 @@ public class IpAddressViewUpdater {
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
 	}
 
-	public void GetCurrentLocalIpAddress() {
+	public IpAdressModel GetCurrentLocalIpAddress() {
 		_logger.Debug("getCurrentLocalIpAddress");
 
 		if (TimeHelper.IsMuteTime()) {
 			_logger.Warn("Mute time!");
-			return;
+			return null;
 		}
 
 		String ip = _userInformationController.GetIp();
@@ -83,5 +83,7 @@ public class IpAddressViewUpdater {
 		IpAdressModel model = new IpAdressModel(true, ip);
 		_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_IP_ADDRESS_MODEL, Bundles.IP_ADDRESS_MODEL,
 				model);
+
+		return model;
 	}
 }

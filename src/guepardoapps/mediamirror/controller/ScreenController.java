@@ -55,7 +55,7 @@ public class ScreenController extends DisplayController {
 	public ScreenController(Context context) {
 		super(context);
 		_logger = new SmartMirrorLogger(TAG);
-		_logger.Info("ScreenController created");
+		_logger.Debug(TAG + " created...");
 		_context = context;
 		_receiverController = new ReceiverController(_context);
 	}

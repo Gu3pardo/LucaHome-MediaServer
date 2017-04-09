@@ -16,11 +16,10 @@ import guepardoapps.library.toolset.controller.BroadcastController;
 import guepardoapps.library.toolset.controller.ReceiverController;
 
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.TimeHelper;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.Constants;
-import guepardoapps.mediamirror.model.CurrentWeatherModel;
+import guepardoapps.mediamirror.view.model.CurrentWeatherModel;
 
 public class CurrentWeatherUpdater {
 
@@ -35,6 +34,7 @@ public class CurrentWeatherUpdater {
 	private ReceiverController _receiverController;
 
 	private int _updateTime;
+	private boolean _isRunning;
 
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
@@ -94,6 +94,10 @@ public class CurrentWeatherUpdater {
 
 	public void Start(int updateTime) {
 		_logger.Debug("Initialize");
+		if (_isRunning) {
+			_logger.Warn("Already running!");
+			return;
+		}
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
 		_receiverController.RegisterReceiver(_updateReceiver,
@@ -101,6 +105,7 @@ public class CurrentWeatherUpdater {
 		_receiverController.RegisterReceiver(_performUpdateReceiver,
 				new String[] { Broadcasts.PERFORM_CURRENT_WEATHER_UPDATE });
 		_updateRunnable.run();
+		_isRunning = true;
 	}
 
 	public void Dispose() {
@@ -108,15 +113,11 @@ public class CurrentWeatherUpdater {
 		_updater.removeCallbacks(_updateRunnable);
 		_receiverController.UnregisterReceiver(_updateReceiver);
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
+		_isRunning = false;
 	}
 
 	public void DownloadWeather() {
 		_logger.Debug("DownloadWeather");
-
-		if (TimeHelper.IsMuteTime()) {
-			_logger.Warn("Mute time!");
-			return;
-		}
 
 		_openWeatherController.loadCurrentWeather();
 	}

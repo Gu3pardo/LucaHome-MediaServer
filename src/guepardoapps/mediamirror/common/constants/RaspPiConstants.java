@@ -1,8 +1,8 @@
 package guepardoapps.mediamirror.common.constants;
 
 public class RaspPiConstants {
-	public static final String USER_NAME = "SmartMirror";
-	public static final String PASS_PHRASE = "023884";
+	public static final String USER = "SmartMirror";
+	public static final String PASSWORD = "023884";
 
 	public static final String[] SERVER_URLs = new String[] { "http://192.168.178.22" };
 

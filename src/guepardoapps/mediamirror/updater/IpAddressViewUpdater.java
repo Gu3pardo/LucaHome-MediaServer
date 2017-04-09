@@ -10,10 +10,9 @@ import guepardoapps.library.toolset.controller.ReceiverController;
 import guepardoapps.library.toolset.controller.UserInformationController;
 
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.TimeHelper;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
-import guepardoapps.mediamirror.model.IpAdressModel;
+import guepardoapps.mediamirror.view.model.IpAdressModel;
 
 public class IpAddressViewUpdater {
 
@@ -28,6 +27,7 @@ public class IpAddressViewUpdater {
 	private UserInformationController _userInformationController;
 
 	private int _updateTime;
+	private boolean _isRunning;
 
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
@@ -56,26 +56,27 @@ public class IpAddressViewUpdater {
 
 	public void Start(int updateTime) {
 		_logger.Debug("Initialize");
+		if (_isRunning) {
+			_logger.Warn("Already running!");
+			return;
+		}
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
 		_receiverController.RegisterReceiver(_performUpdateReceiver,
 				new String[] { Broadcasts.PERFORM_IP_ADDRESS_UPDATE });
 		_updateRunnable.run();
+		_isRunning = true;
 	}
 
 	public void Dispose() {
 		_logger.Debug("Dispose");
 		_updater.removeCallbacks(_updateRunnable);
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
+		_isRunning = false;
 	}
 
 	public IpAdressModel GetCurrentLocalIpAddress() {
 		_logger.Debug("getCurrentLocalIpAddress");
-
-		if (TimeHelper.IsMuteTime()) {
-			_logger.Warn("Mute time!");
-			return null;
-		}
 
 		String ip = _userInformationController.GetIp();
 		_logger.Debug("IP adress is: " + ip);

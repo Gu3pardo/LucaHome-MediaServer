@@ -27,11 +27,11 @@ import guepardoapps.mediamirror.common.constants.Constants;
 import guepardoapps.mediamirror.common.constants.Enables;
 import guepardoapps.mediamirror.common.constants.Timeouts;
 import guepardoapps.mediamirror.controller.BatterySocketController;
-import guepardoapps.mediamirror.model.CenterModel;
-import guepardoapps.mediamirror.model.RSSModel;
 import guepardoapps.mediamirror.server.ServerThread;
 import guepardoapps.mediamirror.updater.*;
 import guepardoapps.mediamirror.view.Main;
+import guepardoapps.mediamirror.view.model.CenterModel;
+import guepardoapps.mediamirror.view.model.RSSModel;
 
 import guepardoapps.test.ConverterTest;
 
@@ -106,91 +106,48 @@ public class MainService extends Service {
 			_logger = new SmartMirrorLogger(TAG);
 
 			_context = this;
-			if (_broadcastController == null) {
-				_broadcastController = new BroadcastController(_context);
-			}
 
-			if (_receiverController == null) {
-				_receiverController = new ReceiverController(_context);
+			_broadcastController = new BroadcastController(_context);
+			_receiverController = new ReceiverController(_context);
+			_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
 
-				_receiverController.RegisterReceiver(_screenEnableReceiver, new String[] { Broadcasts.SCREEN_ENABLED });
-			}
+			_batterySocketController = new BatterySocketController(_context);
 
-			if (_batterySocketController == null) {
-				_batterySocketController = new BatterySocketController(_context);
-				_batterySocketController.Start();
-			}
+			_birthdayUpdater = new BirtdayUpdater(_context);
+			_calendarViewUpdater = new CalendarViewUpdater(_context);
+			_currentWeatherUpdater = new CurrentWeatherUpdater(_context);
+			_dateViewUpdater = new DateViewUpdater(_context);
+			_forecastWeatherUpdater = new ForecastWeatherUpdater(_context);
+			_ipAddressViewUpdater = new IpAddressViewUpdater(_context);
+			_menuListUpdater = new MenuListUpdater(_context);
+			_rssViewUpdater = new RSSViewUpdater(_context);
+			_shoppingListUpdater = new ShoppingListUpdater(_context);
+			_socketListUpdater = new SocketListUpdater(_context);
+			_temperatureUpdater = new TemperatureUpdater(_context);
 
-			if (_birthdayUpdater == null) {
-				_birthdayUpdater = new BirtdayUpdater(_context);
-				_birthdayUpdater.Start(Timeouts.BIRTHDAY_UPDATE);
-			}
+			_ttsController = new TTSController(_context, Enables.TTS);
+			_ttsController.Init();
 
-			if (_calendarViewUpdater == null) {
-				_calendarViewUpdater = new CalendarViewUpdater(_context);
-				_calendarViewUpdater.Start(Timeouts.CALENDAR_UPDATE);
-			}
+			_scheduleService = ScheduleService.getInstance();
 
-			if (_currentWeatherUpdater == null) {
-				_currentWeatherUpdater = new CurrentWeatherUpdater(_context);
-				_currentWeatherUpdater.Start(Timeouts.CURRENT_WEATHER_UPDATE);
-			}
+			_serverThread = new ServerThread(Constants.SERVERPORT, _context);
 
-			if (_dateViewUpdater == null) {
-				_dateViewUpdater = new DateViewUpdater(_context);
-				_dateViewUpdater.Start();
-			}
+			_batterySocketController.Start();
+			_birthdayUpdater.Start(Timeouts.BIRTHDAY_UPDATE);
+			_calendarViewUpdater.Start(Timeouts.CALENDAR_UPDATE);
+			_currentWeatherUpdater.Start(Timeouts.CURRENT_WEATHER_UPDATE);
+			_dateViewUpdater.Start();
+			_forecastWeatherUpdater.Start(Timeouts.FORECAST_WEATHER_UPDATE);
+			_ipAddressViewUpdater.Start(Timeouts.IP_ADRESS_UPDATE);
+			_menuListUpdater.Start(Timeouts.MENU_UPDATE);
+			_rssViewUpdater.Start(Timeouts.RSS_UPDATE);
+			_shoppingListUpdater.Start(Timeouts.SHOPPING_LIST_UPDATE);
+			_socketListUpdater.Start(Timeouts.SOCKET_LIST_UPDATE);
+			_temperatureUpdater.Start(Timeouts.TEMPERATURE_UPDATE);
 
-			if (_forecastWeatherUpdater == null) {
-				_forecastWeatherUpdater = new ForecastWeatherUpdater(_context);
-				_forecastWeatherUpdater.Start(Timeouts.FORECAST_WEATHER_UPDATE);
-			}
-
-			if (_ipAddressViewUpdater == null) {
-				_ipAddressViewUpdater = new IpAddressViewUpdater(_context);
-				_ipAddressViewUpdater.Start(Timeouts.IP_ADRESS_UPDATE);
-			}
-
-			if (_menuListUpdater == null) {
-				_menuListUpdater = new MenuListUpdater(_context);
-				_menuListUpdater.Start(Timeouts.MENU_UPDATE);
-			}
-
-			if (_rssViewUpdater == null) {
-				_rssViewUpdater = new RSSViewUpdater(_context);
-				_rssViewUpdater.Start(Timeouts.RSS_UPDATE);
-			}
-
-			if (_shoppingListUpdater == null) {
-				_shoppingListUpdater = new ShoppingListUpdater(_context);
-				_shoppingListUpdater.Start(Timeouts.SHOPPING_LIST_UPDATE);
-			}
-
-			if (_socketListUpdater == null) {
-				_socketListUpdater = new SocketListUpdater(_context);
-				_socketListUpdater.Start(Timeouts.SOCKET_LIST_UPDATE);
-			}
-
-			if (_temperatureUpdater == null) {
-				_temperatureUpdater = new TemperatureUpdater(_context);
-				_temperatureUpdater.Start(Timeouts.TEMPERATURE_UPDATE);
-			}
-
-			if (_ttsController == null) {
-				_ttsController = new TTSController(_context, Enables.TTS);
-				_ttsController.Init();
-			}
-
-			if (_scheduleService == null) {
-				_scheduleService = ScheduleService.getInstance();
-				_scheduleService.AddSchedule("ChangeBirthdayCalendarView", _switchBirthdayCalendarViewRunnable,
-						Timeouts.SWITCH_BIRTHDAY_CALENDAR, true);
-			}
-
-			if (_serverThread == null) {
-				_serverThread = new ServerThread(Constants.SERVERPORT, _context);
-				_serverThread.Start();
-			}
+			_scheduleService.DeleteSchedule("ChangeBirthdayCalendarView");
+			_scheduleService.AddSchedule("ChangeBirthdayCalendarView", _switchBirthdayCalendarViewRunnable,
+					Timeouts.SWITCH_BIRTHDAY_CALENDAR, true);
 
 			CenterModel centerModel = new CenterModel(false, "", true, YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId(),
 					false, "");
@@ -201,23 +158,7 @@ public class MainService extends Service {
 			_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_RSS_DATA_MODEL, Bundles.RSS_DATA_MODEL,
 					rssModel);
 
-			if (_powerManager == null) {
-				_powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-			}
-			_wakeLock = _powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MediaServerMainService_WakeLock");
-			_wakeLock.acquire();
-
-			if (_wifiManager == null) {
-				_wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-			}
-			_wifiLock = _wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF,
-					"MediaServerMainService_WifiLock");
-			_wifiLock.acquire();
-
-			if (Enables.TESTING) {
-				_converterTest = new ConverterTest();
-				_converterTest.PerformTests();
-			}
+			setLocks();
 		}
 	}
 
@@ -226,7 +167,86 @@ public class MainService extends Service {
 		if (_logger != null) {
 			_logger.Debug("onStartCommand");
 		}
-		return 0;
+
+		if (_isInitialized) {
+			if (_batterySocketController == null) {
+				_batterySocketController.Start();
+			}
+
+			if (_birthdayUpdater == null) {
+				_birthdayUpdater.Start(Timeouts.BIRTHDAY_UPDATE);
+			}
+
+			if (_calendarViewUpdater == null) {
+				_calendarViewUpdater.Start(Timeouts.CALENDAR_UPDATE);
+			}
+
+			if (_currentWeatherUpdater == null) {
+				_currentWeatherUpdater.Start(Timeouts.CURRENT_WEATHER_UPDATE);
+			}
+
+			if (_dateViewUpdater == null) {
+				_dateViewUpdater.Start();
+			}
+
+			if (_forecastWeatherUpdater == null) {
+				_forecastWeatherUpdater.Start(Timeouts.FORECAST_WEATHER_UPDATE);
+			}
+
+			if (_ipAddressViewUpdater == null) {
+				_ipAddressViewUpdater.Start(Timeouts.IP_ADRESS_UPDATE);
+			}
+
+			if (_menuListUpdater == null) {
+				_menuListUpdater.Start(Timeouts.MENU_UPDATE);
+			}
+
+			if (_rssViewUpdater == null) {
+				_rssViewUpdater.Start(Timeouts.RSS_UPDATE);
+			}
+
+			if (_shoppingListUpdater == null) {
+				_shoppingListUpdater.Start(Timeouts.SHOPPING_LIST_UPDATE);
+			}
+
+			if (_socketListUpdater == null) {
+				_socketListUpdater.Start(Timeouts.SOCKET_LIST_UPDATE);
+			}
+
+			if (_temperatureUpdater == null) {
+				_temperatureUpdater.Start(Timeouts.TEMPERATURE_UPDATE);
+			}
+
+			if (_scheduleService == null) {
+				_scheduleService.DeleteSchedule("ChangeBirthdayCalendarView");
+				_scheduleService.AddSchedule("ChangeBirthdayCalendarView", _switchBirthdayCalendarViewRunnable,
+						Timeouts.SWITCH_BIRTHDAY_CALENDAR, true);
+			}
+
+			if (_serverThread == null) {
+				_serverThread.Start();
+			}
+
+			if (_broadcastController != null) {
+				CenterModel centerModel = new CenterModel(false, "", true,
+						YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId(), false, "");
+				_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_CENTER_MODEL, Bundles.CENTER_MODEL,
+						centerModel);
+
+				RSSModel rssModel = new RSSModel(RSSFeed.DEFAULT, true);
+				_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_RSS_DATA_MODEL, Bundles.RSS_DATA_MODEL,
+						rssModel);
+			}
+
+			setLocks();
+
+			if (Enables.TESTING) {
+				_converterTest = new ConverterTest();
+				_converterTest.PerformTests();
+			}
+		}
+
+		return START_STICKY;
 	}
 
 	@Override
@@ -279,5 +299,22 @@ public class MainService extends Service {
 		Intent intent = new Intent(_context, Main.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
+	}
+
+	private void setLocks() {
+		_logger.Debug("setLocks");
+
+		if (_powerManager == null) {
+			_powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		}
+		_wakeLock = _powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MediaServerMainService_WakeLock");
+		_wakeLock.acquire();
+
+		if (_wifiManager == null) {
+			_wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		}
+		_wifiLock = _wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF,
+				"MediaServerMainService_WifiLock");
+		_wifiLock.acquire();
 	}
 }

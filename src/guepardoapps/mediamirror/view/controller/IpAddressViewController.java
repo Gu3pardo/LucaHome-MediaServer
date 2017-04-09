@@ -14,8 +14,7 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.Enables;
-import guepardoapps.mediamirror.model.*;
-
+import guepardoapps.mediamirror.view.model.*;
 import guepardoapps.test.IpAdressViewControllerTest;
 
 public class IpAddressViewController {
@@ -41,14 +40,14 @@ public class IpAddressViewController {
 
 	public void onCreate() {
 		_logger.Debug("onCreate");
-
 		_screenEnabled = true;
-
 		_ipAdressTextView = (TextView) ((Activity) _context).findViewById(R.id.ipAdressTextView);
 	}
 
 	public void onPause() {
 		_logger.Debug("onPause");
+		_receiverController.Dispose();
+		_isInitialized = false;
 	}
 
 	public void onResume() {
@@ -74,11 +73,7 @@ public class IpAddressViewController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
-
-		_receiverController.UnregisterReceiver(_updateViewReceiver);
-		_receiverController.UnregisterReceiver(_screenEnableReceiver);
-		_receiverController.UnregisterReceiver(_screenDisableReceiver);
-
+		_receiverController.Dispose();
 		_isInitialized = false;
 	}
 

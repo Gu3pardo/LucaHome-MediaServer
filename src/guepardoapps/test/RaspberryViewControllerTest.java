@@ -7,7 +7,7 @@ import guepardoapps.library.toolset.controller.BroadcastController;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
-import guepardoapps.mediamirror.model.*;
+import guepardoapps.mediamirror.view.model.*;
 
 public class RaspberryViewControllerTest {
 

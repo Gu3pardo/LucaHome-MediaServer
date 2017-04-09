@@ -28,6 +28,8 @@ public class ServerThread {
 
 	private DataHandler _dataHandler;
 
+	private boolean _isRunning;
+
 	public ServerThread(int port, Context context) {
 		_socketServerPort = port;
 
@@ -43,10 +45,16 @@ public class ServerThread {
 
 	public void Start() {
 		_logger.Debug("Start");
+		if (_isRunning) {
+			_logger.Warn("Already running!");
+			return;
+		}
 
 		SocketServerThread socketServerThread = new SocketServerThread();
 		Thread thread = new Thread(socketServerThread);
 		thread.start();
+
+		_isRunning = true;
 	}
 
 	public void Dispose() {
@@ -61,6 +69,8 @@ public class ServerThread {
 		}
 
 		_dataHandler.Dispose();
+
+		_isRunning = false;
 	}
 
 	private class SocketServerThread extends Thread {

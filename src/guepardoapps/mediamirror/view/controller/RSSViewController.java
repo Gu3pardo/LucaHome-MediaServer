@@ -24,10 +24,9 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.Enables;
-import guepardoapps.mediamirror.model.RSSModel;
 import guepardoapps.mediamirror.rss.RssItem;
 import guepardoapps.mediamirror.rss.RssService;
-
+import guepardoapps.mediamirror.view.model.RSSModel;
 import guepardoapps.test.RSSViewControllerTest;
 
 public class RSSViewController {

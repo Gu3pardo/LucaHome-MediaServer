@@ -15,7 +15,6 @@ import guepardoapps.library.toolset.controller.BroadcastController;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
-import guepardoapps.mediamirror.common.constants.Timeouts;
 import guepardoapps.mediamirror.controller.*;
 
 public class TimeListenerService extends Service {
@@ -28,7 +27,6 @@ public class TimeListenerService extends Service {
 
 	private MediaVolumeController _mediaVolumeController;
 	private ScreenController _screenController;
-	private ScheduleController _scheduleController;
 
 	private boolean _isInitialized;
 
@@ -45,8 +43,7 @@ public class TimeListenerService extends Service {
 	};
 
 	@Override
-	public void onCreate() {
-		super.onCreate();
+	public int onStartCommand(Intent intent, int flags, int startid) {
 		if (!_isInitialized) {
 			_logger = new SmartMirrorLogger(TAG);
 
@@ -67,21 +64,13 @@ public class TimeListenerService extends Service {
 			if (_screenController == null) {
 				_screenController = new ScreenController(_context);
 			}
-			if (_scheduleController == null) {
-				_scheduleController = new ScheduleController(_context);
-				_scheduleController.Start(Timeouts.SCHEDULE_UPDATE);
-			}
 
 			_isInitialized = true;
 		}
-	}
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startid) {
-		if (_logger != null) {
-			_logger.Debug("onStartCommand");
-		}
-		return 0;
+		_logger.Debug("onStartCommand");
+
+		return START_STICKY;
 	}
 
 	@Override
@@ -98,7 +87,6 @@ public class TimeListenerService extends Service {
 		if (_logger != null) {
 			_logger.Debug("onDestroy");
 		}
-		_scheduleController.Dispose();
 		unregisterReceiver(_timeChangedReceiver);
 	}
 

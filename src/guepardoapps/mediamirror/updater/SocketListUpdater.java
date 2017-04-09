@@ -3,11 +3,13 @@ package guepardoapps.mediamirror.updater;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 
 import guepardoapps.library.lucahome.common.dto.WirelessSocketDto;
+import guepardoapps.library.lucahome.common.enums.LucaObject;
+import guepardoapps.library.lucahome.common.enums.RaspberrySelection;
+import guepardoapps.library.lucahome.controller.ServiceController;
 import guepardoapps.library.lucahome.converter.json.JsonDataToSocketConverter;
 
 import guepardoapps.library.toastview.ToastView;
@@ -20,7 +22,6 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.RaspPiConstants;
-import guepardoapps.mediamirror.services.RESTService;
 
 public class SocketListUpdater {
 
@@ -32,8 +33,10 @@ public class SocketListUpdater {
 	private Context _context;
 	private BroadcastController _broadcastController;
 	private ReceiverController _receiverController;
+	private ServiceController _serviceController;
 
 	private int _updateTime;
+	private boolean _isRunning;
 
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
@@ -75,15 +78,21 @@ public class SocketListUpdater {
 		_context = context;
 		_broadcastController = new BroadcastController(_context);
 		_receiverController = new ReceiverController(_context);
+		_serviceController = new ServiceController(_context);
 	}
 
 	public void Start(int updateTime) {
 		_logger.Debug("Initialize");
+		if (_isRunning) {
+			_logger.Warn("Already running!");
+			return;
+		}
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
 		_receiverController.RegisterReceiver(_updateReceiver, new String[] { Broadcasts.DOWNLOAD_SOCKET_FINISHED });
 		_receiverController.RegisterReceiver(_performUpdateReceiver, new String[] { Broadcasts.PERFORM_SOCKET_UPDATE });
 		_updateRunnable.run();
+		_isRunning = true;
 	}
 
 	public void Dispose() {
@@ -91,19 +100,14 @@ public class SocketListUpdater {
 		_updater.removeCallbacks(_updateRunnable);
 		_receiverController.UnregisterReceiver(_updateReceiver);
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
+		_isRunning = false;
 	}
 
 	public void DownloadSocketList() {
 		_logger.Debug("startDownloadSocketList");
 
-		Intent serviceIntent = new Intent(_context, RESTService.class);
-		Bundle serviceData = new Bundle();
-
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, RaspPiConstants.GET_SOCKETS);
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Bundles.SOCKET_LIST);
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, Broadcasts.DOWNLOAD_SOCKET_FINISHED);
-
-		serviceIntent.putExtras(serviceData);
-		_context.startService(serviceIntent);
+		_serviceController.StartRestService(RaspPiConstants.USER, RaspPiConstants.PASSWORD, Bundles.SOCKET_LIST,
+				RaspPiConstants.GET_SOCKETS, Broadcasts.DOWNLOAD_SOCKET_FINISHED, LucaObject.WIRELESS_SOCKET,
+				RaspberrySelection.BOTH);
 	}
 }

@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.model.YoutubeDatabaseModel;
+import guepardoapps.mediamirror.view.model.YoutubeDatabaseModel;
 
 public class DatabaseYoutubeIds {
 

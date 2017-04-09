@@ -23,9 +23,8 @@ import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.Enables;
 import guepardoapps.mediamirror.controller.MediaMirrorDialogController;
-import guepardoapps.mediamirror.model.RaspberryModel;
-import guepardoapps.mediamirror.model.helper.RaspberryTemperatureHelper;
-
+import guepardoapps.mediamirror.view.model.RaspberryModel;
+import guepardoapps.mediamirror.view.model.helper.RaspberryTemperatureHelper;
 import guepardoapps.test.RaspberryViewControllerTest;
 
 public class RaspberryViewController {

@@ -38,8 +38,7 @@ import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.Enables;
 import guepardoapps.mediamirror.controller.DatabaseController;
 import guepardoapps.mediamirror.controller.MediaVolumeController;
-import guepardoapps.mediamirror.model.*;
-
+import guepardoapps.mediamirror.view.model.*;
 import guepardoapps.test.CenterViewControllerTest;
 
 public class CenterViewController implements YouTubePlayer.OnInitializedListener {
@@ -436,6 +435,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 		int playPositionMillis = _youtubePlayer.getCurrentTimeMillis();
 		int playPositionSec = playPositionMillis / 1000;
+
 		return playPositionSec;
 	}
 
@@ -446,6 +446,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
 		int playDurationMillis = _youtubePlayer.getDurationMillis();
 		int playDuratioSec = playDurationMillis / 1000;
+
 		return playDuratioSec;
 	}
 

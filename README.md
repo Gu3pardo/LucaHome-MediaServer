@@ -12,3 +12,5 @@ Android application permanently displaying data behind a mirror
 
 Receive commands by a client application (LucaHome_AndroidApplication)
 - e.g. to display new videos, update rss feed, display websites, display custom text, ...
+
+![alt tag](https://github.com/Gu3pardo/LucaHome-MediaServer/blob/master/screenshots/image001.png)

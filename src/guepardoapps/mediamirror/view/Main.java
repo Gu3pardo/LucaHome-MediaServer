@@ -24,7 +24,7 @@ import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Enables;
 import guepardoapps.mediamirror.common.constants.RaspPiConstants;
-import guepardoapps.mediamirror.controller.NFCController;
+import guepardoapps.mediamirror.controller.MediaStorageController;
 import guepardoapps.mediamirror.controller.ScreenController;
 import guepardoapps.mediamirror.services.*;
 import guepardoapps.mediamirror.view.controller.*;
@@ -50,7 +50,7 @@ public class Main extends YouTubeBaseActivity {
 	private GameViewController _gameViewController;
 	private IpAddressViewController _ipAddressViewController;
 	private LayoutController _layoutController;
-	private NFCController _nfcController;
+	private MediaStorageController _mediaStorageController;
 	private RaspberryViewController _raspberryViewController;
 	private RSSViewController _rssViewController;
 	private SharedPrefController _sharedPrefController;
@@ -108,10 +108,7 @@ public class Main extends YouTubeBaseActivity {
 
 		_screenController.onCreate();
 
-		_nfcController.Start();
 		_ttsController.Init();
-
-		startServices();
 	}
 
 	private void install() {
@@ -119,8 +116,8 @@ public class Main extends YouTubeBaseActivity {
 		_sharedPrefController = new SharedPrefController(_context, SharedPrefConstants.SHARED_PREF_NAME);
 		if (!_sharedPrefController.LoadBooleanValueFromSharedPreferences(SharedPrefConstants.SHARED_PREF_INSTALLED)) {
 			_logger.Info("Installing shared preferences!");
-			_sharedPrefController.SaveStringValue(SharedPrefConstants.USER_NAME, RaspPiConstants.USER_NAME);
-			_sharedPrefController.SaveStringValue(SharedPrefConstants.USER_PASSPHRASE, RaspPiConstants.PASS_PHRASE);
+			_sharedPrefController.SaveStringValue(SharedPrefConstants.USER_NAME, RaspPiConstants.USER);
+			_sharedPrefController.SaveStringValue(SharedPrefConstants.USER_PASSPHRASE, RaspPiConstants.PASSWORD);
 			_sharedPrefController.SaveBooleanValue(SharedPrefConstants.SHARED_PREF_INSTALLED, true);
 		}
 	}
@@ -145,6 +142,8 @@ public class Main extends YouTubeBaseActivity {
 		_volumeViewController.onResume();
 
 		_screenController.onResume();
+
+		startServices();
 	}
 
 	@Override
@@ -190,7 +189,6 @@ public class Main extends YouTubeBaseActivity {
 
 		_screenController.onDestroy();
 
-		_nfcController.Dispose();
 		_ttsController.Dispose();
 	}
 
@@ -246,7 +244,8 @@ public class Main extends YouTubeBaseActivity {
 		_gameViewController = new GameViewController(_context);
 		_ipAddressViewController = new IpAddressViewController(_context);
 		_layoutController = new LayoutController(_context);
-		_nfcController = new NFCController(_context);
+		_mediaStorageController = MediaStorageController.getInstance();
+		_mediaStorageController.Initialize(_context);
 		_raspberryViewController = new RaspberryViewController(_context);
 		_rssViewController = new RSSViewController(_context);
 		_volumeViewController = new VolumeViewController(_context);

@@ -1,4 +1,4 @@
-package guepardoapps.mediamirror.model.helper;
+package guepardoapps.mediamirror.view.model.helper;
 
 import java.io.Serializable;
 

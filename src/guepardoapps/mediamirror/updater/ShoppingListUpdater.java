@@ -3,11 +3,13 @@ package guepardoapps.mediamirror.updater;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 
 import guepardoapps.library.lucahome.common.dto.ShoppingEntryDto;
+import guepardoapps.library.lucahome.common.enums.LucaObject;
+import guepardoapps.library.lucahome.common.enums.RaspberrySelection;
+import guepardoapps.library.lucahome.controller.ServiceController;
 import guepardoapps.library.lucahome.converter.json.JsonDataToShoppingListConverter;
 
 import guepardoapps.library.toastview.ToastView;
@@ -20,7 +22,6 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.RaspPiConstants;
-import guepardoapps.mediamirror.services.RESTService;
 
 public class ShoppingListUpdater {
 
@@ -32,8 +33,10 @@ public class ShoppingListUpdater {
 	private Context _context;
 	private BroadcastController _broadcastController;
 	private ReceiverController _receiverController;
+	private ServiceController _serviceController;
 
 	private int _updateTime;
+	private boolean _isRunning;
 
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
@@ -84,10 +87,15 @@ public class ShoppingListUpdater {
 		_context = context;
 		_broadcastController = new BroadcastController(_context);
 		_receiverController = new ReceiverController(_context);
+		_serviceController = new ServiceController(_context);
 	}
 
 	public void Start(int updateTime) {
 		_logger.Debug("Initialize");
+		if (_isRunning) {
+			_logger.Warn("Already running!");
+			return;
+		}
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
 		_receiverController.RegisterReceiver(_updateReceiver,
@@ -97,6 +105,7 @@ public class ShoppingListUpdater {
 		_receiverController.RegisterReceiver(_reloadReceiver,
 				new String[] { guepardoapps.library.lucahome.common.constants.Broadcasts.RELOAD_SHOPPING_LIST });
 		_updateRunnable.run();
+		_isRunning = true;
 	}
 
 	public void Dispose() {
@@ -105,19 +114,14 @@ public class ShoppingListUpdater {
 		_receiverController.UnregisterReceiver(_updateReceiver);
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
 		_receiverController.UnregisterReceiver(_reloadReceiver);
+		_isRunning = false;
 	}
 
 	public void DownloadShoppingList() {
 		_logger.Debug("startDownloadShoppingList");
 
-		Intent serviceIntent = new Intent(_context, RESTService.class);
-		Bundle serviceData = new Bundle();
-
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_ACTION, RaspPiConstants.GET_SHOPPING_LIST);
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_DATA, Bundles.SHOPPING_LIST);
-		serviceData.putString(RaspPiConstants.BUNDLE_REST_BROADCAST, Broadcasts.DOWNLOAD_SHOPPING_LIST_FINISHED);
-
-		serviceIntent.putExtras(serviceData);
-		_context.startService(serviceIntent);
+		_serviceController.StartRestService(RaspPiConstants.USER, RaspPiConstants.PASSWORD, Bundles.SHOPPING_LIST,
+				RaspPiConstants.GET_SHOPPING_LIST, Broadcasts.DOWNLOAD_SHOPPING_LIST_FINISHED,
+				LucaObject.SHOPPING_ENTRY, RaspberrySelection.BOTH);
 	}
 }

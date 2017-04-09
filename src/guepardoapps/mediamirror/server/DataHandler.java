@@ -32,12 +32,13 @@ import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.Timeouts;
 import guepardoapps.mediamirror.controller.DatabaseController;
+import guepardoapps.mediamirror.controller.MediaStorageController;
 import guepardoapps.mediamirror.controller.MediaVolumeController;
 import guepardoapps.mediamirror.controller.ScreenController;
-import guepardoapps.mediamirror.model.CenterModel;
-import guepardoapps.mediamirror.model.RSSModel;
-import guepardoapps.mediamirror.model.YoutubeDatabaseModel;
 import guepardoapps.mediamirror.view.controller.CenterViewController;
+import guepardoapps.mediamirror.view.model.CenterModel;
+import guepardoapps.mediamirror.view.model.RSSModel;
+import guepardoapps.mediamirror.view.model.YoutubeDatabaseModel;
 
 public class DataHandler {
 
@@ -50,6 +51,7 @@ public class DataHandler {
 	private CenterViewController _centerViewController;
 	private CommandController _commandController;
 	private DatabaseController _dbController;
+	private MediaStorageController _mediaStorageController;
 	private MediaVolumeController _mediaVolumeController;
 	private ReceiverController _receiverController;
 	private ScreenController _screenController;
@@ -104,6 +106,7 @@ public class DataHandler {
 		_centerViewController = CenterViewController.getInstance();
 		_commandController = new CommandController(_context);
 		_dbController = DatabaseController.getInstance();
+		_mediaStorageController = MediaStorageController.getInstance();
 		_mediaVolumeController = MediaVolumeController.getInstance();
 		_receiverController = new ReceiverController(_context);
 		_screenController = new ScreenController(_context);
@@ -287,7 +290,7 @@ public class DataHandler {
 						return action.toString() + ":-1";
 					}
 					long currentTime = System.currentTimeMillis();
-					long differenceTimeSec = (currentTime - _seaSoundStartTime) / 1000;
+					long differenceTimeSec = (Timeouts.SEA_SOUND_STOP - (currentTime - _seaSoundStartTime)) / 1000;
 					while (differenceTimeSec < 0) {
 						differenceTimeSec += 24 * 60 * 60;
 					}
@@ -644,6 +647,7 @@ public class DataHandler {
 	}
 
 	public void Dispose() {
+		_mediaStorageController.Dispose();
 		_mediaVolumeController.Dispose();
 		_receiverController.UnregisterReceiver(_batteryInfoReceiver);
 		_receiverController.UnregisterReceiver(_socketListReceiver);

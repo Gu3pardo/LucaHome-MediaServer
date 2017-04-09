@@ -6,7 +6,7 @@ import android.content.Context;
 
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.database.DatabaseYoutubeIds;
-import guepardoapps.mediamirror.model.YoutubeDatabaseModel;
+import guepardoapps.mediamirror.view.model.YoutubeDatabaseModel;
 
 public class DatabaseController {
 

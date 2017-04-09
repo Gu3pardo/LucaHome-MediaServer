@@ -15,7 +15,7 @@ import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.converter.DateConverter;
 import guepardoapps.mediamirror.converter.TimeConverter;
 import guepardoapps.mediamirror.converter.WeekdayConverter;
-import guepardoapps.mediamirror.model.DateModel;
+import guepardoapps.mediamirror.view.model.DateModel;
 
 public class DateViewUpdater {
 
@@ -25,6 +25,8 @@ public class DateViewUpdater {
 	private Context _context;
 	private BroadcastController _broadcastController;
 	private ReceiverController _receiverController;
+
+	private boolean _isRunning;
 
 	private BroadcastReceiver _timeTickReceiver = new BroadcastReceiver() {
 		@Override
@@ -47,13 +49,19 @@ public class DateViewUpdater {
 
 	public void Start() {
 		_logger.Debug("Initialize");
+		if (_isRunning) {
+			_logger.Warn("Already running!");
+			return;
+		}
 		_receiverController.RegisterReceiver(_timeTickReceiver, new String[] { Intent.ACTION_TIME_TICK });
 		UpdateDate();
+		_isRunning = true;
 	}
 
 	public void Dispose() {
 		_logger.Debug("Dispose");
 		_receiverController.UnregisterReceiver(_timeTickReceiver);
+		_isRunning = false;
 	}
 
 	public void UpdateDate() {

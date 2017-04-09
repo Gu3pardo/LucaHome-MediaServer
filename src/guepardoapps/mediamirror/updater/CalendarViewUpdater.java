@@ -29,6 +29,7 @@ public class CalendarViewUpdater {
 	private ReceiverController _receiverController;
 
 	private int _updateTime;
+	private boolean _isRunning;
 
 	private Runnable _updateRunnable = new Runnable() {
 		public void run() {
@@ -66,16 +67,22 @@ public class CalendarViewUpdater {
 
 	public void Start(int updateTime) {
 		_logger.Debug("Initialize");
+		if (_isRunning) {
+			_logger.Warn("Already running!");
+			return;
+		}
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
 		_receiverController.RegisterReceiver(_performUpdateReceiver,
 				new String[] { Broadcasts.PERFORM_CALENDAR_UPDATE });
 		_updateRunnable.run();
+		_isRunning = true;
 	}
 
 	public void Dispose() {
 		_logger.Debug("Dispose");
 		_updater.removeCallbacks(_updateRunnable);
 		_receiverController.UnregisterReceiver(_performUpdateReceiver);
+		_isRunning = false;
 	}
 }

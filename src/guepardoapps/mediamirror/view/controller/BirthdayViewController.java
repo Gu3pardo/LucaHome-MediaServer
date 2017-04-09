@@ -1,7 +1,5 @@
 package guepardoapps.mediamirror.view.controller;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,6 +9,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import guepardoapps.library.lucahome.common.dto.BirthdayDto;
+
+import guepardoapps.library.toolset.common.classes.SerializableList;
 import guepardoapps.library.toolset.controller.BroadcastController;
 import guepardoapps.library.toolset.controller.ReceiverController;
 
@@ -19,7 +20,6 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.Enables;
-import guepardoapps.mediamirror.model.helper.BirthdayHelper;
 
 import guepardoapps.test.BirthdayViewControllerTest;
 
@@ -107,16 +107,17 @@ public class BirthdayViewController {
 			}
 
 			_logger.Debug("_updateViewReceiver onReceive");
-			ArrayList<BirthdayHelper> birthdayList = (ArrayList<BirthdayHelper>) intent
+			SerializableList<BirthdayDto> birthdayList = (SerializableList<BirthdayDto>) intent
 					.getSerializableExtra(Bundles.BIRTHDAY_MODEL);
+
 			if (birthdayList != null) {
 				_logger.Debug(birthdayList.toString());
-				for (int index = 0; index < birthdayList.size(); index++) {
-					BirthdayHelper entry = birthdayList.get(index);
+				for (int index = 0; index < birthdayList.getSize(); index++) {
+					BirthdayDto entry = birthdayList.getValue(index);
 					if (entry != null) {
 						if (entry.HasBirthday()) {
 							_hasBirthday[index] = true;
-							_birthdayTextViewArray[index].setText(entry.GetNotificationString());
+							_birthdayTextViewArray[index].setText(entry.GetNotificationBody(entry.GetAge()));
 							_birthdayAlarmViewArray[index].setVisibility(View.VISIBLE);
 							checkPlayBirthdaySong(entry);
 						} else {
@@ -146,7 +147,7 @@ public class BirthdayViewController {
 			 */
 		}
 
-		private void checkPlayBirthdaySong(BirthdayHelper entry) {
+		private void checkPlayBirthdaySong(BirthdayDto entry) {
 			if (entry.GetName().contains("Sandra Huber") || entry.GetName().contains("Jonas Schubert")) {
 				_broadcastController.SendSimpleBroadcast(Broadcasts.PLAY_BIRTHDAY_SONG);
 			}
@@ -200,6 +201,8 @@ public class BirthdayViewController {
 
 	public void onPause() {
 		_logger.Debug("onPause");
+		_receiverController.Dispose();
+		_isInitialized = false;
 	}
 
 	public void onResume() {
@@ -228,13 +231,7 @@ public class BirthdayViewController {
 
 	public void onDestroy() {
 		_logger.Debug("onDestroy");
-
-		_receiverController.UnregisterReceiver(_dateChangedReceiver);
-		_receiverController.UnregisterReceiver(_screenEnableReceiver);
-		_receiverController.UnregisterReceiver(_screenDisableReceiver);
-		_receiverController.UnregisterReceiver(_switchViewReceiver);
-		_receiverController.UnregisterReceiver(_updateViewReceiver);
-
+		_receiverController.Dispose();
 		_isInitialized = false;
 	}
 }

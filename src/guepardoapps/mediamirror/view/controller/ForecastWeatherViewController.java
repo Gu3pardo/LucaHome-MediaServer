@@ -14,8 +14,7 @@ import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
 import guepardoapps.mediamirror.common.constants.Enables;
-import guepardoapps.mediamirror.model.*;
-
+import guepardoapps.mediamirror.view.model.*;
 import guepardoapps.test.ForecastWeatherViewControllerTest;
 
 public class ForecastWeatherViewController {

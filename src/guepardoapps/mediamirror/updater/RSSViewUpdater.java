@@ -11,10 +11,9 @@ import guepardoapps.library.toolset.controller.BroadcastController;
 import guepardoapps.library.toolset.controller.ReceiverController;
 
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
-import guepardoapps.mediamirror.common.TimeHelper;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
 import guepardoapps.mediamirror.common.constants.Bundles;
-import guepardoapps.mediamirror.model.RSSModel;
+import guepardoapps.mediamirror.view.model.RSSModel;
 
 public class RSSViewUpdater {
 
@@ -22,6 +21,7 @@ public class RSSViewUpdater {
 	private SmartMirrorLogger _logger;
 
 	private int _updateTime;
+	private boolean _isRunning;
 	private RSSFeed _rssFeed;
 
 	private Handler _updater;
@@ -77,6 +77,10 @@ public class RSSViewUpdater {
 
 	public void Start(int updateTime) {
 		_logger.Debug("Initialize");
+		if (_isRunning) {
+			_logger.Warn("Already running!");
+			return;
+		}
 
 		_updateTime = updateTime;
 		_logger.Debug("UpdateTime is: " + String.valueOf(_updateTime));
@@ -87,6 +91,8 @@ public class RSSViewUpdater {
 
 		_receiverController.RegisterReceiver(_resetRSSFeedReceiver, new String[] { Broadcasts.RESET_RSS_FEED });
 		_receiverController.RegisterReceiver(_updateRSSFeedReceiver, new String[] { Broadcasts.PERFORM_RSS_UPDATE });
+
+		_isRunning = false;
 	}
 
 	public void Dispose() {
@@ -96,15 +102,12 @@ public class RSSViewUpdater {
 
 		_receiverController.UnregisterReceiver(_resetRSSFeedReceiver);
 		_receiverController.UnregisterReceiver(_updateRSSFeedReceiver);
+
+		_isRunning = false;
 	}
 
 	public void LoadRss() {
 		_logger.Debug("LoadRss");
-
-		if (TimeHelper.IsMuteTime()) {
-			_logger.Warn("Mute time!");
-			return;
-		}
 
 		RSSModel model = new RSSModel(_rssFeed, true);
 		_broadcastController.SendSerializableBroadcast(Broadcasts.SHOW_RSS_DATA_MODEL, Bundles.RSS_DATA_MODEL, model);

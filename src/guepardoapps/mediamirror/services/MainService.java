@@ -131,6 +131,7 @@ public class MainService extends Service {
 			_scheduleService = ScheduleService.getInstance();
 
 			_serverThread = new ServerThread(Constants.SERVERPORT, _context);
+			_serverThread.Start();
 
 			_batterySocketController.Start();
 			_birthdayUpdater.Start(Timeouts.BIRTHDAY_UPDATE);
@@ -221,10 +222,6 @@ public class MainService extends Service {
 				_scheduleService.DeleteSchedule("ChangeBirthdayCalendarView");
 				_scheduleService.AddSchedule("ChangeBirthdayCalendarView", _switchBirthdayCalendarViewRunnable,
 						Timeouts.SWITCH_BIRTHDAY_CALENDAR, true);
-			}
-
-			if (_serverThread == null) {
-				_serverThread.Start();
 			}
 
 			if (_broadcastController != null) {

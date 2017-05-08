@@ -66,7 +66,8 @@ public final class R {
 		public static final int weather_fog = 0x7f0200ae;
 		public static final int weather_haze = 0x7f0200af;
 		public static final int weather_rain = 0x7f0200b1;
-		public static final int weather_snow = 0x7f0200b2;
+		public static final int weather_sleet = 0x7f0200b2;
+		public static final int weather_snow = 0x7f0200b3;
 	}
 	public static final class id {
 		public static final int custom_alert_dialog_background = 0x7f0f0031;
@@ -81,12 +82,12 @@ public final class R {
 		public static final int custom_webview_dialog_prompt = 0x7f0f003a;
 		public static final int custom_webview_dialog_title = 0x7f0f0039;
 		public static final int custom_webview_dialog_webview = 0x7f0f003b;
-		public static final int floating_message_background = 0x7f0f00ac;
-		public static final int floating_message_text = 0x7f0f00ae;
-		public static final int floating_message_title = 0x7f0f00ad;
-		public static final int icon = 0x7f0f0173;
-		public static final int text = 0x7f0f00b0;
-		public static final int toast_root = 0x7f0f0172;
+		public static final int floating_message_background = 0x7f0f00b5;
+		public static final int floating_message_text = 0x7f0f00b7;
+		public static final int floating_message_title = 0x7f0f00b6;
+		public static final int icon = 0x7f0f0180;
+		public static final int text = 0x7f0f00b9;
+		public static final int toast_root = 0x7f0f017f;
 	}
 	public static final class layout {
 		public static final int custom_dialog_1button = 0x7f030003;
@@ -94,8 +95,8 @@ public final class R {
 		public static final int custom_dialog_3buttons = 0x7f030005;
 		public static final int custom_dialog_edittext = 0x7f030006;
 		public static final int custom_dialog_webview = 0x7f030007;
-		public static final int floating_message = 0x7f03001a;
-		public static final int toast = 0x7f030037;
+		public static final int floating_message = 0x7f03001b;
+		public static final int toast = 0x7f030039;
 	}
 	public static final class string {
 		public static final int about = 0x7f080008;

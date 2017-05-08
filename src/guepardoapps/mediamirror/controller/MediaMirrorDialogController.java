@@ -146,7 +146,7 @@ public class MediaMirrorDialogController extends LucaDialogController {
 		final ListView listView = (ListView) _dialog.findViewById(R.id.dialog_list_view);
 
 		if (menu != null) {
-			MenuListAdapter listAdapter = new MenuListAdapter(_context, menu, true, false);
+			MenuListAdapter listAdapter = new MenuListAdapter(_context, menu, null, true, false);
 			listView.setAdapter(listAdapter);
 		}
 

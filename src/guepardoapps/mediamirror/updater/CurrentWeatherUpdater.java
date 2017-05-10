@@ -56,7 +56,7 @@ public class CurrentWeatherUpdater {
 				_logger.Debug("Description: " + description);
 
 				WeatherCondition condition = WeatherConverter.GetWeatherCondition(description);
-				int iconId = WeatherConverter.GetIconId(description);
+				int iconId = condition.GetIcon();
 
 				_logger.Debug("WeatherCondition: " + condition.toString());
 				_logger.Debug("IconId: " + String.valueOf(iconId));

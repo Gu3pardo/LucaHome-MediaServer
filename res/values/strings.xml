@@ -23,6 +23,6 @@
     <string name="mode_lose_suffix">\nKlicke auf den Bildschirm</string>
     <string name="snake_layout_text_text"/>
     <string name="example">Example</string>
-    <string name="serverVersion">0.17.2.170507</string>
+    <string name="serverVersion">0.17.3.170510</string>
     <string name="beaconState">Beacon disabled</string>
 </resources>

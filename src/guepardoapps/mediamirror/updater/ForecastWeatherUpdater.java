@@ -87,8 +87,9 @@ public class ForecastWeatherUpdater {
 					return;
 				}
 
-				CurrentWeatherModel forecast1 = new CurrentWeatherModel("", "", "", "", "", weather1.GetIcon(), "",
-						weather1.GetDate(), weather1.GetTime(), weather1.GetTempMin() + " - " + weather1.GetTempMax());
+				CurrentWeatherModel forecast1 = new CurrentWeatherModel("", "", "", "", "",
+						weather1.GetCondition().GetIcon(), "", weather1.GetDate(), weather1.GetTime(),
+						weather1.GetTempMin() + " - " + weather1.GetTempMax());
 
 				guepardoapps.library.openweather.common.model.ForecastWeatherModel weather2 = forecastWeather.GetList()
 						.get(entryIndex);
@@ -117,8 +118,9 @@ public class ForecastWeatherUpdater {
 					return;
 				}
 
-				CurrentWeatherModel forecast2 = new CurrentWeatherModel("", "", "", "", "", weather2.GetIcon(), "",
-						weather2.GetDate(), weather2.GetTime(), weather2.GetTempMin() + " - " + weather2.GetTempMax());
+				CurrentWeatherModel forecast2 = new CurrentWeatherModel("", "", "", "", "",
+						weather2.GetCondition().GetIcon(), "", weather2.GetDate(), weather2.GetTime(),
+						weather2.GetTempMin() + " - " + weather2.GetTempMax());
 
 				guepardoapps.library.openweather.common.model.ForecastWeatherModel weather3 = forecastWeather.GetList()
 						.get(entryIndex);
@@ -147,8 +149,9 @@ public class ForecastWeatherUpdater {
 					return;
 				}
 
-				CurrentWeatherModel forecast3 = new CurrentWeatherModel("", "", "", "", "", weather3.GetIcon(), "",
-						weather3.GetDate(), weather3.GetTime(), weather3.GetTempMin() + " - " + weather3.GetTempMax());
+				CurrentWeatherModel forecast3 = new CurrentWeatherModel("", "", "", "", "",
+						weather3.GetCondition().GetIcon(), "", weather3.GetDate(), weather3.GetTime(),
+						weather3.GetTempMin() + " - " + weather3.GetTempMax());
 
 				ForecastWeatherModel model = new ForecastWeatherModel();
 				model.AddForecast(forecast1);

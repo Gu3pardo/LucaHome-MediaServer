@@ -1,4 +1,7 @@
 # MediaMirrorSerrver
+
+<a target="_blank" href="https://www.paypal.me/GuepardoApps" title="Donate using PayPal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
+
 Android application permanently displaying data behind a mirror
 - date and time
 - weather (current and forecast)

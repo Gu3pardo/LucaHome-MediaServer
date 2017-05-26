@@ -1,0 +1,5 @@
+include ':app', ':lib_verticalseekbar', ':lib_lucahome', ':lib_openweather', ':lib_toolset'
+project(':lib_verticalseekbar').projectDir = new File(settingsDir, '../VerticalSeekbarView/lib_verticalseekbar')
+project(':lib_lucahome').projectDir = new File(settingsDir, '../LucaHome/lib_lucahome')
+project(':lib_openweather').projectDir = new File(settingsDir, '../OpenWeather/lib_openweather')
+project(':lib_toolset').projectDir = new File(settingsDir, '../Toolset/lib_toolset')

@@ -15,8 +15,10 @@ import android.widget.TextView;
 import java.util.Locale;
 
 import guepardoapps.library.toolset.controller.ReceiverController;
+
 import guepardoapps.library.verticalseekbarview.VerticalSeekBarView;
 import guepardoapps.library.verticalseekbarview.enums.VerticalSeekBarStyle;
+
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;

@@ -16,8 +16,8 @@ import java.util.Locale;
 import es.dmoral.toasty.Toasty;
 
 import guepardoapps.library.lucahome.common.enums.RSSFeed;
-import guepardoapps.library.lucahome.common.enums.YoutubeId;
 
+import guepardoapps.library.lucahome.common.enums.YoutubeId;
 import guepardoapps.library.toolset.controller.BroadcastController;
 import guepardoapps.library.toolset.controller.ReceiverController;
 import guepardoapps.library.toolset.controller.TTSController;
@@ -46,7 +46,6 @@ public class MainService extends Service {
     private Context _context;
 
     private BroadcastController _broadcastController;
-    //private MediaMirrorFTPController _mediaMirrorFTPController;
     private MediaVolumeController _mediaVolumeController;
     private ReceiverController _receiverController;
     private TTSController _ttsController;
@@ -105,13 +104,6 @@ public class MainService extends Service {
         }
     };
 
-    /*private Runnable _checkForUpdateRunnable = new Runnable() {
-        public void run() {
-            _logger.Debug("_checkForUpdateRunnable run");
-            checkForApplicationUpdate();
-        }
-    };*/
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -124,7 +116,6 @@ public class MainService extends Service {
             _context = this;
 
             _broadcastController = new BroadcastController(_context);
-            //_mediaMirrorFTPController = new MediaMirrorFTPController(_context);
             _receiverController = new ReceiverController(_context);
 
             _receiverController.RegisterReceiver(_screenEnableReceiver, new String[]{Broadcasts.SCREEN_ENABLED});
@@ -165,13 +156,6 @@ public class MainService extends Service {
             _shoppingListUpdater.Start(Timeouts.SHOPPING_LIST_UPDATE);
             _socketListUpdater.Start(Timeouts.SOCKET_LIST_UPDATE);
             _temperatureUpdater.Start(Timeouts.TEMPERATURE_UPDATE);
-
-            /*_scheduleService.DeleteSchedule("CheckForUpdateRunnable");
-            _scheduleService.AddSchedule(
-                    "CheckForUpdateRunnable",
-                    _checkForUpdateRunnable,
-                    Timeouts.CHECK_FOR_UPDATE,
-                    true);*/
 
             CenterModel centerModel = new CenterModel(
                     false,
@@ -250,23 +234,14 @@ public class MainService extends Service {
                 _temperatureUpdater.Start(Timeouts.TEMPERATURE_UPDATE);
             }
 
-            /*if (_scheduleService != null) {
-                _scheduleService.DeleteSchedule("CheckForUpdateRunnable");
-                _scheduleService.AddSchedule(
-                        "CheckForUpdateRunnable",
-                        _checkForUpdateRunnable,
-                        Timeouts.CHECK_FOR_UPDATE,
-                        true);
-            }*/
-
             if (_broadcastController != null) {
                 CenterModel centerModel = new CenterModel(
-                        false,
-                        "",
-                        true,
-                        YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId(),
-                        false,
-                        "");
+                    false,
+                    "",
+                    true,
+                    YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId(),
+                    false,
+                    "");
 
                 _broadcastController.SendSerializableBroadcast(
                         Broadcasts.SHOW_CENTER_MODEL,
@@ -354,13 +329,6 @@ public class MainService extends Service {
             }
         }
     }
-
-    /*private void checkForApplicationUpdate() {
-        _logger.Debug("checkForApplicationUpdate");
-        if (_mediaMirrorFTPController.IsUpdateAvailable()) {
-            Toasty.info(_context, "Update available", Toast.LENGTH_LONG).show();
-        }
-    }*/
 
     private void restartActivity() {
         _logger.Info("Restarting activity Main.class!");

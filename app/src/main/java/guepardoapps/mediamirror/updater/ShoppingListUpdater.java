@@ -10,8 +10,6 @@ import android.widget.Toast;
 import es.dmoral.toasty.Toasty;
 
 import guepardoapps.library.lucahome.common.dto.ShoppingEntryDto;
-import guepardoapps.library.lucahome.common.enums.LucaObject;
-import guepardoapps.library.lucahome.common.enums.RaspberrySelection;
 import guepardoapps.library.lucahome.controller.ServiceController;
 import guepardoapps.library.lucahome.converter.json.JsonDataToShoppingListConverter;
 
@@ -124,8 +122,6 @@ public class ShoppingListUpdater {
                 RaspPiConstants.PASSWORD,
                 Bundles.SHOPPING_LIST,
                 RaspPiConstants.GET_SHOPPING_LIST,
-                Broadcasts.DOWNLOAD_SHOPPING_LIST_FINISHED,
-                LucaObject.SHOPPING_ENTRY,
-                RaspberrySelection.BOTH);
+                Broadcasts.DOWNLOAD_SHOPPING_LIST_FINISHED);
     }
 }

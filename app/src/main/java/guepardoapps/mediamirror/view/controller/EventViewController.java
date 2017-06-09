@@ -5,17 +5,12 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.Locale;
-
-import es.dmoral.toasty.Toasty;
 
 import guepardoapps.library.lucahome.common.dto.BirthdayDto;
 
@@ -39,7 +34,6 @@ public class EventViewController {
     private static final int INVERT_TIME = 1000;
     private static final int MAX_CALENDAR_COUNT = 2;
 
-    private boolean _calendarPermissionGranted;
     private boolean _isInitialized;
     private boolean _screenEnabled;
 
@@ -66,33 +60,8 @@ public class EventViewController {
             final String action = intent.getAction();
             if (action.equals(Intent.ACTION_DATE_CHANGED)) {
                 _logger.Debug("ACTION_DATE_CHANGED");
-
                 _broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_BIRTHDAY_UPDATE);
-
-                if (_calendarPermissionGranted) {
-                    _broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_CALENDAR_UPDATE);
-                } else {
-                    _logger.Error("No permission to read calendar!");
-                    Toasty.error(_context, "No permission to read calendar!", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    };
-
-    private BroadcastReceiver _permissionReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            _logger.Debug("_permissionReceiver onReceive");
-
-            int permissionGrantedResult = intent.getIntExtra(guepardoapps.library.lucahome.common.constants.Bundles.PERMISSION_READ_CALENDAR, -1);
-            _calendarPermissionGranted = permissionGrantedResult == PackageManager.PERMISSION_GRANTED;
-            _logger.Info(String.format("Permission READ_CALENDAR result %s is granted %s!", permissionGrantedResult, _calendarPermissionGranted));
-
-            if (_calendarPermissionGranted) {
                 _broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_CALENDAR_UPDATE);
-            } else {
-                _logger.Error("No permission to read calendar!");
-                Toasty.error(_context, "No permission to read calendar!", Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -110,14 +79,8 @@ public class EventViewController {
         @Override
         public void onReceive(Context context, Intent intent) {
             initializeViews();
-
             _broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_BIRTHDAY_UPDATE);
-            if (_calendarPermissionGranted) {
-                _broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_CALENDAR_UPDATE);
-            } else {
-                _logger.Error("No permission to read calendar!");
-                Toasty.error(_context, "No permission to read calendar!", Toast.LENGTH_LONG).show();
-            }
+            _broadcastController.SendSimpleBroadcast(Broadcasts.PERFORM_CALENDAR_UPDATE);
         }
     };
 
@@ -301,7 +264,6 @@ public class EventViewController {
             _logger.Debug("Initializing!");
 
             _receiverController.RegisterReceiver(_dateChangedReceiver, new String[]{Intent.ACTION_DATE_CHANGED});
-            _receiverController.RegisterReceiver(_permissionReceiver, new String[]{guepardoapps.library.lucahome.common.constants.Broadcasts.PERMISSION_READ_CALENDAR});
             _receiverController.RegisterReceiver(_screenDisableReceiver, new String[]{Broadcasts.SCREEN_OFF});
             _receiverController.RegisterReceiver(_screenEnableReceiver, new String[]{Broadcasts.SCREEN_ENABLED});
             _receiverController.RegisterReceiver(_updateBirthdayViewReceiver, new String[]{Broadcasts.SHOW_BIRTHDAY_MODEL});

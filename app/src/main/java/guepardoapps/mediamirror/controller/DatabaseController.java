@@ -11,6 +11,7 @@ import guepardoapps.mediamirror.database.DatabaseYoutubeIds;
 import guepardoapps.mediamirror.view.model.YoutubeDatabaseModel;
 
 public class DatabaseController {
+    private static final DatabaseController SINGLETON = new DatabaseController();
 
     private static final String TAG = DatabaseController.class.getSimpleName();
     private SmartMirrorLogger _logger;
@@ -19,9 +20,17 @@ public class DatabaseController {
 
     private DatabaseYoutubeIds _databaseYoutubeIds;
 
-    public DatabaseController(@NonNull Context context) {
+    private DatabaseController() {
         _logger = new SmartMirrorLogger(TAG);
         _logger.Debug(TAG + " created...");
+    }
+
+    public static DatabaseController getSingleton() {
+        return SINGLETON;
+    }
+
+    public void Initialize(@NonNull Context context) {
+        _logger.Debug("Initialize");
 
         if (_isInitialized) {
             _logger.Warn("Already initialized!");

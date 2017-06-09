@@ -7,8 +7,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import guepardoapps.library.lucahome.common.dto.TemperatureDto;
-import guepardoapps.library.lucahome.common.enums.LucaObject;
-import guepardoapps.library.lucahome.common.enums.RaspberrySelection;
 import guepardoapps.library.lucahome.controller.ServiceController;
 import guepardoapps.library.lucahome.converter.json.JsonDataToTemperatureConverter;
 
@@ -123,8 +121,6 @@ public class TemperatureUpdater {
                 RaspPiConstants.PASSWORD,
                 Bundles.RASPBERRY_DATA_MODEL,
                 RaspPiConstants.GET_TEMPERATURES,
-                Broadcasts.DOWNLOAD_TEMPERATURE_FINISHED,
-                LucaObject.TEMPERATURE,
-                RaspberrySelection.BOTH);
+                Broadcasts.DOWNLOAD_TEMPERATURE_FINISHED);
     }
 }

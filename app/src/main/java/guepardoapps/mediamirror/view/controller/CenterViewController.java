@@ -7,6 +7,7 @@ import com.google.android.youtube.player.YouTubePlayer.PlaybackEventListener;
 import com.google.android.youtube.player.YouTubePlayer.PlayerStateChangeListener;
 import com.google.android.youtube.player.YouTubePlayer.Provider;
 import com.google.android.youtube.player.YouTubePlayerView;
+import com.taishi.library.Indicator;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -23,6 +24,7 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import es.dmoral.toasty.Toasty;
@@ -54,7 +56,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
     private Context _context;
     private BroadcastController _broadcastController;
-    private DatabaseController _dbController;
+    private DatabaseController _databaseController;
     private MediaVolumeController _mediaVolumeController;
     private ReceiverController _receiverController;
 
@@ -62,6 +64,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
     private ProgressDialog _progressDialog;
     private WebView _centerWebView;
 
+    private Indicator _musicIndicator;
     private boolean _youTubePlayerIsInitialized;
     private YouTubePlayer _youtubePlayer;
     private YouTubePlayerView _youTubePlayerView;
@@ -121,6 +124,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
         @Override
         public void onReceive(Context context, Intent intent) {
             _screenEnabled = false;
+            pauseVideo();
             _youtubePlayer.release();
             _youTubePlayerIsInitialized = false;
         }
@@ -188,12 +192,13 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
             if (model != null) {
                 _logger.Debug(model.toString());
 
-                if (model.GetCenterVisibility()) {
+                if (model.IsCenterVisible()) {
                     if (_loadingUrl) {
                         _centerWebView.stopLoading();
                         _progressDialog.dismiss();
                     }
 
+                    _musicIndicator.setVisibility(View.INVISIBLE);
                     _youTubePlayerView.setVisibility(View.INVISIBLE);
                     _centerWebView.setVisibility(View.INVISIBLE);
                     _centerTextView.setVisibility(View.VISIBLE);
@@ -201,19 +206,21 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
                     stopVideo();
 
                     _centerTextView.setText(model.GetCenterText());
-                } else if (model.GetYoutubeVisibility()) {
+                } else if (model.IsYoutubeVisible()) {
                     if (_loadingUrl) {
                         _centerWebView.stopLoading();
                         _progressDialog.dismiss();
                     }
 
+                    _musicIndicator.setVisibility(View.VISIBLE);
                     _youTubePlayerView.setVisibility(View.VISIBLE);
                     _centerWebView.setVisibility(View.INVISIBLE);
                     _centerTextView.setVisibility(View.INVISIBLE);
 
                     _youtubeId = model.GetYoutubeId();
                     startVideo(_youtubeId);
-                } else if (model.GetWebViewVisibility()) {
+                } else if (model.IsWebViewVisible()) {
+                    _musicIndicator.setVisibility(View.INVISIBLE);
                     _youTubePlayerView.setVisibility(View.INVISIBLE);
                     _centerWebView.setVisibility(View.VISIBLE);
                     _centerTextView.setVisibility(View.INVISIBLE);
@@ -234,6 +241,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
                         _progressDialog.dismiss();
                     }
 
+                    _musicIndicator.setVisibility(View.INVISIBLE);
                     _youTubePlayerView.setVisibility(View.INVISIBLE);
                     _centerWebView.setVisibility(View.INVISIBLE);
                     _centerTextView.setVisibility(View.VISIBLE);
@@ -276,6 +284,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
             if (youtubeId != null) {
                 _logger.Debug("received youtubeId: " + youtubeId);
                 _youtubeId = youtubeId;
+
                 startVideo(_youtubeId);
             }
         }
@@ -324,7 +333,8 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
         _context = context;
         _broadcastController = new BroadcastController(_context);
-        _dbController = new DatabaseController(_context);
+        _databaseController = DatabaseController.getSingleton();
+        _databaseController.Initialize(_context);
         _mediaVolumeController = MediaVolumeController.getInstance();
         _receiverController = new ReceiverController(_context);
 
@@ -347,6 +357,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
             }
         });
 
+        _musicIndicator = (Indicator) ((Activity) _context).findViewById(R.id.musicIndicator);
         _youTubePlayerView = (YouTubePlayerView) ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
         if (Keys.YOUTUBE_API_KEY.length() != 0) {
             _youTubePlayerView.initialize(Keys.YOUTUBE_API_KEY, this);
@@ -354,6 +365,10 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
             _logger.Warn("Please enter your youtube api key!");
             Toasty.error(_context, "Please enter your youtube api key!", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void onStart() {
+        _logger.Debug("onStart");
     }
 
     public void onPause() {
@@ -406,6 +421,10 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
         return _youtubePlayer.getDurationMillis() / 1000;
     }
 
+    public ArrayList<YoutubeDatabaseModel> GetYoutubeIds() {
+        return _databaseController.GetYoutubeIds();
+    }
+
     private void startVideo(@NonNull String youtubeId) {
         _logger.Debug(String.format("trying to start video %s", youtubeId));
 
@@ -431,10 +450,11 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
         }
 
         if (_youtubePlayer != null) {
-            _dbController.SaveYoutubeId(new YoutubeDatabaseModel(_dbController.GetHighestId() + 1, youtubeId, 0));
+            _databaseController.SaveYoutubeId(new YoutubeDatabaseModel(_databaseController.GetHighestId() + 1, youtubeId, 0));
             _youtubePlayer.cueVideo(youtubeId);
         }
 
+        _musicIndicator.setVisibility(View.VISIBLE);
         _youTubePlayerView.setVisibility(View.VISIBLE);
         _centerWebView.setVisibility(View.INVISIBLE);
         _centerTextView.setVisibility(View.INVISIBLE);
@@ -482,6 +502,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
         _youtubePlayer.pause();
         _youtubePlayer.seekToMillis(0);
 
+        _musicIndicator.setVisibility(View.INVISIBLE);
         _youTubePlayerView.setVisibility(View.INVISIBLE);
     }
 
@@ -494,6 +515,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
         _loadingVideo = false;
         _logger.Error("Video Play Error :" + error);
 
+        _musicIndicator.setVisibility(View.INVISIBLE);
         _youTubePlayerView.setVisibility(View.INVISIBLE);
 
         _centerTextView.setVisibility(View.VISIBLE);
@@ -563,6 +585,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
             if (_youtubePlayer.hasNext()) {
                 _youtubePlayer.next();
             } else {
+                _musicIndicator.setVisibility(View.INVISIBLE);
                 _youTubePlayerView.setVisibility(View.INVISIBLE);
                 _centerWebView.setVisibility(View.INVISIBLE);
                 _centerTextView.setVisibility(View.VISIBLE);

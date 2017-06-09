@@ -10,10 +10,9 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import guepardoapps.library.lucahome.common.dto.BirthdayDto;
-import guepardoapps.library.lucahome.common.enums.LucaObject;
-import guepardoapps.library.lucahome.common.enums.RaspberrySelection;
 import guepardoapps.library.lucahome.controller.ServiceController;
 import guepardoapps.library.lucahome.converter.json.JsonDataToBirthdayConverter;
+
 import guepardoapps.library.toolset.common.classes.SerializableList;
 import guepardoapps.library.toolset.controller.BroadcastController;
 import guepardoapps.library.toolset.controller.ReceiverController;
@@ -189,8 +188,6 @@ public class BirthdayUpdater {
                 RaspPiConstants.PASSWORD,
                 Bundles.BIRTHDAY_MODEL,
                 RaspPiConstants.GET_BIRTHDAYS,
-                Broadcasts.DOWNLOAD_BIRTHDAY_FINISHED,
-                LucaObject.BIRTHDAY,
-                RaspberrySelection.BOTH);
+                Broadcasts.DOWNLOAD_BIRTHDAY_FINISHED);
     }
 }

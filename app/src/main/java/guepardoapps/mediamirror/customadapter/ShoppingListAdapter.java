@@ -17,10 +17,9 @@ import guepardoapps.library.lucahome.R;
 import guepardoapps.library.lucahome.common.constants.Broadcasts;
 import guepardoapps.library.lucahome.common.constants.Bundles;
 import guepardoapps.library.lucahome.common.dto.ShoppingEntryDto;
-import guepardoapps.library.lucahome.common.enums.LucaObject;
-import guepardoapps.library.lucahome.common.enums.RaspberrySelection;
 import guepardoapps.library.lucahome.common.tools.LucaHomeLogger;
 import guepardoapps.library.lucahome.controller.ServiceController;
+
 import guepardoapps.library.toolset.common.classes.SerializableList;
 
 public class ShoppingListAdapter extends BaseAdapter {
@@ -110,9 +109,7 @@ public class ShoppingListAdapter extends BaseAdapter {
             _serviceController.StartRestService(
                     Bundles.SHOPPING_LIST,
                     entry.GetCommandUpdate(),
-                    Broadcasts.RELOAD_SHOPPING_LIST,
-                    LucaObject.SHOPPING_ENTRY,
-                    RaspberrySelection.BOTH);
+                    Broadcasts.RELOAD_SHOPPING_LIST);
         });
 
         holder._decrease = (ImageButton) rowView.findViewById(R.id.shopping_button_decrease);
@@ -122,9 +119,7 @@ public class ShoppingListAdapter extends BaseAdapter {
             _serviceController.StartRestService(
                     Bundles.SHOPPING_LIST,
                     entry.GetCommandUpdate(),
-                    Broadcasts.RELOAD_SHOPPING_LIST,
-                    LucaObject.SHOPPING_ENTRY,
-                    RaspberrySelection.BOTH);
+                    Broadcasts.RELOAD_SHOPPING_LIST);
         });
 
         holder._delete = (ImageButton) rowView.findViewById(R.id.shopping_button_delete);
@@ -133,9 +128,7 @@ public class ShoppingListAdapter extends BaseAdapter {
             _serviceController.StartRestService(
                     Bundles.SHOPPING_LIST,
                     entry.GetCommandDelete(),
-                    Broadcasts.RELOAD_SHOPPING_LIST,
-                    LucaObject.SHOPPING_ENTRY,
-                    RaspberrySelection.BOTH);
+                    Broadcasts.RELOAD_SHOPPING_LIST);
         });
 
         holder._bought = (CheckBox) rowView.findViewById(R.id.shopping_checkbox_bought);

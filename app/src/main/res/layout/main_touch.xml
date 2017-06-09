@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#000000">
@@ -399,13 +400,27 @@
         android:src="@android:drawable/ic_dialog_info"
         android:visibility="gone" />
 
+    <com.taishi.library.Indicator
+        android:id="@+id/musicIndicator"
+        android:layout_width="480dp"
+        android:layout_height="80dp"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/temperatureRaspberryValue"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:background="#00000000"
+        app:bar_color="@color/colorWhite"
+        app:bar_num="50"
+        app:duration="20000"
+        app:step_num="65" />
+
     <com.google.android.youtube.player.YouTubePlayerView
         android:id="@+id/centerYoutubePlayer"
         android:layout_width="480dp"
         android:layout_height="270dp"
-        android:layout_below="@+id/temperatureRaspberryValue"
+        android:layout_below="@+id/musicIndicator"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="0dp"
         android:background="#fff" />
 
     <TextView

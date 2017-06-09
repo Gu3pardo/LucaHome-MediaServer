@@ -10,8 +10,6 @@ import android.widget.Toast;
 import es.dmoral.toasty.Toasty;
 
 import guepardoapps.library.lucahome.common.dto.MenuDto;
-import guepardoapps.library.lucahome.common.enums.LucaObject;
-import guepardoapps.library.lucahome.common.enums.RaspberrySelection;
 import guepardoapps.library.lucahome.controller.ServiceController;
 import guepardoapps.library.lucahome.converter.json.JsonDataToMenuConverter;
 
@@ -113,8 +111,6 @@ public class MenuListUpdater {
                 RaspPiConstants.PASSWORD,
                 Bundles.MENU,
                 RaspPiConstants.GET_MENU,
-                Broadcasts.DOWNLOAD_MENU_FINISHED,
-                LucaObject.MENU,
-                RaspberrySelection.BOTH);
+                Broadcasts.DOWNLOAD_MENU_FINISHED);
     }
 }

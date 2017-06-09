@@ -11,9 +11,7 @@ import java.util.Locale;
 
 import es.dmoral.toasty.Toasty;
 
-import guepardoapps.library.lucahome.common.enums.LucaObject;
-import guepardoapps.library.lucahome.common.enums.MediaMirrorSelection;
-import guepardoapps.library.lucahome.common.enums.RaspberrySelection;
+import guepardoapps.library.lucahome.common.enums.MediaServerSelection;
 import guepardoapps.library.lucahome.controller.ServiceController;
 
 import guepardoapps.library.toolset.controller.NetworkController;
@@ -103,10 +101,10 @@ public class BatterySocketController {
 
         if (localIp != null) {
             try {
-                MediaMirrorSelection mediaMirrorSelection = MediaMirrorSelection.GetByIp(localIp);
-                _logger.Debug(String.format("MediaMirrorSelection is %s", mediaMirrorSelection));
+                MediaServerSelection mediaServerSelection = MediaServerSelection.GetByIp(localIp);
+                _logger.Debug(String.format("MediaServerSelection is %s", mediaServerSelection));
 
-                String localSocket = mediaMirrorSelection.GetSocket();
+                String localSocket = mediaServerSelection.GetSocket();
                 if (localSocket != null) {
                     _logger.Debug(String.format(Locale.GERMAN, "setBatterySocket %s to %s", localSocket, ((enable) ? RaspPiConstants.SOCKET_STATE_ON : RaspPiConstants.SOCKET_STATE_OFF)));
 
@@ -115,9 +113,7 @@ public class BatterySocketController {
                             RaspPiConstants.PASSWORD,
                             "",
                             RaspPiConstants.SET_SOCKET + localSocket + ((enable) ? RaspPiConstants.SOCKET_STATE_ON : RaspPiConstants.SOCKET_STATE_OFF),
-                            "",
-                            LucaObject.WIRELESS_SOCKET,
-                            RaspberrySelection.BOTH);
+                            "");
 
                     _isSocketActive = enable;
 

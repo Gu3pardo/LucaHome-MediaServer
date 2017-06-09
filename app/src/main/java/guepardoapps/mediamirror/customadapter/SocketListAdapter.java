@@ -14,10 +14,9 @@ import android.widget.TextView;
 import guepardoapps.library.lucahome.R;
 import guepardoapps.library.lucahome.common.constants.Broadcasts;
 import guepardoapps.library.lucahome.common.dto.WirelessSocketDto;
-import guepardoapps.library.lucahome.common.enums.LucaObject;
-import guepardoapps.library.lucahome.common.enums.RaspberrySelection;
 import guepardoapps.library.lucahome.common.tools.LucaHomeLogger;
 import guepardoapps.library.lucahome.controller.ServiceController;
+
 import guepardoapps.library.toolset.common.classes.SerializableList;
 
 public class SocketListAdapter extends BaseAdapter {
@@ -88,9 +87,7 @@ public class SocketListAdapter extends BaseAdapter {
             _serviceController.StartRestService(
                     _socketList.getValue(index).GetName(),
                     _socketList.getValue(index).GetCommandSet(isChecked),
-                    Broadcasts.RELOAD_SOCKETS,
-                    LucaObject.WIRELESS_SOCKET,
-                    RaspberrySelection.BOTH);
+                    Broadcasts.RELOAD_SOCKETS);
         });
 
         return rowView;

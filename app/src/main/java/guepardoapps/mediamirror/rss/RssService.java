@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -23,8 +24,6 @@ public class RssService extends IntentService {
     private static final String TAG = RssService.class.getSimpleName();
     private SmartMirrorLogger _logger;
 
-    private static final RSSFeed DEFAULT_FEED = RSSFeed.DEFAULT;
-
     public static final String ITEMS = "items";
     public static final String TITLE = "title";
     public static final String RECEIVER = "receiver";
@@ -41,7 +40,7 @@ public class RssService extends IntentService {
 
         RSSFeed feed = (RSSFeed) intent.getSerializableExtra(FEED);
         if (feed == null) {
-            feed = DEFAULT_FEED;
+            feed = RSSFeed.DEFAULT;
         }
 
         List<RssItem> rssItems = null;
@@ -66,8 +65,8 @@ public class RssService extends IntentService {
         try {
             URL url = new URL(link);
             return url.openConnection().getInputStream();
-        } catch (IOException e) {
-            _logger.Warn("Exception while retrieving the input stream");
+        } catch (IOException exception) {
+            _logger.Error(String.format(Locale.getDefault(), "Exception while retrieving the input stream %s", exception));
             return null;
         }
     }

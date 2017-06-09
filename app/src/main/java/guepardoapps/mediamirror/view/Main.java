@@ -11,11 +11,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 
-import guepardoapps.library.lucahome.common.constants.Broadcasts;
-import guepardoapps.library.lucahome.common.constants.Bundles;
+import java.util.Locale;
+
 import guepardoapps.library.lucahome.common.constants.SharedPrefConstants;
 
-import guepardoapps.library.toolset.controller.BroadcastController;
 import guepardoapps.library.toolset.controller.PermissionController;
 import guepardoapps.library.toolset.controller.SharedPrefController;
 import guepardoapps.library.toolset.controller.TTSController;
@@ -35,7 +34,6 @@ public class Main extends YouTubeBaseActivity {
     private SmartMirrorLogger _logger;
 
     private Context _context;
-    private BroadcastController _broadcastController;
 
     private CenterViewController _centerViewController;
     private CurrentWeatherViewController _currentWeatherViewController;
@@ -60,7 +58,6 @@ public class Main extends YouTubeBaseActivity {
         _logger.Debug("onCreate");
 
         _context = this;
-        _broadcastController = new BroadcastController(_context);
 
         install();
 
@@ -109,17 +106,11 @@ public class Main extends YouTubeBaseActivity {
         _ttsController.Init();
     }
 
-    private void install() {
-        _logger.Debug("install");
-        SharedPrefController sharedPrefController = new SharedPrefController(_context, SharedPrefConstants.SHARED_PREF_NAME);
-
-        if (!sharedPrefController.LoadBooleanValueFromSharedPreferences(SharedPrefConstants.SHARED_PREF_INSTALLED)) {
-            _logger.Info("Installing shared preferences!");
-
-            sharedPrefController.SaveStringValue(SharedPrefConstants.USER_NAME, RaspPiConstants.USER);
-            sharedPrefController.SaveStringValue(SharedPrefConstants.USER_PASSPHRASE, RaspPiConstants.PASSWORD);
-            sharedPrefController.SaveBooleanValue(SharedPrefConstants.SHARED_PREF_INSTALLED, true);
-        }
+    @Override
+    public void onStart() {
+        super.onStart();
+        _logger.Debug("onStart");
+        _centerViewController.onStart();
     }
 
     @Override
@@ -185,43 +176,10 @@ public class Main extends YouTubeBaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int callbackId, @NonNull String permissions[], @NonNull int[] grantResults) {
-        _logger.Debug(String.format("onRequestPermissionsResult with id %s for permissions %s has result %s", callbackId, permissions, grantResults));
+        _logger.Debug(String.format(Locale.getDefault(), "onRequestPermissionsResult with id %s for permissions %s has result %s", callbackId, permissions, grantResults));
         int index = 0;
         for (String permission : permissions) {
             _logger.Info(String.format("Permission %s has been granted: %s", permission, grantResults[index]));
-
-            switch (permission) {
-                case Manifest.permission.READ_CALENDAR:
-                    _broadcastController.SendIntBroadcast(
-                            Broadcasts.PERMISSION_READ_CALENDAR,
-                            Bundles.PERMISSION_READ_CALENDAR,
-                            grantResults[index]);
-                    break;
-
-                case Manifest.permission.READ_EXTERNAL_STORAGE:
-                    _broadcastController.SendIntBroadcast(
-                            Broadcasts.PERMISSION_READ_EXTERNAL_STORAGE,
-                            Bundles.PERMISSION_READ_EXTERNAL_STORAGE,
-                            grantResults[index]);
-                    break;
-
-                case Manifest.permission.WRITE_EXTERNAL_STORAGE:
-                    _broadcastController.SendIntBroadcast(
-                            Broadcasts.PERMISSION_WRITE_EXTERNAL_STORAGE,
-                            Bundles.PERMISSION_WRITE_EXTERNAL_STORAGE,
-                            grantResults[index]);
-                    break;
-
-                case Manifest.permission.WRITE_SETTINGS:
-                    _broadcastController.SendIntBroadcast(
-                            Broadcasts.PERMISSION_WRITE_SETTINGS,
-                            Bundles.PERMISSION_WRITE_SETTINGS,
-                            grantResults[index]);
-                    break;
-                default:
-                    _logger.Info(String.format("Received request for permission %s, but this is not handled here!", permission));
-                    break;
-            }
             index++;
         }
     }
@@ -244,6 +202,19 @@ public class Main extends YouTubeBaseActivity {
 
     public void ShowUpdateAvailableDialog(View view) {
         _infoViewController.ShowUpdateAvailableDialog(view);
+    }
+
+    private void install() {
+        _logger.Debug("install");
+        SharedPrefController sharedPrefController = new SharedPrefController(_context, SharedPrefConstants.SHARED_PREF_NAME);
+
+        if (!sharedPrefController.LoadBooleanValueFromSharedPreferences(SharedPrefConstants.SHARED_PREF_INSTALLED)) {
+            _logger.Info("Installing shared preferences!");
+
+            sharedPrefController.SaveStringValue(SharedPrefConstants.USER_NAME, RaspPiConstants.USER);
+            sharedPrefController.SaveStringValue(SharedPrefConstants.USER_PASSPHRASE, RaspPiConstants.PASSWORD);
+            sharedPrefController.SaveBooleanValue(SharedPrefConstants.SHARED_PREF_INSTALLED, true);
+        }
     }
 
     private void initializeController() {

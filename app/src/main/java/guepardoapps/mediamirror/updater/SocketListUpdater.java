@@ -10,8 +10,6 @@ import android.widget.Toast;
 import es.dmoral.toasty.Toasty;
 
 import guepardoapps.library.lucahome.common.dto.WirelessSocketDto;
-import guepardoapps.library.lucahome.common.enums.LucaObject;
-import guepardoapps.library.lucahome.common.enums.RaspberrySelection;
 import guepardoapps.library.lucahome.controller.ServiceController;
 import guepardoapps.library.lucahome.converter.json.JsonDataToSocketConverter;
 
@@ -115,8 +113,6 @@ public class SocketListUpdater {
                 RaspPiConstants.PASSWORD,
                 Bundles.SOCKET_LIST,
                 RaspPiConstants.GET_SOCKETS,
-                Broadcasts.DOWNLOAD_SOCKET_FINISHED,
-                LucaObject.WIRELESS_SOCKET,
-                RaspberrySelection.BOTH);
+                Broadcasts.DOWNLOAD_SOCKET_FINISHED);
     }
 }

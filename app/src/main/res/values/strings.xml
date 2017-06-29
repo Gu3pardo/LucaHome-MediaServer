@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">MediaMirror</string>
-    <string name="serverVersion">0.19.0.170609</string>
+    <string name="serverVersion">0.20.0.170629</string>
     <string name="madeByGuepardoApps">MediaMirror by GuepardoApps</string>
 
     <string name="contentDescription">This is an image</string>

@@ -46,12 +46,12 @@ public class CurrentWeatherViewController {
         public void onReceive(Context context, Intent intent) {
             _screenEnabled = true;
 
-            _conditionTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherConditionTextView);
-            _temperatureTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherTemperatureTextView);
-            _humidityTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherHumidityTextView);
-            _pressureTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherPressureTextView);
-            _updatedTimeTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherUpdateTextView);
-            _conditionImageView = (ImageView) ((Activity) _context).findViewById(R.id.weatherConditionImageView);
+            _conditionTextView = ((Activity) _context).findViewById(R.id.weatherConditionTextView);
+            _temperatureTextView = ((Activity) _context).findViewById(R.id.weatherTemperatureTextView);
+            _humidityTextView = ((Activity) _context).findViewById(R.id.weatherHumidityTextView);
+            _pressureTextView = ((Activity) _context).findViewById(R.id.weatherPressureTextView);
+            _updatedTimeTextView = ((Activity) _context).findViewById(R.id.weatherUpdateTextView);
+            _conditionImageView = ((Activity) _context).findViewById(R.id.weatherConditionImageView);
         }
     };
 
@@ -91,12 +91,12 @@ public class CurrentWeatherViewController {
 
         _screenEnabled = true;
 
-        _conditionTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherConditionTextView);
-        _temperatureTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherTemperatureTextView);
-        _humidityTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherHumidityTextView);
-        _pressureTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherPressureTextView);
-        _updatedTimeTextView = (TextView) ((Activity) _context).findViewById(R.id.weatherUpdateTextView);
-        _conditionImageView = (ImageView) ((Activity) _context).findViewById(R.id.weatherConditionImageView);
+        _conditionTextView = ((Activity) _context).findViewById(R.id.weatherConditionTextView);
+        _temperatureTextView = ((Activity) _context).findViewById(R.id.weatherTemperatureTextView);
+        _humidityTextView = ((Activity) _context).findViewById(R.id.weatherHumidityTextView);
+        _pressureTextView = ((Activity) _context).findViewById(R.id.weatherPressureTextView);
+        _updatedTimeTextView = ((Activity) _context).findViewById(R.id.weatherUpdateTextView);
+        _conditionImageView = ((Activity) _context).findViewById(R.id.weatherConditionImageView);
     }
 
     public void onPause() {

@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 <a target="_blank" href="https://www.paypal.me/GuepardoApps" title="Donate using PayPal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
 
-[![Version](https://img.shields.io/badge/version-v0.19.0.170609-blue.svg)](https://github.com/Gu3pardo/LucaHome-MediaServer)
+[![Version](https://img.shields.io/badge/version-v0.20.0.170629-blue.svg)](https://github.com/Gu3pardo/LucaHome-MediaServer)
 
 Android application permanently displaying data behind a mirror
 - date and time
@@ -13,6 +13,7 @@ Android application permanently displaying data behind a mirror
 - temperature in the flat
 - birthdays
 - watching youtube videos
+- listening to radio streams
 - RSS data
 - surfing websites
 - displaying custom text

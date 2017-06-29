@@ -15,6 +15,8 @@ public class Broadcasts {
     public static final String PAUSE_VIDEO = "guepardoapps.mediamirror.video.pause";
     public static final String STOP_VIDEO = "guepardoapps.mediamirror.video.stop";
     public static final String SET_VIDEO_POSITION = "guepardoapps.mediamirror.videoview.set.position";
+    public static final String PLAY_RADIO_STREAM = "guepardoapps.mediamirror.radio_stream.play";
+    public static final String STOP_RADIO_STREAM = "guepardoapps.mediamirror.radio_stream.stop";
     // CURRENT WEATHER VIEW
     public static final String SHOW_CURRENT_WEATHER_MODEL = "guepardoapps.mediamirror.show.current_weather_model";
     public static final String PERFORM_CURRENT_WEATHER_UPDATE = "guepardoapps.mediamirror.broadcast.perform.update.current_weather";

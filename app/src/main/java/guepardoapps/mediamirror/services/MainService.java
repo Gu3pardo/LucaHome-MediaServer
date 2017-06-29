@@ -17,6 +17,7 @@ import es.dmoral.toasty.Toasty;
 
 import guepardoapps.library.lucahome.common.enums.RSSFeed;
 
+import guepardoapps.library.lucahome.common.enums.RadioStreams;
 import guepardoapps.library.lucahome.common.enums.YoutubeId;
 import guepardoapps.library.toolset.controller.BroadcastController;
 import guepardoapps.library.toolset.controller.ReceiverController;
@@ -163,7 +164,9 @@ public class MainService extends Service {
                     true,
                     YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId(),
                     false,
-                    "");
+                    "",
+                    false,
+                    RadioStreams.NULL);
             _broadcastController.SendSerializableBroadcast(
                     Broadcasts.SHOW_CENTER_MODEL,
                     Bundles.CENTER_MODEL,
@@ -236,12 +239,14 @@ public class MainService extends Service {
 
             if (_broadcastController != null) {
                 CenterModel centerModel = new CenterModel(
-                    false,
-                    "",
-                    true,
-                    YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId(),
-                    false,
-                    "");
+                        false,
+                        "",
+                        true,
+                        YoutubeId.THE_GOOD_LIFE_STREAM.GetYoutubeId(),
+                        false,
+                        "",
+                        false,
+                        RadioStreams.NULL);
 
                 _broadcastController.SendSerializableBroadcast(
                         Broadcasts.SHOW_CENTER_MODEL,

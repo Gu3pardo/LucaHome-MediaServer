@@ -234,14 +234,14 @@ public class RSSViewController {
 
         _screenEnabled = true;
 
-        _rssTitleTextView = (TextView) ((Activity) _context).findViewById(R.id.rssTitleTextView);
-        _rssSeparatorTextView = (TextView) ((Activity) _context).findViewById(R.id.rssSeparatorTextView);
+        _rssTitleTextView = ((Activity) _context).findViewById(R.id.rssTitleTextView);
+        _rssSeparatorTextView = ((Activity) _context).findViewById(R.id.rssSeparatorTextView);
 
-        _rssTextView1 = (TextView) ((Activity) _context).findViewById(R.id.rssTextView1);
-        _rssTextView1Description = (TextView) ((Activity) _context).findViewById(R.id.rssDescriptionTextView1);
-        _rssTextView2 = (TextView) ((Activity) _context).findViewById(R.id.rssTextView2);
-        _rssTextView2Description = (TextView) ((Activity) _context).findViewById(R.id.rssDescriptionTextView2);
-        _rssTextView3 = (TextView) ((Activity) _context).findViewById(R.id.rssTextView3);
-        _rssTextView3Description = (TextView) ((Activity) _context).findViewById(R.id.rssDescriptionTextView3);
+        _rssTextView1 = ((Activity) _context).findViewById(R.id.rssTextView1);
+        _rssTextView1Description = ((Activity) _context).findViewById(R.id.rssDescriptionTextView1);
+        _rssTextView2 = ((Activity) _context).findViewById(R.id.rssTextView2);
+        _rssTextView2Description = ((Activity) _context).findViewById(R.id.rssDescriptionTextView2);
+        _rssTextView3 = ((Activity) _context).findViewById(R.id.rssTextView3);
+        _rssTextView3Description = ((Activity) _context).findViewById(R.id.rssDescriptionTextView3);
     }
 }

@@ -75,8 +75,8 @@ public class RaspberryViewController {
             _screenEnabled = true;
 
             _raspberryAlarmTextView = ((Activity) _context).findViewById(R.id.temperatureRaspberryAlarm);
-            _raspberryNameTextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberryName);
-            _raspberryTemperatureTextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberryValue);
+            _raspberryNameTextView = ((Activity) _context).findViewById(R.id.temperatureRaspberryName);
+            _raspberryTemperatureTextView = ((Activity) _context).findViewById(R.id.temperatureRaspberryValue);
         }
     };
 
@@ -142,8 +142,8 @@ public class RaspberryViewController {
         _screenEnabled = true;
 
         _raspberryAlarmTextView = ((Activity) _context).findViewById(R.id.temperatureRaspberryAlarm);
-        _raspberryNameTextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberryName);
-        _raspberryTemperatureTextView = (TextView) ((Activity) _context).findViewById(R.id.temperatureRaspberryValue);
+        _raspberryNameTextView = ((Activity) _context).findViewById(R.id.temperatureRaspberryName);
+        _raspberryTemperatureTextView = ((Activity) _context).findViewById(R.id.temperatureRaspberryValue);
     }
 
     public void onPause() {
@@ -174,7 +174,7 @@ public class RaspberryViewController {
     }
 
     public void ShowMenuListDialog(@NonNull View view) {
-        _logger.Debug(String.format(Locale.GERMAN, "showMenuListDialog: %s", view));
+        _logger.Debug(String.format(Locale.getDefault(), "showMenuListDialog: %s", view));
         if (_shoppingList != null) {
             _dialogController.ShowMenuListDialog(_menu);
         } else {
@@ -184,7 +184,7 @@ public class RaspberryViewController {
     }
 
     public void ShowShoppingListDialog(@NonNull View view) {
-        _logger.Debug(String.format(Locale.GERMAN, "showShoppingListDialog: %s", view));
+        _logger.Debug(String.format(Locale.getDefault(), "showShoppingListDialog: %s", view));
         if (_shoppingList != null) {
             _dialogController.ShowShoppingListDialog(_shoppingList);
         } else {
@@ -194,7 +194,7 @@ public class RaspberryViewController {
     }
 
     public void ShowSocketsDialog(@NonNull View view) {
-        _logger.Debug(String.format(Locale.GERMAN, "showSocketsDialog: %s", view));
+        _logger.Debug(String.format(Locale.getDefault(), "showSocketsDialog: %s", view));
         if (_socketList != null) {
             _dialogController.ShowSocketListDialog(_socketList);
         } else {
@@ -204,7 +204,7 @@ public class RaspberryViewController {
     }
 
     public void ShowTemperatureGraph(@NonNull View view) {
-        _logger.Debug(String.format(Locale.GERMAN, "showTemperatureGraph: %s", view));
+        _logger.Debug(String.format(Locale.getDefault(), "showTemperatureGraph: %s", view));
         String url = _raspberryModel.GetRaspberryTemperatureGraphUrl();
         if (url.length() > 0) {
             _dialogController.ShowTemperatureGraphDialog(_raspberryModel.GetRaspberryTemperatureGraphUrl());

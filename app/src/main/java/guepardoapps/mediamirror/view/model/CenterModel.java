@@ -17,6 +17,7 @@ public class CenterModel implements Serializable {
     private static final String DEFAULT_CENTER_TEXT = "Hello, this is your media mirror!";
     private static final String DEFAULT_YOUTUBE_VIDEO_ID = YoutubeId.DEFAULT.GetYoutubeId();
     private static final String DEFAULT_WEB_VIEW_URL = "http://imgur.com/";
+    private static final RadioStreams DEFAULT_RADIO_STREAM = RadioStreams.DEFAULT;
 
     private boolean _centerVisible;
     private String _centerText;
@@ -27,13 +28,18 @@ public class CenterModel implements Serializable {
     private boolean _webViewVisible;
     private String _webViewUrl;
 
+    private boolean _radioStreamVisible;
+    private RadioStreams _radioStream;
+
     public CenterModel(
             boolean centerVisible,
             @NonNull String centerText,
             boolean youtubeVisible,
             @NonNull String youtubeId,
             boolean webViewVisible,
-            @NonNull String webViewUrl) {
+            @NonNull String webViewUrl,
+            boolean radioStreamVisible,
+            @NonNull RadioStreams radioStream) {
         _logger = new SmartMirrorLogger(TAG);
 
         _centerVisible = centerVisible;
@@ -44,6 +50,9 @@ public class CenterModel implements Serializable {
 
         _webViewVisible = webViewVisible;
         _webViewUrl = webViewUrl;
+
+        _radioStreamVisible = radioStreamVisible;
+        _radioStream = radioStream;
 
         checkPlausibility();
     }
@@ -72,44 +81,78 @@ public class CenterModel implements Serializable {
         return _webViewUrl;
     }
 
+    public boolean IsRadioStreamVisible() {
+        return _radioStreamVisible;
+    }
+
+    public RadioStreams GetRadioStream() {
+        return _radioStream;
+    }
+
     private void checkPlausibility() {
         if ((_centerVisible && _youtubeVisible)
                 || (_centerVisible && _webViewVisible)
-                || (_youtubeVisible && _webViewVisible)) {
+                || (_centerVisible && _radioStreamVisible)
+                || (_youtubeVisible && _webViewVisible)
+                || (_youtubeVisible && _radioStreamVisible)
+                || (_webViewVisible && _radioStreamVisible)) {
 
             _logger.Warn("Invalid visibilities!");
 
             if (_youtubeId.length() > 0) {
                 _youtubeVisible = true;
-                _logger.Warn("Resetting webView, radio and center!");
+                _logger.Warn("Resetting center, webView and radio!");
 
                 _centerVisible = false;
                 _centerText = "";
 
                 _webViewVisible = false;
                 _webViewUrl = "";
+
+                _radioStreamVisible = false;
+                _radioStream = RadioStreams.NULL;
             }
 
             if (_centerText.length() > 0) {
-                _centerVisible = true;
-                _logger.Warn("Resetting video, radio and webView!");
-
                 _youtubeVisible = false;
                 _youtubeId = "";
 
+                _centerVisible = true;
+                _logger.Warn("Resetting youtube, webView and radio!");
+
                 _webViewVisible = false;
                 _webViewUrl = "";
+
+                _radioStreamVisible = false;
+                _radioStream = RadioStreams.NULL;
             }
 
             if (_webViewUrl.length() > 0) {
-                _webViewVisible = true;
-                _logger.Warn("Resetting center, radio and video!");
-
                 _youtubeVisible = false;
                 _youtubeId = "";
 
                 _centerVisible = false;
                 _centerText = "";
+
+                _webViewVisible = true;
+                _logger.Warn("Resetting youtube, center and radio!");
+
+                _radioStreamVisible = false;
+                _radioStream = RadioStreams.NULL;
+            }
+
+            if (_radioStream != null || _radioStream != RadioStreams.NULL) {
+                _youtubeVisible = false;
+                _youtubeId = "";
+
+                _centerVisible = false;
+                _centerText = "";
+
+                _webViewVisible = false;
+                _webViewUrl = "";
+
+                _radioStreamVisible = true;
+                _logger.Warn("Resetting youtube, center and webView!");
             }
         }
 
@@ -127,6 +170,11 @@ public class CenterModel implements Serializable {
             if (_webViewUrl.length() == 0) {
                 _logger.Warn("Setting webViewUrl to default: " + DEFAULT_WEB_VIEW_URL);
                 _webViewUrl = DEFAULT_WEB_VIEW_URL;
+            }
+        } else if (_radioStreamVisible) {
+            if (_radioStream == null || _radioStream == RadioStreams.NULL) {
+                _logger.Warn("Setting radioStream to default: " + DEFAULT_RADIO_STREAM);
+                _radioStream = DEFAULT_RADIO_STREAM;
             }
         } else {
             _centerVisible = true;
@@ -146,6 +194,8 @@ public class CenterModel implements Serializable {
                 + ";YoutubeId:" + _youtubeId
                 + ";WebViewVisible:" + String.valueOf(_webViewVisible)
                 + ";WebViewUrl:" + _webViewUrl
+                + ";RadioStreamVisible:" + String.valueOf(_radioStreamVisible)
+                + ";RadioStream:" + _radioStream
                 + "}";
     }
 }

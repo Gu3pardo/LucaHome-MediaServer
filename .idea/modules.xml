@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/../LucaHome/lib_lucahome/lib_lucahome.iml" filepath="$PROJECT_DIR$/../LucaHome/lib_lucahome/lib_lucahome.iml" />
       <module fileurl="file://$PROJECT_DIR$/../OpenWeather/lib_openweather/lib_openweather.iml" filepath="$PROJECT_DIR$/../OpenWeather/lib_openweather/lib_openweather.iml" />
       <module fileurl="file://$PROJECT_DIR$/../Toolset/lib_toolset/lib_toolset.iml" filepath="$PROJECT_DIR$/../Toolset/lib_toolset/lib_toolset.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Toolset/lib_toolset/lib_toolset.iml" filepath="$PROJECT_DIR$/../Toolset/lib_toolset/lib_toolset.iml" />
       <module fileurl="file://$PROJECT_DIR$/../VerticalSeekbarView/lib_verticalseekbar/lib_verticalseekbar.iml" filepath="$PROJECT_DIR$/../VerticalSeekbarView/lib_verticalseekbar/lib_verticalseekbar.iml" />
     </modules>
   </component>

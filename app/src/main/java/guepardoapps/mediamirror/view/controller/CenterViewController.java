@@ -15,12 +15,15 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +33,7 @@ import java.util.Locale;
 import es.dmoral.toasty.Toasty;
 
 import guepardoapps.library.lucahome.common.constants.Keys;
+import guepardoapps.library.lucahome.common.enums.RadioStreams;
 import guepardoapps.library.lucahome.common.enums.YoutubeId;
 import guepardoapps.library.lucahome.tasks.DownloadYoutubeVideoTask;
 
@@ -64,6 +68,12 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
     private ProgressDialog _progressDialog;
     private WebView _centerWebView;
 
+    private LinearLayout _centerRadioStreamLinearLayout;
+    private ImageButton _imageButtonRadioStreamPlay;
+    private ImageButton _imageButtonRadioStreamStop;
+    private RadioStreams _radioStream = RadioStreams.DEFAULT;
+    private MediaPlayer _radioPlayer;
+
     private Indicator _musicIndicator;
     private boolean _youTubePlayerIsInitialized;
     private YouTubePlayer _youtubePlayer;
@@ -76,12 +86,13 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
     private BroadcastReceiver _pauseVideoReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            _logger.Debug("_pauseVideoReceiver onReceive");
+
             if (!_screenEnabled) {
                 _logger.Debug("Screen is not enabled!");
                 return;
             }
 
-            _logger.Debug("_pauseVideoReceiver onReceive");
             pauseVideo();
         }
     };
@@ -89,13 +100,48 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
     private BroadcastReceiver _playBirthdaySongReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            _logger.Debug("_playBirthdaySongReceiver onReceive");
+
             if (!_screenEnabled) {
                 _logger.Debug("Screen is not enabled!");
                 return;
             }
 
-            _logger.Debug("_playBirthdaySongReceiver onReceive");
             startVideo(YoutubeId.BIRTHDAY_SONG.toString());
+        }
+    };
+
+    private BroadcastReceiver _playRadioStreamReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            _logger.Debug("_playRadioStreamReceiver onReceive");
+
+            if (!_screenEnabled) {
+                _logger.Debug("Screen is not enabled!");
+                return;
+            }
+
+            String radioStreamId = intent.getStringExtra(Bundles.RADIO_STREAM_ID);
+            if (radioStreamId != null) {
+                if (radioStreamId.length() > 0) {
+                    try {
+                        int id = Integer.parseInt(radioStreamId);
+                        RadioStreams radioStream = RadioStreams.GetById(id);
+                        if (radioStream == RadioStreams.NULL) {
+                            radioStream = RadioStreams.DEFAULT;
+                        }
+                        _radioStream = radioStream;
+                    } catch (Exception exception) {
+                        _logger.Error(exception.toString());
+                        _radioStream = RadioStreams.DEFAULT;
+                    }
+                }
+            }
+
+            stopVideo();
+            stopWebViewLoading();
+
+            startRadioPlaying();
         }
     };
 
@@ -116,6 +162,9 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
                 }
             }
 
+            stopRadioPlaying();
+            stopWebViewLoading();
+
             startVideo(_youtubeId);
         }
     };
@@ -123,10 +172,15 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
     private BroadcastReceiver _screenDisableReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            _logger.Debug("_screenDisableReceiver onReceive");
+
             _screenEnabled = false;
+
             pauseVideo();
             _youtubePlayer.release();
             _youTubePlayerIsInitialized = false;
+
+            stopRadioPlaying();
         }
     };
 
@@ -134,11 +188,13 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
         @SuppressLint("SetJavaScriptEnabled")
         @Override
         public void onReceive(Context context, Intent intent) {
+            _logger.Debug("_screenEnableReceiver onReceive");
+
             _screenEnabled = true;
 
-            _centerTextView = (TextView) ((Activity) _context).findViewById(R.id.centerTextView);
+            _centerTextView = ((Activity) _context).findViewById(R.id.centerTextView);
 
-            _centerWebView = (WebView) ((Activity) _context).findViewById(R.id.centerWebView);
+            _centerWebView = ((Activity) _context).findViewById(R.id.centerWebView);
             _centerWebView.getSettings().setBuiltInZoomControls(true);
             _centerWebView.getSettings().setSupportZoom(true);
             _centerWebView.getSettings().setJavaScriptEnabled(true);
@@ -155,7 +211,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
                 }
             });
 
-            _youTubePlayerView = (YouTubePlayerView) ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
+            _youTubePlayerView = ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
             if (Keys.YOUTUBE_API_KEY.length() != 0) {
                 _youTubePlayerView.initialize(Keys.YOUTUBE_API_KEY, CenterViewController.this);
             } else {
@@ -165,15 +221,30 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
         }
     };
 
-    private BroadcastReceiver _stopVideoReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver _stopRadioStreamReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            _logger.Debug("_stopRadioStreamReceiver onReceive");
+
             if (!_screenEnabled) {
                 _logger.Debug("Screen is not enabled!");
                 return;
             }
 
+            stopRadioPlaying();
+        }
+    };
+
+    private BroadcastReceiver _stopVideoReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
             _logger.Debug("_stopVideoReceiver onReceive");
+
+            if (!_screenEnabled) {
+                _logger.Debug("Screen is not enabled!");
+                return;
+            }
+
             stopVideo();
         }
     };
@@ -181,59 +252,76 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
     private BroadcastReceiver _updateViewReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            _logger.Debug("_updateViewReceiver onReceive");
+
             if (!_screenEnabled) {
                 _logger.Debug("Screen is not enabled!");
                 return;
             }
 
-            _logger.Debug("_updateViewReceiver onReceive");
             CenterModel model = (CenterModel) intent.getSerializableExtra(Bundles.CENTER_MODEL);
 
             if (model != null) {
                 _logger.Debug(model.toString());
 
                 if (model.IsCenterVisible()) {
-                    if (_loadingUrl) {
-                        _centerWebView.stopLoading();
-                        _progressDialog.dismiss();
-                    }
+                    stopWebViewLoading();
+                    stopVideo();
+                    stopRadioPlaying();
 
                     _musicIndicator.setVisibility(View.INVISIBLE);
                     _youTubePlayerView.setVisibility(View.INVISIBLE);
                     _centerWebView.setVisibility(View.INVISIBLE);
                     _centerTextView.setVisibility(View.VISIBLE);
-
-                    stopVideo();
+                    _centerRadioStreamLinearLayout.setVisibility(View.GONE);
 
                     _centerTextView.setText(model.GetCenterText());
                 } else if (model.IsYoutubeVisible()) {
-                    if (_loadingUrl) {
-                        _centerWebView.stopLoading();
-                        _progressDialog.dismiss();
-                    }
+                    stopWebViewLoading();
+                    stopRadioPlaying();
 
                     _musicIndicator.setVisibility(View.VISIBLE);
                     _youTubePlayerView.setVisibility(View.VISIBLE);
                     _centerWebView.setVisibility(View.INVISIBLE);
                     _centerTextView.setVisibility(View.INVISIBLE);
+                    _centerRadioStreamLinearLayout.setVisibility(View.GONE);
 
                     _youtubeId = model.GetYoutubeId();
                     startVideo(_youtubeId);
                 } else if (model.IsWebViewVisible()) {
+                    stopWebViewLoading();
+                    stopVideo();
+                    stopRadioPlaying();
+
                     _musicIndicator.setVisibility(View.INVISIBLE);
                     _youTubePlayerView.setVisibility(View.INVISIBLE);
                     _centerWebView.setVisibility(View.VISIBLE);
                     _centerTextView.setVisibility(View.INVISIBLE);
+                    _centerRadioStreamLinearLayout.setVisibility(View.GONE);
 
+                    _loadingUrl = true;
+                    _progressDialog = ProgressDialog.show(_context, "Loading url...", "");
+                    _progressDialog.setCancelable(true);
+                    _centerWebView.loadUrl(model.GetWebViewUrl());
+                } else if (model.IsRadioStreamVisible()) {
+                    stopWebViewLoading();
                     stopVideo();
+                    stopRadioPlaying();
 
-                    if (!_loadingUrl) {
-                        _loadingUrl = true;
-                        _progressDialog = ProgressDialog.show(_context, "Loading url...", "");
-                        _progressDialog.setCancelable(true);
-                        _centerWebView.loadUrl(model.GetWebViewUrl());
+                    _musicIndicator.setVisibility(View.VISIBLE);
+                    _youTubePlayerView.setVisibility(View.INVISIBLE);
+                    _centerWebView.setVisibility(View.INVISIBLE);
+                    _centerTextView.setVisibility(View.VISIBLE);
+                    _centerRadioStreamLinearLayout.setVisibility(View.VISIBLE);
+
+                    RadioStreams radioStream = model.GetRadioStream();
+                    if (radioStream != null) {
+                        _radioStream = radioStream;
+                        _centerTextView.setText(_radioStream.GetTitle());
+                        startRadioPlaying();
                     } else {
-                        _logger.Warn("WebView is already loading a website!");
+                        _logger.Error("RadioStream is null!");
+                        _centerTextView.setText("An error appeared receiving the radio stream!");
                     }
                 } else {
                     if (_loadingUrl) {
@@ -280,6 +368,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
         @Override
         public void onReceive(Context context, Intent intent) {
             _logger.Debug("_youtubeIdReceiver onReceive");
+
             String youtubeId = intent.getStringExtra(guepardoapps.library.lucahome.common.constants.Bundles.YOUTUBE_ID);
             if (youtubeId != null) {
                 _logger.Debug("received youtubeId: " + youtubeId);
@@ -338,9 +427,22 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
         _mediaVolumeController = MediaVolumeController.getInstance();
         _receiverController = new ReceiverController(_context);
 
-        _centerTextView = (TextView) ((Activity) _context).findViewById(R.id.centerTextView);
+        _centerTextView = ((Activity) _context).findViewById(R.id.centerTextView);
 
-        _centerWebView = (WebView) ((Activity) _context).findViewById(R.id.centerWebView);
+        _centerRadioStreamLinearLayout = ((Activity) _context).findViewById(R.id.centerRadioStreamLinearLayout);
+        _imageButtonRadioStreamPlay = ((Activity) _context).findViewById(R.id.imageButtonRadioStreamPlay);
+        _imageButtonRadioStreamPlay.setOnClickListener(view -> {
+            _logger.Debug("_imageButtonRadioStreamPlay onClick");
+            startRadioPlaying();
+        });
+        _imageButtonRadioStreamStop = ((Activity) _context).findViewById(R.id.imageButtonRadioStreamStop);
+        _imageButtonRadioStreamStop.setOnClickListener(view -> {
+            _logger.Debug("_imageButtonRadioStreamStop onClick");
+            stopRadioPlaying();
+        });
+        initializeMediaPlayer();
+
+        _centerWebView = ((Activity) _context).findViewById(R.id.centerWebView);
         _centerWebView.getSettings().setBuiltInZoomControls(true);
         _centerWebView.getSettings().setSupportZoom(true);
         _centerWebView.getSettings().setJavaScriptEnabled(true);
@@ -357,8 +459,8 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
             }
         });
 
-        _musicIndicator = (Indicator) ((Activity) _context).findViewById(R.id.musicIndicator);
-        _youTubePlayerView = (YouTubePlayerView) ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
+        _musicIndicator = ((Activity) _context).findViewById(R.id.musicIndicator);
+        _youTubePlayerView = ((Activity) _context).findViewById(R.id.centerYoutubePlayer);
         if (Keys.YOUTUBE_API_KEY.length() != 0) {
             _youTubePlayerView.initialize(Keys.YOUTUBE_API_KEY, this);
         } else {
@@ -373,16 +475,21 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
     public void onPause() {
         _logger.Debug("onPause");
+        stopWebViewLoading();
+        stopVideo();
+        stopRadioPlaying();
     }
 
     public void onResume() {
         _logger.Debug("onResume");
         if (!_isInitialized) {
-            _receiverController.RegisterReceiver(_pauseVideoReceiver, new String[]{Broadcasts.PAUSE_VIDEO});
-            _receiverController.RegisterReceiver(_playVideoReceiver, new String[]{Broadcasts.PLAY_VIDEO});
             _receiverController.RegisterReceiver(_playBirthdaySongReceiver, new String[]{Broadcasts.PLAY_BIRTHDAY_SONG});
+            _receiverController.RegisterReceiver(_playRadioStreamReceiver, new String[]{Broadcasts.PLAY_RADIO_STREAM});
+            _receiverController.RegisterReceiver(_playVideoReceiver, new String[]{Broadcasts.PLAY_VIDEO});
+            _receiverController.RegisterReceiver(_pauseVideoReceiver, new String[]{Broadcasts.PAUSE_VIDEO});
             _receiverController.RegisterReceiver(_screenDisableReceiver, new String[]{Broadcasts.SCREEN_OFF});
             _receiverController.RegisterReceiver(_screenEnableReceiver, new String[]{Broadcasts.SCREEN_ENABLED});
+            _receiverController.RegisterReceiver(_stopRadioStreamReceiver, new String[]{Broadcasts.STOP_RADIO_STREAM});
             _receiverController.RegisterReceiver(_stopVideoReceiver, new String[]{Broadcasts.STOP_VIDEO});
             _receiverController.RegisterReceiver(_updateViewReceiver, new String[]{Broadcasts.SHOW_CENTER_MODEL});
             _receiverController.RegisterReceiver(_videoPositionReceiver, new String[]{Broadcasts.SET_VIDEO_POSITION});
@@ -397,6 +504,9 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
     public void onDestroy() {
         _logger.Debug("onDestroy");
+        stopWebViewLoading();
+        stopVideo();
+        stopRadioPlaying();
         _receiverController.Dispose();
         _isInitialized = false;
     }
@@ -423,6 +533,25 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
 
     public ArrayList<YoutubeDatabaseModel> GetYoutubeIds() {
         return _databaseController.GetYoutubeIds();
+    }
+
+    public int GetRadioStreamId() {
+        return _radioStream.GetId();
+    }
+
+    public boolean IsRadioStreamPlaying() {
+        return _radioPlayer.isPlaying();
+    }
+
+    private void stopWebViewLoading() {
+        _logger.Warn("stopWebViewLoading");
+
+        if (_loadingUrl) {
+            _logger.Warn("WebView is loading a website! Cancel loading!");
+            _centerWebView.stopLoading();
+            _loadingUrl = false;
+            _progressDialog.dismiss();
+        }
     }
 
     private void startVideo(@NonNull String youtubeId) {
@@ -519,7 +648,7 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
         _youTubePlayerView.setVisibility(View.INVISIBLE);
 
         _centerTextView.setVisibility(View.VISIBLE);
-        _centerTextView.setText(String.format(Locale.GERMAN, "Video Play Error : %s", error));
+        _centerTextView.setText(String.format(Locale.getDefault(), "Video Play Error : %s", error));
     }
 
     private PlaybackEventListener _playbackEventListener = new PlaybackEventListener() {
@@ -554,10 +683,10 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
         }
 
         @Override
-        public void onError(ErrorReason arg0) {
-            _logger.Error(arg0.toString());
+        public void onError(ErrorReason errorReason) {
+            _logger.Error(errorReason.toString());
 
-            if (arg0 == ErrorReason.USER_DECLINED_RESTRICTED_CONTENT) {
+            if (errorReason == ErrorReason.USER_DECLINED_RESTRICTED_CONTENT) {
                 if (YoutubeId.GetByYoutubeId(_youtubeId) == YoutubeId.THE_GOOD_LIFE_STREAM) {
                     _logger.Debug("Stream is " + YoutubeId.THE_GOOD_LIFE_STREAM.GetTitle() + "! Searching other id!");
 
@@ -598,4 +727,50 @@ public class CenterViewController implements YouTubePlayer.OnInitializedListener
             _mediaVolumeController.UnMuteVolume();
         }
     };
+
+    private void initializeMediaPlayer() {
+        _logger.Debug("initializeMediaPlayer");
+
+        _radioPlayer = new MediaPlayer();
+
+        try {
+            _radioPlayer.setDataSource(_radioStream.GetUrl());
+            _logger.Debug(String.format(Locale.getDefault(), "Set DataSource to %s", _radioStream.GetUrl()));
+        } catch (Exception e) {
+            _logger.Error(e.toString());
+            Toasty.error(_context, "An error appeared settings url for radio player!", Toast.LENGTH_LONG).show();
+        }
+
+        _radioPlayer.setOnBufferingUpdateListener((mediaPlayer, percent) -> _logger.Info(String.format(Locale.getDefault(), "Buffered to %d%%", percent)));
+        _radioPlayer.setOnPreparedListener(mediaPlayer -> {
+            _logger.Debug("onPreparedListener...");
+            _radioPlayer.start();
+        });
+    }
+
+    private void startRadioPlaying() {
+        _logger.Debug("startRadioPlaying");
+
+        _imageButtonRadioStreamPlay.setEnabled(false);
+        _imageButtonRadioStreamStop.setEnabled(true);
+
+        try {
+            _radioPlayer.prepareAsync();
+        } catch (Exception exception) {
+            _logger.Error(exception.toString());
+        }
+    }
+
+    private void stopRadioPlaying() {
+        _logger.Debug("stopRadioPlaying");
+
+        if (_radioPlayer.isPlaying()) {
+            _radioPlayer.stop();
+        }
+        _radioPlayer.release();
+        initializeMediaPlayer();
+
+        _imageButtonRadioStreamPlay.setEnabled(true);
+        _imageButtonRadioStreamStop.setEnabled(false);
+    }
 }

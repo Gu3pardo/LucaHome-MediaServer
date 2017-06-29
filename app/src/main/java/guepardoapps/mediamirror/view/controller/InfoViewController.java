@@ -17,8 +17,8 @@ import java.util.Locale;
 import guepardoapps.library.toolset.controller.ReceiverController;
 
 import guepardoapps.library.verticalseekbarview.VerticalSeekBarView;
-import guepardoapps.library.verticalseekbarview.enums.VerticalSeekBarStyle;
 
+import guepardoapps.library.verticalseekbarview.enums.VerticalSeekBarStyleEnum;
 import guepardoapps.mediamirror.R;
 import guepardoapps.mediamirror.common.SmartMirrorLogger;
 import guepardoapps.mediamirror.common.constants.Broadcasts;
@@ -90,7 +90,7 @@ public class InfoViewController {
                 _updateAvailableView.setVisibility(View.GONE);
                 _updateFilePath = null;
             } else {
-                _logger.Info(String.format(Locale.GERMAN, "Update available at path %s", downloadedFilePath));
+                _logger.Info(String.format(Locale.getDefault(), "Update available at path %s", downloadedFilePath));
                 _updateAvailableView.setVisibility(View.VISIBLE);
                 _updateFilePath = downloadedFilePath;
             }
@@ -149,7 +149,7 @@ public class InfoViewController {
 
             if (newVolumeText != null) {
                 _logger.Debug("newVolumeText: " + newVolumeText);
-                _volumeValueTextView.setText(String.format(Locale.GERMAN, "Vol.: %s", newVolumeText));
+                _volumeValueTextView.setText(String.format(Locale.getDefault(), "Vol.: %s", newVolumeText));
 
                 if (!newVolumeText.contains("mute")) {
                     int currentVolume = -1;
@@ -222,7 +222,7 @@ public class InfoViewController {
     }
 
     public void ShowUpdateAvailableDialog(@NonNull View view) {
-        _logger.Debug(String.format(Locale.GERMAN, "ShowUpdateAvailableDialog at view: %s", view));
+        _logger.Debug(String.format(Locale.getDefault(), "ShowUpdateAvailableDialog at view: %s", view));
         if (_updateFilePath == null) {
             _logger.Error("UpdateFilePath is null!");
             return;
@@ -237,17 +237,17 @@ public class InfoViewController {
         _screenEnabled = true;
 
         _batteryAlarmView = ((Activity) _context).findViewById(R.id.batteryAlarm);
-        _batteryValueTextView = (TextView) ((Activity) _context).findViewById(R.id.batteryTextView);
+        _batteryValueTextView = ((Activity) _context).findViewById(R.id.batteryTextView);
 
-        _ipAddressTextView = (TextView) ((Activity) _context).findViewById(R.id.ipAddressTextView);
+        _ipAddressTextView = ((Activity) _context).findViewById(R.id.ipAddressTextView);
 
         _maxVolume = _mediaVolumeController.GetMaxVolume();
 
-        _volumeValueTextView = (TextView) ((Activity) _context).findViewById(R.id.volumeTextView);
+        _volumeValueTextView = ((Activity) _context).findViewById(R.id.volumeTextView);
         _volumeValueTextView.setText(String.valueOf(_mediaVolumeController.GetCurrentVolume()));
-        _volumeControl = (VerticalSeekBarView) ((Activity) _context).findViewById(R.id.volumeSlider);
-        _volumeControl.SetStyle(VerticalSeekBarStyle.VOLUME_SLIDER);
-        _volumeControl.setOnVerticalSeebarMoveListener(volumePercentage -> {
+        _volumeControl = ((Activity) _context).findViewById(R.id.volumeSlider);
+        _volumeControl.SetStyle(VerticalSeekBarStyleEnum.VOLUME_SLIDER);
+        _volumeControl.setOnVerticalSeekBarMoveListener(volumePercentage -> {
             _logger.Debug(String.format("VolumePercentage: %s", volumePercentage));
             if (volumePercentage < 0) {
                 volumePercentage *= -1;
@@ -261,7 +261,7 @@ public class InfoViewController {
             _mediaVolumeController.SetVolume((_maxVolume * volumePercentage / 100));
         }, LOOP_INTERVAL);
 
-        TextView serverVersionTextView = (TextView) ((Activity) _context).findViewById(R.id.serverVersionTextView);
+        TextView serverVersionTextView = ((Activity) _context).findViewById(R.id.serverVersionTextView);
         String version;
         try {
             PackageInfo packageInfo = _context.getPackageManager().getPackageInfo(_context.getPackageName(), 0);
@@ -272,6 +272,6 @@ public class InfoViewController {
         }
         serverVersionTextView.setText(version);
 
-        _updateAvailableView = (ImageView) ((Activity) _context).findViewById(R.id.updateAvailableView);
+        _updateAvailableView = ((Activity) _context).findViewById(R.id.updateAvailableView);
     }
 }

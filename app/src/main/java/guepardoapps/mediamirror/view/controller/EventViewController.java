@@ -88,49 +88,54 @@ public class EventViewController {
         @Override
         public void onReceive(Context context, Intent intent) {
             _logger.Debug("_updateBirthdayViewReceiver onReceive");
-            SerializableList<BirthdayDto> birthdayList;
+            SerializableList<BirthdayDto> birthdayList = new SerializableList<>();
 
             if (!_screenEnabled) {
                 _logger.Debug("Screen is not enabled!");
                 return;
             }
 
-            _logger.Debug("Receiving Serializable object from intent and bundle birthdayModel and casting it to SerializableList<BirthdayDto>");
-            birthdayList = (SerializableList<BirthdayDto>) intent.getSerializableExtra(Bundles.BIRTHDAY_MODEL);
-
-            _logger.Debug("Trying to work with received birthdayList");
-            if (birthdayList != null) {
-                _logger.Debug("birthdayList: " + birthdayList.toString());
-
-                for (int index = 0; index < birthdayList.getSize(); index++) {
-                    BirthdayDto entry = birthdayList.getValue(index);
-                    _logger.Debug(String.format(Locale.GERMAN, "Birthday: %s", entry));
-
-                    if (entry != null) {
-                        if (entry.HasBirthday()) {
-                            _logger.Debug("Entry has today birthday!");
-                            _hasBirthday = true;
-                            _birthdayTextView.setText(entry.GetNotificationBody(entry.GetAge()));
-                            _birthdayAlarmView.setVisibility(View.VISIBLE);
-                            checkPlayBirthdaySong(entry);
-                        } else {
-                            _hasBirthday = false;
-                            _birthdayTextView.setText(entry.GetName() + ": " + entry.GetBirthdayString());
-                            _birthdayAlarmView.setVisibility(View.INVISIBLE);
-                        }
+            _logger.Debug("Receiving Serializable object from intent and bundle birthdayModel and trying to cast it to SerializableList<BirthdayDto>");
+            SerializableList<?> serializableExtra = (SerializableList<?>) intent.getSerializableExtra(Bundles.BIRTHDAY_MODEL);
+            if (serializableExtra != null) {
+                for (int index = 0; index < serializableExtra.getSize(); index++) {
+                    if (!(serializableExtra.getValue(index) instanceof BirthdayDto)) {
+                        _logger.Error(String.format(Locale.getDefault(), "Value at index %d is not an instance of BirthdayDto: %s", index, serializableExtra.getValue(index)));
+                        return;
                     } else {
-                        _logger.Warn("Birthday entry is null!");
-                        _hasBirthday = false;
-                        _birthdayTextView.setText("");
-                        _birthdayAlarmView.setVisibility(View.INVISIBLE);
+                        birthdayList.addValue((BirthdayDto) serializableExtra.getValue(index));
                     }
                 }
-
-                _updateBirthdayAlarmHandler.removeCallbacks(_updateBirthdayAlarmViewRunnable);
-                _updateBirthdayAlarmHandler.postDelayed(_updateBirthdayAlarmViewRunnable, INVERT_TIME);
-            } else {
-                _logger.Warn("birthdayList is null!");
             }
+
+            _logger.Debug("birthdayList: " + birthdayList.toString());
+
+            for (int index = 0; index < birthdayList.getSize(); index++) {
+                BirthdayDto entry = birthdayList.getValue(index);
+                _logger.Debug(String.format(Locale.getDefault(), "Birthday: %s", entry));
+
+                if (entry != null) {
+                    if (entry.HasBirthday()) {
+                        _logger.Debug("Entry has today birthday!");
+                        _hasBirthday = true;
+                        _birthdayTextView.setText(entry.GetNotificationBody(entry.GetAge()));
+                        _birthdayAlarmView.setVisibility(View.VISIBLE);
+                        checkPlayBirthdaySong(entry);
+                    } else {
+                        _hasBirthday = false;
+                        _birthdayTextView.setText(entry.GetName() + ": " + entry.GetBirthdayString());
+                        _birthdayAlarmView.setVisibility(View.INVISIBLE);
+                    }
+                } else {
+                    _logger.Warn("Birthday entry is null!");
+                    _hasBirthday = false;
+                    _birthdayTextView.setText("");
+                    _birthdayAlarmView.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            _updateBirthdayAlarmHandler.removeCallbacks(_updateBirthdayAlarmViewRunnable);
+            _updateBirthdayAlarmHandler.postDelayed(_updateBirthdayAlarmViewRunnable, INVERT_TIME);
         }
 
         private void checkPlayBirthdaySong(@NonNull BirthdayDto entry) {
@@ -145,53 +150,64 @@ public class EventViewController {
     private BroadcastReceiver _updateCalendarViewReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            _logger.Debug("_updateBirthdayViewReceiver onReceive");
+            SerializableList<CalendarEntryDto> calendarList = new SerializableList<>();
+
             if (!_screenEnabled) {
                 _logger.Debug("Screen is not enabled!");
                 return;
             }
 
-            _logger.Debug("_updateCalendarViewReceiver onReceive");
-            @SuppressWarnings("unchecked")
-            SerializableList<CalendarEntryDto> calendarlist = (SerializableList<CalendarEntryDto>) intent.getSerializableExtra(Bundles.CALENDAR_MODEL);
-            if (calendarlist != null) {
-                _logger.Debug(calendarlist.toString());
-                _calendarList.clear();
-
-                for (int index = 0; index < calendarlist.getSize(); index++) {
-                    CalendarEntryDto entry = calendarlist.getValue(index);
-
-                    if (entry.BeginIsAfterNow()) {
-                        _logger.Debug(entry.toString() + ": begin is after now!");
-                        _calendarList.addValue(entry);
+            _logger.Debug("Receiving Serializable object from intent and bundle birthdayModel and trying to cast it to SerializableList<CalendarEntryDto>");
+            SerializableList<?> serializableExtra = (SerializableList<?>) intent.getSerializableExtra(Bundles.CALENDAR_MODEL);
+            if (serializableExtra != null) {
+                for (int index = 0; index < serializableExtra.getSize(); index++) {
+                    if (!(serializableExtra.getValue(index) instanceof CalendarEntryDto)) {
+                        _logger.Error(String.format(Locale.getDefault(), "Value at index %d is not an instance of CalendarEntryDto: %s", index, serializableExtra.getValue(index)));
+                        return;
+                    } else {
+                        calendarList.addValue((CalendarEntryDto) serializableExtra.getValue(index));
                     }
                 }
+            }
 
-                for (int index = 0; index < MAX_CALENDAR_COUNT; index++) {
-                    _isToday[index] = false;
+            _logger.Debug("calendarList: " + calendarList.toString());
+            _calendarList.clear();
+
+            for (int index = 0; index < calendarList.getSize(); index++) {
+                CalendarEntryDto entry = calendarList.getValue(index);
+
+                if (entry.BeginIsAfterNow()) {
+                    _logger.Debug(entry.toString() + ": begin is after now!");
+                    _calendarList.addValue(entry);
                 }
+            }
 
-                for (int index = 0; index < MAX_CALENDAR_COUNT; index++) {
-                    if (index < _calendarList.getSize()) {
-                        CalendarEntryDto entry = _calendarList.getValue(index);
-                        if (entry.IsToday()) {
-                            _logger.Debug(entry.toString() + " is today!");
-                            _isToday[index] = true;
-                            _calendarAlarmViewArray[index].setVisibility(View.VISIBLE);
-                        } else {
-                            _logger.Debug(entry.toString() + " is not today!");
-                            _isToday[index] = false;
-                            _calendarAlarmViewArray[index].setVisibility(View.INVISIBLE);
-                        }
-                        _calendarTextViewArray[index].setText(entry.GetMirrorText());
+            for (int index = 0; index < MAX_CALENDAR_COUNT; index++) {
+                _isToday[index] = false;
+            }
+
+            for (int index = 0; index < MAX_CALENDAR_COUNT; index++) {
+                if (index < _calendarList.getSize()) {
+                    CalendarEntryDto entry = _calendarList.getValue(index);
+                    if (entry.IsToday()) {
+                        _logger.Debug(entry.toString() + " is today!");
+                        _isToday[index] = true;
+                        _calendarAlarmViewArray[index].setVisibility(View.VISIBLE);
                     } else {
-                        _calendarTextViewArray[index].setVisibility(View.INVISIBLE);
+                        _logger.Debug(entry.toString() + " is not today!");
+                        _isToday[index] = false;
                         _calendarAlarmViewArray[index].setVisibility(View.INVISIBLE);
                     }
+                    _calendarTextViewArray[index].setText(entry.GetMirrorText());
+                } else {
+                    _calendarTextViewArray[index].setVisibility(View.INVISIBLE);
+                    _calendarAlarmViewArray[index].setVisibility(View.INVISIBLE);
                 }
-
-                _updateCalendarAlarmHandler.removeCallbacks(_updateCalendarAlarmViewRunnable);
-                _updateCalendarAlarmHandler.postDelayed(_updateCalendarAlarmViewRunnable, INVERT_TIME);
             }
+
+            _updateCalendarAlarmHandler.removeCallbacks(_updateCalendarAlarmViewRunnable);
+            _updateCalendarAlarmHandler.postDelayed(_updateCalendarAlarmViewRunnable, INVERT_TIME);
         }
     };
 
@@ -291,11 +307,11 @@ public class EventViewController {
         _screenEnabled = true;
 
         _birthdayAlarmView = ((Activity) _context).findViewById(R.id.birthdayAlarmView);
-        _birthdayTextView = (TextView) ((Activity) _context).findViewById(R.id.birthdayTextView);
+        _birthdayTextView = ((Activity) _context).findViewById(R.id.birthdayTextView);
 
         _calendarAlarmViewArray[0] = ((Activity) _context).findViewById(R.id.calendar1AlarmView);
-        _calendarTextViewArray[0] = (TextView) ((Activity) _context).findViewById(R.id.calendar1TextView);
+        _calendarTextViewArray[0] = ((Activity) _context).findViewById(R.id.calendar1TextView);
         _calendarAlarmViewArray[1] = ((Activity) _context).findViewById(R.id.calendar2AlarmView);
-        _calendarTextViewArray[1] = (TextView) ((Activity) _context).findViewById(R.id.calendar2TextView);
+        _calendarTextViewArray[1] = ((Activity) _context).findViewById(R.id.calendar2TextView);
     }
 }

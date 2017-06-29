@@ -39,9 +39,9 @@ public class RaspberryTemperatureHelper implements Serializable {
             drawable = R.xml.circle_red;
         } else if (parsedDouble >= 15 && parsedDouble < 18) {
             drawable = R.xml.circle_yellow;
-        } else if (parsedDouble >= 18 && parsedDouble < 24) {
+        } else if (parsedDouble >= 18 && parsedDouble <= 25) {
             drawable = R.xml.circle_green;
-        } else if (parsedDouble >= 24 && parsedDouble < 30) {
+        } else if (parsedDouble > 25 && parsedDouble < 30) {
             drawable = R.xml.circle_yellow;
         } else if (parsedDouble >= 30) {
             drawable = R.xml.circle_red;

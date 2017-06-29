@@ -21,6 +21,8 @@ public class Bundles {
 	public static final String IP_ADDRESS_MODEL = "IP_ADDRESS_MODEL";
 	// MENU DATA
 	public static final String MENU = "MENU";
+	// RADIO STREAM DATA
+	public static final String RADIO_STREAM_ID = "RADIO_STREAM_ID";
 	// RASPBERRY VIEW
 	public static final String RASPBERRY_DATA_MODEL = "RASPBERRY_DATA_MODEL";
 	// RSS VIEW

@@ -53,23 +53,23 @@ public class ForecastWeatherViewController {
             _weatherForecastTimeTextViews = new TextView[_forecastCount];
             _weatherForecastTemperatureRangeTextViews = new TextView[_forecastCount];
 
-            _weatherForecastConditionImageViews[0] = (ImageView) ((Activity) _context).findViewById(R.id.weatherForecast1Condition);
-            _weatherForecastWeekdayTextViews[0] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast1Weekday);
-            _weatherForecastDateTextViews[0] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast1Date);
-            _weatherForecastTimeTextViews[0] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast1Time);
-            _weatherForecastTemperatureRangeTextViews[0] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast1TemperatureRange);
+            _weatherForecastConditionImageViews[0] = ((Activity) _context).findViewById(R.id.weatherForecast1Condition);
+            _weatherForecastWeekdayTextViews[0] = ((Activity) _context).findViewById(R.id.weatherForecast1Weekday);
+            _weatherForecastDateTextViews[0] = ((Activity) _context).findViewById(R.id.weatherForecast1Date);
+            _weatherForecastTimeTextViews[0] = ((Activity) _context).findViewById(R.id.weatherForecast1Time);
+            _weatherForecastTemperatureRangeTextViews[0] = ((Activity) _context).findViewById(R.id.weatherForecast1TemperatureRange);
 
-            _weatherForecastConditionImageViews[1] = (ImageView) ((Activity) _context).findViewById(R.id.weatherForecast2Condition);
-            _weatherForecastWeekdayTextViews[1] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast2Weekday);
-            _weatherForecastDateTextViews[1] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast2Date);
-            _weatherForecastTimeTextViews[1] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast2Time);
-            _weatherForecastTemperatureRangeTextViews[1] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast2TemperatureRange);
+            _weatherForecastConditionImageViews[1] = ((Activity) _context).findViewById(R.id.weatherForecast2Condition);
+            _weatherForecastWeekdayTextViews[1] = ((Activity) _context).findViewById(R.id.weatherForecast2Weekday);
+            _weatherForecastDateTextViews[1] = ((Activity) _context).findViewById(R.id.weatherForecast2Date);
+            _weatherForecastTimeTextViews[1] = ((Activity) _context).findViewById(R.id.weatherForecast2Time);
+            _weatherForecastTemperatureRangeTextViews[1] = ((Activity) _context).findViewById(R.id.weatherForecast2TemperatureRange);
 
-            _weatherForecastConditionImageViews[2] = (ImageView) ((Activity) _context).findViewById(R.id.weatherForecast3Condition);
-            _weatherForecastWeekdayTextViews[2] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast3Weekday);
-            _weatherForecastDateTextViews[2] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast3Date);
-            _weatherForecastTimeTextViews[2] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast3Time);
-            _weatherForecastTemperatureRangeTextViews[2] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast3TemperatureRange);
+            _weatherForecastConditionImageViews[2] = ((Activity) _context).findViewById(R.id.weatherForecast3Condition);
+            _weatherForecastWeekdayTextViews[2] = ((Activity) _context).findViewById(R.id.weatherForecast3Weekday);
+            _weatherForecastDateTextViews[2] = ((Activity) _context).findViewById(R.id.weatherForecast3Date);
+            _weatherForecastTimeTextViews[2] = ((Activity) _context).findViewById(R.id.weatherForecast3Time);
+            _weatherForecastTemperatureRangeTextViews[2] = ((Activity) _context).findViewById(R.id.weatherForecast3TemperatureRange);
         }
     };
 
@@ -121,23 +121,23 @@ public class ForecastWeatherViewController {
         _weatherForecastTimeTextViews = new TextView[_forecastCount];
         _weatherForecastTemperatureRangeTextViews = new TextView[_forecastCount];
 
-        _weatherForecastConditionImageViews[0] = (ImageView) ((Activity) _context).findViewById(R.id.weatherForecast1Condition);
-        _weatherForecastWeekdayTextViews[0] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast1Weekday);
-        _weatherForecastDateTextViews[0] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast1Date);
-        _weatherForecastTimeTextViews[0] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast1Time);
-        _weatherForecastTemperatureRangeTextViews[0] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast1TemperatureRange);
+        _weatherForecastConditionImageViews[0] = ((Activity) _context).findViewById(R.id.weatherForecast1Condition);
+        _weatherForecastWeekdayTextViews[0] = ((Activity) _context).findViewById(R.id.weatherForecast1Weekday);
+        _weatherForecastDateTextViews[0] = ((Activity) _context).findViewById(R.id.weatherForecast1Date);
+        _weatherForecastTimeTextViews[0] = ((Activity) _context).findViewById(R.id.weatherForecast1Time);
+        _weatherForecastTemperatureRangeTextViews[0] = ((Activity) _context).findViewById(R.id.weatherForecast1TemperatureRange);
 
-        _weatherForecastConditionImageViews[1] = (ImageView) ((Activity) _context).findViewById(R.id.weatherForecast2Condition);
-        _weatherForecastWeekdayTextViews[1] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast2Weekday);
-        _weatherForecastDateTextViews[1] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast2Date);
-        _weatherForecastTimeTextViews[1] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast2Time);
-        _weatherForecastTemperatureRangeTextViews[1] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast2TemperatureRange);
+        _weatherForecastConditionImageViews[1] = ((Activity) _context).findViewById(R.id.weatherForecast2Condition);
+        _weatherForecastWeekdayTextViews[1] = ((Activity) _context).findViewById(R.id.weatherForecast2Weekday);
+        _weatherForecastDateTextViews[1] = ((Activity) _context).findViewById(R.id.weatherForecast2Date);
+        _weatherForecastTimeTextViews[1] = ((Activity) _context).findViewById(R.id.weatherForecast2Time);
+        _weatherForecastTemperatureRangeTextViews[1] = ((Activity) _context).findViewById(R.id.weatherForecast2TemperatureRange);
 
-        _weatherForecastConditionImageViews[2] = (ImageView) ((Activity) _context).findViewById(R.id.weatherForecast3Condition);
-        _weatherForecastWeekdayTextViews[2] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast3Weekday);
-        _weatherForecastDateTextViews[2] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast3Date);
-        _weatherForecastTimeTextViews[2] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast3Time);
-        _weatherForecastTemperatureRangeTextViews[2] = (TextView) ((Activity) _context).findViewById(R.id.weatherForecast3TemperatureRange);
+        _weatherForecastConditionImageViews[2] = ((Activity) _context).findViewById(R.id.weatherForecast3Condition);
+        _weatherForecastWeekdayTextViews[2] = ((Activity) _context).findViewById(R.id.weatherForecast3Weekday);
+        _weatherForecastDateTextViews[2] = ((Activity) _context).findViewById(R.id.weatherForecast3Date);
+        _weatherForecastTimeTextViews[2] = ((Activity) _context).findViewById(R.id.weatherForecast3Time);
+        _weatherForecastTemperatureRangeTextViews[2] = ((Activity) _context).findViewById(R.id.weatherForecast3TemperatureRange);
     }
 
     public void onPause() {

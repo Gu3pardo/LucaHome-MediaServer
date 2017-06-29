@@ -17,6 +17,7 @@ import guepardoapps.library.lucahome.common.dto.WirelessSocketDto;
 import guepardoapps.library.lucahome.common.enums.MediaServerAction;
 import guepardoapps.library.lucahome.common.enums.MediaServerSelection;
 import guepardoapps.library.lucahome.common.enums.RSSFeed;
+import guepardoapps.library.lucahome.common.enums.RadioStreams;
 import guepardoapps.library.lucahome.common.enums.YoutubeId;
 
 import guepardoapps.library.toolset.common.classes.SerializableList;
@@ -73,7 +74,9 @@ public class DataHandler {
                     false,
                     "",
                     false,
-                    "");
+                    "",
+                    false,
+                    RadioStreams.NULL);
             _logger.Info("Created center model: " + goodNightModel.toString());
 
             _broadcastController.SendSerializableBroadcast(
@@ -161,7 +164,9 @@ public class DataHandler {
                                         true,
                                         youtubeId.GetYoutubeId(),
                                         false,
-                                        "");
+                                        "",
+                                        false,
+                                        RadioStreams.NULL);
                                 _logger.Info("Created center model: " + youtubeModel.toString());
 
                                 _broadcastController.SendSerializableBroadcast(
@@ -178,7 +183,9 @@ public class DataHandler {
                                     true,
                                     data,
                                     false,
-                                    "");
+                                    "",
+                                    false,
+                                    RadioStreams.NULL);
                             _logger.Info("Created center model: " + youtubeModel.toString());
 
                             _broadcastController.SendSerializableBroadcast(
@@ -262,6 +269,74 @@ public class DataHandler {
 
                         break;
 
+                    case SHOW_RADIO_STREAM:
+                        if (!_screenController.IsScreenOn()) {
+                            _logger.Error("Screen is not enabled!");
+                            return "Error:Screen is not enabled!";
+                        }
+
+                        RadioStreams radioStream = RadioStreams.DEFAULT;
+                        try {
+                            int radioStreamId = Integer.parseInt(data);
+                            radioStream = RadioStreams.GetById(radioStreamId);
+                            if (radioStream == RadioStreams.NULL) {
+                                _logger.Warn(String.format(Locale.getDefault(), "Failed to find id %d! Setting to default!", radioStreamId));
+                                radioStream = RadioStreams.DEFAULT;
+                            }
+                        } catch (Exception exception) {
+                            _logger.Error(exception.toString());
+                        }
+
+                        CenterModel radioStreamModel = new CenterModel(
+                                false,
+                                "",
+                                false,
+                                "",
+                                false,
+                                "",
+                                true,
+                                radioStream);
+                        _logger.Info("Created center model: " + radioStreamModel.toString());
+
+                        _broadcastController.SendSerializableBroadcast(
+                                Broadcasts.SHOW_CENTER_MODEL,
+                                Bundles.CENTER_MODEL,
+                                radioStreamModel);
+                        break;
+
+                    case IS_RADIO_STREAM_PLAYING:
+                        return action.toString() + ":" + String.valueOf(_centerViewController.IsRadioStreamPlaying());
+
+                    case PLAY_RADIO_STREAM:
+                        if (!_screenController.IsScreenOn()) {
+                            _logger.Error("Screen is not enabled!");
+                            return "Error:Screen is not enabled!";
+                        }
+
+                        if (data != null) {
+                            if (data.length() > 0) {
+                                _lastYoutubeId = data;
+                                _broadcastController.SendStringBroadcast(
+                                        Broadcasts.PLAY_RADIO_STREAM,
+                                        Bundles.RADIO_STREAM_ID,
+                                        data);
+                            } else {
+                                _broadcastController.SendSimpleBroadcast(Broadcasts.PLAY_RADIO_STREAM);
+                            }
+                        } else {
+                            _broadcastController.SendSimpleBroadcast(Broadcasts.PLAY_RADIO_STREAM);
+                        }
+                        break;
+
+                    case STOP_RADIO_STREAM:
+                        if (!_screenController.IsScreenOn()) {
+                            _logger.Error("Screen is not enabled!");
+                            return "Error:Screen is not enabled!";
+                        }
+
+                        _broadcastController.SendSimpleBroadcast(Broadcasts.STOP_RADIO_STREAM);
+                        break;
+
                     case PLAY_SEA_SOUND:
                         if (!_screenController.IsScreenOn()) {
                             _logger.Error("Screen is not enabled!");
@@ -284,7 +359,9 @@ public class DataHandler {
                                 true,
                                 YoutubeId.SEA_SOUND.GetYoutubeId(),
                                 false,
-                                "");
+                                "",
+                                false,
+                                RadioStreams.NULL);
                         _logger.Info("Created center model: " + playSeaSoundModel.toString());
 
                         _broadcastController.SendSerializableBroadcast(
@@ -309,7 +386,9 @@ public class DataHandler {
                                 false,
                                 "",
                                 false,
-                                "");
+                                "",
+                                false,
+                                RadioStreams.NULL);
                         _logger.Info("Created center model: " + stopSeaSoundModel.toString());
 
                         _broadcastController.SendSerializableBroadcast(
@@ -356,7 +435,9 @@ public class DataHandler {
                                 false,
                                 "",
                                 true,
-                                data);
+                                data,
+                                false,
+                                RadioStreams.NULL);
                         _logger.Info("Created center model: " + webViewModel.toString());
 
                         _broadcastController.SendSerializableBroadcast(
@@ -377,7 +458,9 @@ public class DataHandler {
                                 false,
                                 "",
                                 false,
-                                "");
+                                "",
+                                false,
+                                RadioStreams.NULL);
                         _logger.Info("Created center model: " + centerTextModel.toString());
 
                         _broadcastController.SendSerializableBroadcast(
@@ -702,6 +785,9 @@ public class DataHandler {
                             playedYoutubeIds += entry.GetCommunicationString();
                         }
 
+                        String radioStreamId = String.valueOf(_centerViewController.GetRadioStreamId());
+                        String isRadioStreamPlaying = _centerViewController.IsRadioStreamPlaying() ? "1" : "0";
+
                         String isSeaSSoundPlaying = _seaSoundIsRunning ? "1" : "0";
                         String seaSoundCountdown;
                         if (!_seaSoundIsRunning) {
@@ -722,10 +808,13 @@ public class DataHandler {
                         String serverVersion = _context.getString(R.string.serverVersion);
                         String screenBrightness = String.valueOf(_screenController.GetCurrentBrightness());
 
-                        String mediaMirrorDto = String.format("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s", serverIp,
-                                batteryLevel, socketName, socketState, volume, youtubeId, isYoutubePlaying,
-                                youtubeCurrentPlayPosition, youtubeCurrentVideoDuration, playedYoutubeIds,
-                                isSeaSSoundPlaying, seaSoundCountdown, serverVersion, screenBrightness);
+                        String mediaMirrorDto = String.format("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s",
+                                serverIp, batteryLevel, socketName,
+                                socketState, volume, youtubeId,
+                                isYoutubePlaying, youtubeCurrentPlayPosition, youtubeCurrentVideoDuration,
+                                playedYoutubeIds, radioStreamId, isRadioStreamPlaying,
+                                isSeaSSoundPlaying, seaSoundCountdown, serverVersion,
+                                screenBrightness);
 
                         return action.toString() + ":" + mediaMirrorDto;
 

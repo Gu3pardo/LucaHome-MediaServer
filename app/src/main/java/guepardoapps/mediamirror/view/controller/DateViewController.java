@@ -41,9 +41,9 @@ public class DateViewController {
 
         _screenEnabled = true;
 
-        _weekdayTextView = (TextView) ((Activity) _context).findViewById(R.id.weekdayTextView);
-        _dateTextView = (TextView) ((Activity) _context).findViewById(R.id.dateTextView);
-        _timeTextView = (TextView) ((Activity) _context).findViewById(R.id.timeTextView);
+        _weekdayTextView = ((Activity) _context).findViewById(R.id.weekdayTextView);
+        _dateTextView = ((Activity) _context).findViewById(R.id.dateTextView);
+        _timeTextView = ((Activity) _context).findViewById(R.id.timeTextView);
     }
 
     public void onPause() {
@@ -100,9 +100,9 @@ public class DateViewController {
         public void onReceive(Context context, Intent intent) {
             _screenEnabled = true;
 
-            _weekdayTextView = (TextView) ((Activity) _context).findViewById(R.id.weekdayTextView);
-            _dateTextView = (TextView) ((Activity) _context).findViewById(R.id.dateTextView);
-            _timeTextView = (TextView) ((Activity) _context).findViewById(R.id.timeTextView);
+            _weekdayTextView = ((Activity) _context).findViewById(R.id.weekdayTextView);
+            _dateTextView = ((Activity) _context).findViewById(R.id.dateTextView);
+            _timeTextView = ((Activity) _context).findViewById(R.id.timeTextView);
         }
     };
 

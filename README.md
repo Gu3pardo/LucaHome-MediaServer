@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 <a target="_blank" href="https://www.paypal.me/GuepardoApps" title="Donate using PayPal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
 
-[![Version](https://img.shields.io/badge/version-v0.20.0.170629-blue.svg)](https://github.com/Gu3pardo/LucaHome-MediaServer)
+[![Version](https://img.shields.io/badge/version-v0.20.0.170629-blue.svg)](https://github.com/GuepardoApps/LucaHome-MediaServer)
 
 Android application permanently displaying data behind a mirror
 - date and time
@@ -24,9 +24,9 @@ Receive commands by a client application (LucaHome_AndroidApplication)
 
 ---
 
-![alt tag](https://github.com/Gu3pardo/LucaHome-MediaServer/blob/master/screenshots/image001.png)
+![alt tag](https://github.com/GuepardoApps/LucaHome-MediaServer/blob/master/screenshots/image001.png)
 
 ---
 
 IMPORTANT:
-This library uses library LucaHome of repository https://github.com/Gu3pardo/LucaHome-AndroidApplication!
+This library uses library LucaHome of repository https://github.com/GuepardoApps/LucaHome-AndroidApplication!

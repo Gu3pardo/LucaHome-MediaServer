@@ -1,4 +1,6 @@
-# MediaMirrorSerrver
+# MediaMirrorSerrver - DEPRECATED
+
+THIS PROJECT WAS MERGED INTO [LucaHome-AndroidApplication](https://github.com/GuepardoApps/LucaHome-AndroidApplication)
 
 [![Platform](https://img.shields.io/badge/platform-Android-blue.svg)](https://www.android.com)
 <a target="_blank" href="https://android-arsenal.com/api?level=24" title="API24+"><img src="https://img.shields.io/badge/API-24+-blue.svg" /></a>
